@@ -8,7 +8,7 @@ class UserProfile(models.Model):
     dateofbirth=models.DateField(blank=False, null=False)
     skincolor=models.TextField(max_length=30,blank=False, null=False)
     occupation=models.TextField(max_length=30,blank=False, null=False)
-    picture = models.ImageField(upload_to='profile_images', blank=True)
+    picture = models.ImageField(upload_to='images/profileImages', blank=True)
     
     def __unicode__(self):
         return self.user.username

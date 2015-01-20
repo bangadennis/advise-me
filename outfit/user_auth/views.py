@@ -1,10 +1,23 @@
 from django.shortcuts import render
-from .forms import UserForm, UserProfileForm
+from .forms import UserProfileForm, UserForm
+
+def index(request):
+
+    # Construct a dictionary to pass to the template engine as its context.
+    # Note the key boldmessage is the same as {{ boldmessage }} in the template!
+    context_dict = {'message': "Welcome to Outfit.com"}
+
+    # Return a rendered response to send to the client.
+    # We make use of the shortcut function to make our lives easier.
+    # Note that the first parameter is the template we wish to use.
+
+    return render(request, 'user_auth/base.html', context_dict)
 
 def trya(request):
+    hello="Welcome, to Our Outfit Expert System:"
     return render(request,
                   'user_auth/trya.html',
-                  {'message': 'Hello BOYS'})
+                  {'message': hello})
 #registration view
 def register(request):
     
@@ -13,9 +26,9 @@ def register(request):
     if request.method=="POST":
         
         userform=UserForm(data=request.POST)
-        userprofile=UserProfileForm(data=request.POST)
+        userprofileform=UserProfileForm(data=request.POST)
         
-        if userform.is_valid() and userprofile.is_valid():
+        if userform.is_valid() and userprofileform.is_valid():
             
             #saving the user's form data in the databases
             user=userform.save()
@@ -23,7 +36,7 @@ def register(request):
             user.set_password(user.password)
             user.save()
             
-            profile=userprofile.save(commit=False)
+            profile=userprofileform.save(commit=False)
             profile.user=user
             
             #add the profile image if there is one
@@ -36,7 +49,7 @@ def register(request):
             
         else:
             
-            print user_form.errors, profile_form.errors
+            print userform.errors, userprofileform.errors
     else:
         userform=UserForm()
         userprofileform=UserProfileForm()

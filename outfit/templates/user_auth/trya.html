@@ -1,0 +1,12 @@
+
+{% extends "user_auth/base.html" %}
+{% load staticfiles %}
+{% block body_block %}
+     <h1>Message</h1>
+    <strong>{{ message }}</strong><br />
+    <a href="/admin/">dennis</a><br />
+    <h3>Quote of The Day</h3>
+    <img src="{% static "images/myles.jpg" %}" alt="Myles Quote" />
+{% endblock %}
+   
+

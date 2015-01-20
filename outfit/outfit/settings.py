@@ -13,6 +13,7 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 
@@ -36,6 +37,10 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'user_auth',
+    'bootstrap3_datetime',
+    
+    
 )
 
 MIDDLEWARE_CLASSES = (
@@ -88,29 +93,23 @@ USE_TZ = True
 #TEMPLATES
 
 
-STATIC_URL = '/static/'
 TEMPLATE_PATH=os.path.join(BASE_DIR, 'templates')
-TEMPLATE_DIRS=(
+TEMPLATE_DIRS=[
     TEMPLATE_PATH,
+]
+
+#static files
+STATIC_PATH=os.path.join(BASE_DIR, 'static')
+STATIC_URL = '/static/'
+
+STATICFILES_DIRS=(
+      STATIC_PATH,
 )
-
-#static fikes
-#STATIC_ROOT = 'static'
-
-#STATIC_PATH=os.path.join(BASE_DIR, 'static')
-
-STATIC_URL = '/templates/'
-
-#STATICFILES_DIRS=(
- #   STATIC_PATH,
-#)
-
 
 #MEDIA FILES
 
-#MEDIA_URL='/media/'
-#MEDIA_ROOT=os.path.join(BASE_DIR, 'media')
-
+MEDIA_URL='/media/'
+MEDIA_ROOT=os.path.join(BASE_DIR, 'media')
     
 
 
