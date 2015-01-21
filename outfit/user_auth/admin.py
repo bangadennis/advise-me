@@ -1,6 +1,7 @@
 from django.contrib import admin
-from user_auth.models import UserProfile
+from user_auth.models import UserDetails, ClothDescription
 
-admin.site.register(UserProfile)
+admin.site.register(UserDetails)
+admin.site.register(ClothDescription)
 
 # Register your models here.

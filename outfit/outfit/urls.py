@@ -10,6 +10,8 @@ urlpatterns = patterns('',
      url(r'^$', 'user_auth.views.index', name='index'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^auth/', include('user_auth.urls')),
+    url(r'^password/', include('password_reset.urls')),
+    url(r'^ajaximage/', include('ajaximage.urls')),
     
 )
 

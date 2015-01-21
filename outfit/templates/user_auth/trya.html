@@ -1,12 +1,33 @@
 
 {% extends "user_auth/base.html" %}
 {% load staticfiles %}
+
+{% block side_block %}
+    <h4>Profile</h3>
+    <b>{{ user.username }}</b>  <br/>
+    <img src="{{ userdetails.profile_picture.url }}" /><br/>
+    <a href="{% url 'closet_upload' %}">Closet Upload</a>
+{% endblock %}
+
 {% block body_block %}
-     <h1>Message</h1>
-    <strong>{{ message }}</strong><br />
-    <a href="/admin/">dennis</a><br />
-    <h3>Quote of The Day</h3>
-    <img src="{% static "images/myles.jpg" %}" alt="Myles Quote" />
+     <h1>MyCloset</h1>
+    {% if messages %}
+        <ul class="messages">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+    
+    <div class="row">
+        {% for cloth in cloths%}
+        <div class='col-md-4'>
+            <img src="{{ cloth.cloth_image.url }}" />
+            <p> {{cloth.cloth_description }} </p>
+        </div>
+        {% endfor %}
+    </div>
+        
 {% endblock %}
    
 

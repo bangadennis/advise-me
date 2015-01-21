@@ -5,37 +5,20 @@
 {% block body_block %}
 {% if registered %}
                  
- <h1>Welcome to Outfit ES</h1>
+<h1>Welcome to Outfit ES</h1>
 {% else %}
+<div class='col-md-6 col-md-offset-2'>          
 <form role="form"  method="post" action="/auth/register/">
-                {% csrf_token %}
-                
-<fieldset class="form-group">
-                {% for field in userform %}
-  <label class="control-label" for="id_{{ field.name }}">{{ field.label }}</label>
-    <div class="form-control">
-      <input type="{{field.type}}" class="form-control"
-        name="{{ field.name }}"
-        id="id_{{ field.name }}" />
-                
-       <!-- <p class="help-text">{{ field.help_text }} </p>
-    </div>-->
-    {% endfor %}
+<legend>Registration Form</legend>
+<fieldset>
+{% csrf_token %}
 
-{% for field in userprofileform %}
-  <label class="control-label" for="id_{{ field.name }}">{{ field.label }}</label>
-    <div class="form-control">
-      <input type="{{field.type}}" class="form-control"
-        name="{{ field.name }}"
-        id="id_{{ field.name }}" />
-                
-        <!--<p class="help-text">{{ field.help_text }} </p>-->
-    </div>
-
-{% endfor %}
+{% load crispy_forms_tags %}
+{% crispy userform %}
 </fieldset>
 <button type="submit" class="btn btn-default">Submit</button>
 </form>
+</div>  
 
 {% endif %}
 {% endblock %}

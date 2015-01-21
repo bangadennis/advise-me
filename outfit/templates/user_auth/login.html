@@ -1,0 +1,20 @@
+
+{% extends 'user_auth/base.html' %}
+{% block body_block %}
+{% if invalid %}
+<p>Invalid Login details</p>
+{% endif %}
+    <div class='col-md-5 col-md-offset-3'>   
+        <form id="login_form" method="post" action="{% url 'login' %}">
+            <div class='form-group'>
+            {% csrf_token %}
+            Username: <input type="text" class="form-control" name="username" value="" size="50" />
+            <br />
+            Password: <input type="password" class="form-control" name="password" value="" size="50" />
+            <br />
+            </div>
+    
+            <input type="submit" class="btn btn-large" value="submit" />
+        </form>
+    </div> 
+{% endblock %}

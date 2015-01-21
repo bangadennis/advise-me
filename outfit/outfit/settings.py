@@ -26,7 +26,8 @@ DEBUG = True
 TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
-
+#Crispy forms configuration to use bootstrap 3
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 # Application definition
 
@@ -39,6 +40,9 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'user_auth',
     'bootstrap3_datetime',
+    'crispy_forms',
+    'imagekit',
+    'password_reset',
     
     
 )
@@ -111,7 +115,11 @@ STATICFILES_DIRS=(
 MEDIA_URL='/media/'
 MEDIA_ROOT=os.path.join(BASE_DIR, 'media')
     
+#LOGIN URL
+LOGIN_URL='/auth/login'
 
+#EMAIL BACKEND for sending email
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 
 
