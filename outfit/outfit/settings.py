@@ -43,6 +43,7 @@ INSTALLED_APPS = (
     'crispy_forms',
     'imagekit',
     'password_reset',
+    'bootstrap_toolkit',
     
     
 )
