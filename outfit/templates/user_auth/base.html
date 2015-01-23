@@ -13,6 +13,7 @@
 
     <link href="{{STATIC_URL}}css/bootstrap.min.css" rel="stylesheet">
     <link href="{{ STATIC_URL}}css/dashboard.css" rel="stylesheet">
+    <link href="{{ STATIC_URL}}css/main.css" rel="stylesheet">
 
     <!--[if lt IE 9]>
     <!--
@@ -63,14 +64,21 @@
       <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
             <div>
+                
                 {% block side_block %}
                 {% endblock %}
+                {% if user.is_authenticated %}
+                <h4>Profile</h3>
+                <b>{{ user.username }}</b>  <br/>
+                <img src="{{ userdetails.profile_picture.url }}" /><br/>
                 <h4>ES Links</h4>
                 <a href="/admin/">AdminLogin</a> <br />
-                {% if user.is_authenticated %}
                 <a href="{% url 'trya' %}">MyCloset</a><br />
-                {% else %} 
-                <a href="{% url 'register' %}">Register</a><br />
+                <a href="{% url 'closet_upload' %}">Upload Cloth</a><br/>
+                <a href="{% url 'add_user_activity' %}">Add Activity</a>
+                {% else %}
+                <h4 class='text-info'>ES Links</h4>
+                <a href="{% url 'register' %}">Register</a> <br />
                 <a href="{% url 'password_reset_recover'%}">Password Reset</a>
                
                 {% endif %}

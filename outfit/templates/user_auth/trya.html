@@ -2,19 +2,13 @@
 {% extends "user_auth/base.html" %}
 {% load staticfiles %}
 
-{% block side_block %}
-    <h4>Profile</h3>
-    <b>{{ user.username }}</b>  <br/>
-    <img src="{{ userdetails.profile_picture.url }}" /><br/>
-    <a href="{% url 'closet_upload' %}">Closet Upload</a>
-{% endblock %}
 
 {% block body_block %}
-     <h1>MyCloset</h1>
+     <h1 class='text-info'>MyCloset</h1>
     {% if messages %}
-        <ul class="messages">
+        <ul class="messages success">
         {% for message in messages %}
-        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        <p{% if message.tags %} class="{{ message.tags }} text-success "{% endif %}>{{ message }}</p>
         {% endfor %}
         </ul>
     {% endif %}

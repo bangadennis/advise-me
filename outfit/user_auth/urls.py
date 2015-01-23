@@ -12,6 +12,8 @@ urlpatterns = patterns('',
     url(r'^try/', views.trya, name='trya'),
     url(r'^logout/$', views.user_logout, name='logout'),
     url(r'^userdetails/$', views.completeuserdetails, name='userdetails'),
+    url(r'^add_user_activity/$', views.add_user_activity, name='add_user_activity'),
+    url(r'^user_activities/$', views.user_activites, name='user_activities'),
 
 )
 

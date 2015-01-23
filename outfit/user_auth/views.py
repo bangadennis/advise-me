@@ -1,10 +1,10 @@
 from django.shortcuts import render
-from user_auth.forms import UserForm, UserDetailsForm, ClothDescriptionForm
+from user_auth.forms import UserForm, UserDetailsForm, ClothDescriptionForm, UserActivityForm
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from models import UserDetails, ClothDescription
+from models import UserDetails, ClothDescription, UserActivity
 
 def index(request):
     
@@ -31,6 +31,7 @@ def trya(request):
         hello="Welcome, to Our Outfit Expert System:"
         user=UserDetails.objects.get(user=request.user)
         cloths=ClothDescription.objects.all().filter(user=request.user)
+            
         return render(request,
                       'user_auth/trya.html',
                       {'cloths': cloths, 'userdetails': user})
@@ -151,7 +152,7 @@ def completeuserdetails(request):
                       "user_auth/userdetails.html",
                       {"userdetails": userdetails})
    
-#closet 
+#closet upload cloth images
 @login_required
 def closet_upload(request):
     #check if the user details are completed
@@ -170,15 +171,94 @@ def closet_upload(request):
                     cloth.cloth_image=request.FILES['cloth_image']
                 cloth.save()
                 messages.info(request, "Cloth Image and Description uploaded successfully")
-                return HttpResponseRedirect('/auth/closet_upload')
+                return HttpResponseRedirect('/auth/try')
                 
             else:
                 
                 print clothdetails.errors
         else:
             clothdetails=ClothDescriptionForm()
-        
+            
+        userdetails=UserDetails.objects.get(user=request.user)
         #return render to response depending on the context
         return render(request,
                       "user_auth/closet_upload.html",
-                      {"clothform": clothdetails})
+                      {"clothform": clothdetails, 'userdetails': userdetails})
+
+
+
+
+#add activity details view
+@login_required
+def add_user_activity(request):
+    #check if the user details are completed
+    
+    if not UserDetails.objects.filter(user=request.user).exists():
+            return HttpResponseRedirect('/auth/userdetails')
+    else:
+        if request.method=="POST":
+            
+            activitydetails=UserActivityForm(data=request.POST)
+            
+            if activitydetails.is_valid():
+    
+                useractivity=activitydetails.save(commit=False)
+                useractivity.user=request.user
+                useractivity.save()
+                messages.info(request, "Activity added successfully")
+        
+                return HttpResponseRedirect('/auth/user_activities')
+                
+            else:
+                
+                print activitydetails.errors
+        else:
+            activitydetails=UserActivityForm()
+        
+        userdetails=UserDetails.objects.get(user=request.user)
+        
+        #return render to response depending on the context
+        return render(request,
+                      "user_auth/add_user_activity.html",
+                      {"activitydetails": activitydetails, 'userdetails': userdetails})
+    
+#view for activities 
+@login_required
+def user_activites(request):
+    if not UserDetails.objects.filter(user=request.user).exists():
+            return HttpResponseRedirect('/auth/userdetails')
+    else:
+        user=UserDetails.objects.get(user=request.user)
+        activities=UserActivity.objects.all().filter(user=request.user)
+            
+        return render(request,
+                      'user_auth/user_activity.html',
+                      {'activities': activities, 'userdetails': user})    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+   

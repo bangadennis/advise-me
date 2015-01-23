@@ -4,14 +4,15 @@
 
     {% if messages %}
         <b>{{ username }}</b><br/>
-        <ul class="messages">
+        <ul class="messages info">
         {% for message in messages %}
-        <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        <p {% if message.tags %} class="{{ message.tags }} text-success"{% endif %}>
+            <span class="glyphicon glyphicon-log-in" aria-hidden="true"> {{ message }}</p>
         {% endfor %}
         </ul>
     {% endif %}
 
-<p>Complete the user details</p>
+<h3 class='text-info'>Upload a Cloth to  your Wadrobe</h3>
 <form role="form"  method="post" action="/auth/closet_upload/" enctype="multipart/form-data">
 <legend>Cloth And Description</legend>
 <fieldset>

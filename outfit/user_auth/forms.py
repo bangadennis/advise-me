@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from user_auth.models import UserDetails, ClothDescription
+from user_auth.models import UserDetails, ClothDescription, UserActivity
 from crispy_forms.helper import FormHelper
 from bootstrap_toolkit.widgets import BootstrapDateInput, BootstrapTextInput, BootstrapUneditableInput
 #from bootstrap3_datetime.widgets import DateTimePicker
@@ -20,8 +20,10 @@ class UserForm(forms.ModelForm):
 
 #UserProfileForm
 class UserDetailsForm(forms.ModelForm):
+    choices=(("Male","Male",),("Female","Female"),)
     helper = FormHelper()
     helper.form_tag = False
+    gender=forms.ChoiceField(widget=forms.Select(),choices=choices, label="Gender", )
     dateofbirth = forms.DateField(label="Date Of Birh ",
         widget=BootstrapDateInput(), required=True,
         )
@@ -29,7 +31,7 @@ class UserDetailsForm(forms.ModelForm):
     occupation=forms.CharField(label="Occupation", required=True,)
     class Meta:
         model=UserDetails
-        fields=('dateofbirth', 'skintone', 'occupation', 'profile_picture',)
+        fields=('gender','dateofbirth', 'skintone', 'occupation', 'profile_picture',)
     
 #Cloths Description Form and Q&A
 class ClothDescriptionForm(forms.ModelForm):
@@ -42,8 +44,10 @@ class ClothDescriptionForm(forms.ModelForm):
         
 
 #UserActivity Form 
-#class UserActivityForm(forms.ModelForm):
-   # helper = FormHelper()
-   # helper.form_tag = False  
-   # class Meta:
-     #   model=UserActivity
+class UserActivityForm(forms.ModelForm):
+   helper = FormHelper()
+   helper.form_tag = False  
+   class Meta:
+    model=UserActivity
+    exclude=('user',)
+    
