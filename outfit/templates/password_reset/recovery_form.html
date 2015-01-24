@@ -6,13 +6,17 @@
 {% block title %}{% trans "Password recovery" %}{% endblock %}
 
 {% block content %}
-	<form method="post" action="{{ url }}">
+	<div class='col-md-offset-4 col-md-6'>
+		<form method="post" action="{{ url }}">
 		{% csrf_token %}
 		{{ form|as_bootstrap }}
 		<div class="form-actions">
 			<br/>
 		    <button type="submit"  class="btn btn-primary">Recover Password</button>
 		</div>
-		
 	</form>
+		
+		
+	</div>
+	
 {% endblock %}

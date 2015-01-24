@@ -7,20 +7,24 @@
         <ul class="messages info">
         {% for message in messages %}
         <p {% if message.tags %} class="{{ message.tags }} text-success"{% endif %}>
-            <span class="glyphicon glyphicon-log-in" aria-hidden="true"> {{ message }}</p>
+            
         {% endfor %}
         </ul>
     {% endif %}
 
-<h3 class='text-info'>Upload a Cloth to  your Wadrobe</h3>
-<form role="form"  method="post" action="/auth/closet_upload/" enctype="multipart/form-data">
-<legend>Cloth And Description</legend>
-<fieldset>
-{% csrf_token %}
+<div class='row'>
+    <div class='col-md-offset-3 col-md-6'>
+        <h3 class='text-info'>Upload a Cloth to  your Wadrobe</h3>
+        <form role="form"  method="post" action="/auth/closet_upload/" enctype="multipart/form-data">
+        <fieldset>
+        {% csrf_token %}
+        
+        {% load crispy_forms_tags %}
+        {% crispy clothform %}
+        </fieldset>
+        <button type="submit" class="btn btn-default">Complete</button>
+        </form> 
+    </div>
+</div>
 
-{% load crispy_forms_tags %}
-{% crispy clothform %}
-</fieldset>
-<button type="submit" class="btn btn-default">Complete</button>
-</form>
 {% endblock %}

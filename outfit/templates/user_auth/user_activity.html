@@ -8,13 +8,14 @@
     {% if messages %}
         <ul class="messages">
         {% for message in messages %}
-        <span {% if message.tags %} class="{{ message.tags }} text-success"{% endif %}>{{ message }}</span>
+        <p {% if message.tags %} class="{{ message.tags }} text-success"{% endif %}>
+            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"> {{ message }}</span></p>
         {% endfor %}
         </ul>
     {% endif %}
     
     <div class="row">
-        <div class='col-md-offset-1 col-md-8 '>
+        <div class=''>
             <table class='table table-responsive table-stripped table-hover '>
                 <thead>
                     <td>Category</td>
@@ -32,7 +33,9 @@
                         <td>{{item.event_date}} </td>
                         <td>{{item.start_time}} </td>
                         <td>{{item.end_time}} </td>
-                        
+                        <td> <a href="/auth/delete_activity/{{item.activity_id}}/delete/">
+                            <span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>
+                        </a> </td>
                     </tr>
                 {% endfor %}
                             

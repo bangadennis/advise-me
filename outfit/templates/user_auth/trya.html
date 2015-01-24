@@ -4,11 +4,18 @@
 
 
 {% block body_block %}
-     <h1 class='text-info'>MyCloset</h1>
+     <h1 class='text-info'>Closet</h1>
     {% if messages %}
         <ul class="messages success">
         {% for message in messages %}
-        <p{% if message.tags %} class="{{ message.tags }} text-success "{% endif %}>{{ message }}</p>
+        <p{% if message.tags %} class="{{ message.tags }}"{% endif %}>
+            {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                <span class="glyphicon glyphicon-warning-sign text-error bg-danger" aria-hidden="true"> {{ message }}</span>
+                {%else%}
+                    <span class="glyphicon glyphicon-info-sign text-success bg-info" aria-hidden="true"> {{ message }}</span>
+            {% endif %}
+            
+            </p>
         {% endfor %}
         </ul>
     {% endif %}
@@ -16,8 +23,12 @@
     <div class="row">
         {% for cloth in cloths%}
         <div class='col-md-4'>
-            <img src="{{ cloth.cloth_image.url }}" />
+            <a href="/auth/get_facts/{{cloth.id}}/view/">
+                
+            <img src="{{ cloth.cloth_image.url }}" class='img-rounded' alt="{{cloth.cloth_description}}" />
+            </a>
             <p> {{cloth.cloth_description }} </p>
+        
         </div>
         {% endfor %}
     </div>

@@ -6,7 +6,7 @@
         <form id="login_form" method="post" action="{% url 'login' %}">
             <div class='form-group'>
             {% if invalid %}
-            <p>Invalid Login details</p>
+            <p class='infoWarning'>Invalid Login details</p>
             {% endif %}
             {% csrf_token %}
             Username: <input type="text" class="form-control" name="username" value="" size="50" />

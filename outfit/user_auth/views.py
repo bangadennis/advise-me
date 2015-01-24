@@ -1,10 +1,12 @@
 from django.shortcuts import render
-from user_auth.forms import UserForm, UserDetailsForm, ClothDescriptionForm, UserActivityForm
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from models import UserDetails, ClothDescription, UserActivity
+from django.contrib.auth.models import User
+
+from user_auth.forms import UserForm, UserDetailsForm, ClothDescriptionForm, UserActivityForm, ClothFactForm
+from models import UserDetails, ClothDescription, UserActivity, ClothFactBase
 
 def index(request):
     
@@ -170,8 +172,8 @@ def closet_upload(request):
                 if 'cloth_image' in request.FILES['cloth_image']:
                     cloth.cloth_image=request.FILES['cloth_image']
                 cloth.save()
-                messages.info(request, "Cloth Image and Description uploaded successfully")
-                return HttpResponseRedirect('/auth/try')
+                messages.info(request, "Cloth's Image and Description uploaded successfully")
+                return HttpResponseRedirect('/auth/get_facts/{}/view'.format(cloth.id))
                 
             else:
                 
@@ -221,6 +223,7 @@ def add_user_activity(request):
         return render(request,
                       "user_auth/add_user_activity.html",
                       {"activitydetails": activitydetails, 'userdetails': userdetails})
+
     
 #view for activities 
 @login_required
@@ -230,13 +233,104 @@ def user_activites(request):
     else:
         user=UserDetails.objects.get(user=request.user)
         activities=UserActivity.objects.all().filter(user=request.user)
+        
+        if activities.count()==0:
+            messages.info(request, "No Activities")
+            return HttpResponseRedirect('/auth/try')
             
         return render(request,
                       'user_auth/user_activity.html',
                       {'activities': activities, 'userdetails': user})    
     
+#delete activity
+@login_required
+def delete_activity(request, activity_id):
+    if not UserDetails.objects.filter(user=request.user).exists():
+            return HttpResponseRedirect('/auth/userdetails')
+    else:
+        if activity_id:
+            try:
+                user=User.objects.get(username=request.user.username)
+                activity=user.useractivity_set.get(activity_id=activity_id)
+                activity.delete()
+                
+                messages.info(request, "Activity Deleted")
+                return HttpResponseRedirect('/auth/user_activities')
+            except:
+                messages.info(request, "Invalid Delete Activity Option")
+                return HttpResponseRedirect('/auth/user_activities/')   
     
     
+#add cloth facts
+@login_required
+def add_cloth_facts(request, cloth_id):
+    #check if the user details are completed
+    if not UserDetails.objects.filter(user=request.user).exists():
+            return HttpResponseRedirect('/auth/userdetails')
+    else:
+        if cloth_id:
+            user=User.objects.get(username=request.user.username)
+            try :
+                cloth_data=user.clothdescription_set.get(id=cloth_id)
+            except:
+                messages.error(request, "Invalid Option")
+                return HttpResponseRedirect('/auth/try') 
+                
+        else:
+            return HttpResponseRedirect('auth/try')
+        if request.method=="POST":
+            cloth_fact=ClothFactForm(data=request.POST)
+            
+            if cloth_fact.is_valid():
+    
+                cloth=cloth_fact.save(commit=False)
+                cloth.cloth_id=cloth_data
+                cloth.save()
+                messages.info(request, "Cloth facts added successfully")
+        
+                return HttpResponseRedirect('/auth/try')
+                
+            else:
+                
+                print cloth_fact.errors
+        else:
+            cloth_fact=ClothFactForm()
+        
+        userdetails=UserDetails.objects.get(user=request.user)
+        data=ClothFactBase.objects.filter(cloth_id=cloth_id).exists()
+        facts={}
+        if data:
+            facts=ClothFactBase.objects.get(cloth_id=cloth_id)
+        
+        #return render to response depending on the context
+        return render(request,
+                      "user_auth/add_cloth_facts.html",
+                      {"clothform": cloth_fact, 'userdetails': userdetails,
+                       'cloth': cloth_data, 'clothfacts': facts})
+    
+
+#delete a cloth
+@login_required
+def delete_cloth(request, cloth_id):
+       #check if the user details are completed
+    if not UserDetails.objects.filter(user=request.user).exists():
+            return HttpResponseRedirect('/auth/userdetails')
+    else:
+        if cloth_id:
+            user=User.objects.get(username=request.user.username)
+            try :
+                cloth_data=user.clothdescription_set.get(id=cloth_id)
+                cloth_data.delete()
+                messages.info(request, "Cloth deleted")
+                return HttpResponseRedirect('/auth/try') 
+                
+            except:
+                messages.error(request, "Invalid Option")
+                return HttpResponseRedirect('/auth/try') 
+            
+    
+    
+
     
     
     

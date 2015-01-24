@@ -43,14 +43,17 @@
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
             {% if user.is_authenticated %}
-           
-            <li><a href="{% url 'trya' %}"> {{user.username}} </a></li>
+            <li><a href="{% url 'closet_upload' %}">Closet Upload</a></li>
+            <li><a href="{% url 'add_user_activity' %}">Add Activity</a></li>
+            <li><a href="{% url 'user_activities' %}">Activites</a></li>
+           <li><a href="{% url 'trya' %}"> {{user.username}} </a></li>
            <li><a href="{% url 'logout' %}">Logout</a></li>
            <li><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>
            </li>
             {% else %}
              <li><a href="{% url 'index' %}">Home</a></li>
              <li><a href="{% url 'login' %}">Login</a></li>
+             
              
             <li><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span></li>
             {% endif %}
@@ -69,8 +72,9 @@
                 {% endblock %}
                 {% if user.is_authenticated %}
                 <h4>Profile</h3>
-                <b>{{ user.username }}</b>  <br/>
-                <img src="{{ userdetails.profile_picture.url }}" /><br/>
+                <p class='text-info' >{{ user.username|capfirst }}</p>  <br/>
+                <img src="{{ userdetails.profile_picture.url }}"  class='img-thumbnail img-circle' alt="{{user.username}}"/>
+                <br/>
                 <h4>ES Links</h4>
                 <a href="/admin/">AdminLogin</a> <br />
                 <a href="{% url 'trya' %}">MyCloset</a><br />
