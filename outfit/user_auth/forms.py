@@ -2,8 +2,8 @@ from django import forms
 from django.contrib.auth.models import User
 from user_auth.models import UserDetails, ClothDescription, UserActivity, ClothFactBase
 from crispy_forms.helper import FormHelper
-from bootstrap_toolkit.widgets import BootstrapDateInput, BootstrapTextInput, BootstrapUneditableInput
-#from bootstrap3_datetime.widgets import DateTimePicker
+#from bootstrap_toolkit.widgets import BootstrapDateInput, BootstrapTextInput, BootstrapUneditableInput
+from datetimewidget.widgets import DateTimeWidget, DateWidget, TimeWidget
 
 #UserForm
 class UserForm(forms.ModelForm):
@@ -26,7 +26,7 @@ class UserDetailsForm(forms.ModelForm):
     helper.form_tag = False
     gender=forms.ChoiceField(widget=forms.Select(),choices=choices, label="Gender", )
     dateofbirth = forms.DateField(label="Date Of Birh ",
-        widget=BootstrapDateInput(), required=True,
+        widget=DateWidget(usel10n=True, bootstrap_version=3), required=True,
         )
     skintone=forms.CharField(label="Skin Tone ", required=True,)
     occupation=forms.CharField(label="Occupation", required=True,)
@@ -49,6 +49,15 @@ class UserActivityForm(forms.ModelForm):
     category_choices=(('',''),('Wedding', 'Wedding'),('Funeral', 'Funeral'), ('Work', 'Work'), ('Party', 'Party'),)
     helper = FormHelper()
     helper.form_tag = False
+    event_date= forms.DateField(label="Date Of Event",
+        widget=DateWidget(usel10n=True, bootstrap_version=3), required=True,
+        )
+    start_time= forms.TimeField(label="Start Time",
+        widget=TimeWidget(usel10n=True, bootstrap_version=3), required=True,
+        )
+    end_time= forms.TimeField(label="End Time",
+        widget=TimeWidget(usel10n=True, bootstrap_version=3), required=True,
+        )
     category=forms.ChoiceField(widget=forms.Select(), choices=category_choices, )
     class Meta:
         model=UserActivity
@@ -56,12 +65,12 @@ class UserActivityForm(forms.ModelForm):
     
 #ClothFactbase Form
 class ClothFactForm(forms.ModelForm):
-    choices_type=(('',''), ('topbottom', 'Dress'),('bottom', 'Pants'), ('top', 'Sweater'),
-        ('top', 'Shirt'), ('top', 'Jacket'), ('bottom', 'Skirt'), ('flatshoes', 'FlatShoes'),
-        ('highheelsshoes', 'HighHeels') )
+    choices_type=(('',''), ('topbottom', 'Dress'),('bottom', 'Pants'), ('topc', 'Sweater'),
+        ('top', 'Shirt'), ('topc', 'Jacket/jumpers'), ('bottom', 'Skirt'), ('shoes', 'Shoes'),
+        ('', 'HighHeels') )
     
     choices_color=(('',''),('red', 'Red'), ('blue', 'Blue'), ('black', 'Black'), ('white', 'White'),
-        ('multicolor', 'MultiColored'))
+        ('gray', 'Gray'),('green', 'Green'), ('pink', 'Pink'),('purple','Purple'), ('multicolor','MultiColored'))
     
     choices_material=(('',''),('cotton', 'Cottom'), ('slik', 'Slik'), ('wool', 'Woolen'), ('nylon', 'Nylon'),
         ('polyester', 'Polyester'), ('denim', 'Denim'), ('knitwear', 'KnitWear'), ('lace','Lace' ),

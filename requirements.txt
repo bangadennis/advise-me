@@ -7,12 +7,14 @@ django-appconf==0.6
 django-bootstrap-toolkit==2.15.0
 django-bootstrap3-datetimepicker==2.2.3
 django-crispy-forms==1.4.0
+django-datetime-widget==0.9.3
 django-debug-toolbar==1.2.2
 django-imagekit==3.2.5
 django-password-reset==0.7
 django-registration-redux==1.1
 pbr==0.10.7
 pilkit==1.1.12
+pytz==2014.10
 six==1.9.0
 sqlparse==0.1.14
 stevedore==1.2.0

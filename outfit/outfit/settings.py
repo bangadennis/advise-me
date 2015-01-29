@@ -39,11 +39,11 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'user_auth',
-    'bootstrap3_datetime',
     'crispy_forms',
     'imagekit',
     'password_reset',
     'bootstrap_toolkit',
+    'datetimewidget',
     
     
 )
@@ -56,6 +56,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
+   
 )
 
 ROOT_URLCONF = 'outfit.urls'

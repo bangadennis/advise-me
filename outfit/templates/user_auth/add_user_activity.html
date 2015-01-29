@@ -1,7 +1,8 @@
 {% extends "user_auth/base.html" %}
 
-{% block body_block %}
+{%block link%} {{ activitydetails.media }} {%endblock%}
 
+{% block body_block %}
 {% if user.is_authenticated %}
     {% if messages %}
         <b>{{ username }}</b><br/>

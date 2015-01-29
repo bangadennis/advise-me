@@ -11,7 +11,7 @@ from models import UserDetails, ClothDescription, UserActivity, ClothFactBase
 def index(request):
     
     if request.user.is_authenticated():
-        return HttpResponseRedirect('/auth/try')
+        return HttpResponseRedirect('/auth/dash')
     
     # Construct a dictionary to pass to the template engine as its context.
     # Note the key boldmessage is the same as {{ boldmessage }} in the template!
@@ -26,7 +26,7 @@ def index(request):
 
 
 @login_required
-def trya(request):
+def dash(request):
     if not UserDetails.objects.filter(user=request.user).exists():
             return HttpResponseRedirect('/auth/userdetails')
     else:
@@ -35,14 +35,14 @@ def trya(request):
         cloths=ClothDescription.objects.all().filter(user=request.user)
             
         return render(request,
-                      'user_auth/trya.html',
+                      'user_auth/dash.html',
                       {'cloths': cloths, 'userdetails': user})
     
     
 #registration view
 def register(request):
     if request.user.is_authenticated():
-        return HttpResponseRedirect('/auth/try')
+        return HttpResponseRedirect('/auth/dash')
     
     if request.method=="POST":
         
@@ -80,7 +80,7 @@ def register(request):
 #login view
 def login_view(request):
     if request.user.is_authenticated():
-        return HttpResponseRedirect('/auth/try')
+        return HttpResponseRedirect('/auth/dash')
     
     if request.method=="POST":
         username=request.POST['username']
@@ -94,7 +94,7 @@ def login_view(request):
                 # If the account is valid and active, we can log the user in.
                 # We'll send the user back to the homepage.
                 login(request, user)
-                return HttpResponseRedirect('/auth/try')
+                return HttpResponseRedirect('/auth/dash')
             else:
                 # An inactive account was used - no logging in!
                 return HttpResponse("Your Outfit account is disabled.")
@@ -126,7 +126,7 @@ def user_logout(request):
 def completeuserdetails(request):
     #check if the user details are completed
     if UserDetails.objects.filter(user=request.user).exists():
-            return HttpResponseRedirect('/auth/try')
+            return HttpResponseRedirect('/auth/dash')
     else:
         if request.method=="POST":
             
@@ -141,7 +141,7 @@ def completeuserdetails(request):
                     
                 profile.save()
                 
-                return HttpResponseRedirect('/auth/try')
+                return HttpResponseRedirect('/auth/dash')
                 
             else:
                 
@@ -236,7 +236,7 @@ def user_activites(request):
         
         if activities.count()==0:
             messages.info(request, "No Activities")
-            return HttpResponseRedirect('/auth/try')
+            return HttpResponseRedirect('/auth/dash')
             
         return render(request,
                       'user_auth/user_activity.html',
@@ -274,10 +274,10 @@ def add_cloth_facts(request, cloth_id):
                 cloth_data=user.clothdescription_set.get(id=cloth_id)
             except:
                 messages.error(request, "Invalid Option")
-                return HttpResponseRedirect('/auth/try') 
+                return HttpResponseRedirect('/auth/dash') 
                 
         else:
-            return HttpResponseRedirect('auth/try')
+            return HttpResponseRedirect('auth/dash')
         if request.method=="POST":
             cloth_fact=ClothFactForm(data=request.POST)
             
@@ -288,7 +288,7 @@ def add_cloth_facts(request, cloth_id):
                 cloth.save()
                 messages.info(request, "Cloth facts added successfully")
         
-                return HttpResponseRedirect('/auth/try')
+                return HttpResponseRedirect('/auth/dash')
                 
             else:
                 
@@ -322,11 +322,11 @@ def delete_cloth(request, cloth_id):
                 cloth_data=user.clothdescription_set.get(id=cloth_id)
                 cloth_data.delete()
                 messages.info(request, "Cloth deleted")
-                return HttpResponseRedirect('/auth/try') 
+                return HttpResponseRedirect('/auth/dash') 
                 
             except:
                 messages.error(request, "Invalid Option")
-                return HttpResponseRedirect('/auth/try') 
+                return HttpResponseRedirect('/auth/dash') 
             
     
     
