@@ -66,17 +66,16 @@ class UserActivityForm(forms.ModelForm):
 #ClothFactbase Form
 class ClothFactForm(forms.ModelForm):
     choices_type=(('',''), ('topbottom', 'Dress'),('bottom', 'Pants'), ('topc', 'Sweater'),
-        ('top', 'Shirt'), ('topc', 'Jacket/jumpers'), ('bottom', 'Skirt'), ('shoes', 'Shoes'),
-        ('', 'HighHeels') )
+        ('top', 'Shirt'), ('bottom', 'Skirt'),('jacket', 'Jacket'))
     
     choices_color=(('',''),('red', 'Red'), ('blue', 'Blue'), ('black', 'Black'), ('white', 'White'),
         ('gray', 'Gray'),('green', 'Green'), ('pink', 'Pink'),('purple','Purple'), ('multicolor','MultiColored'))
     
-    choices_material=(('',''),('cotton', 'Cottom'), ('slik', 'Slik'), ('wool', 'Woolen'), ('nylon', 'Nylon'),
+    choices_material=(('',''),('cotton', 'Cotton'), ('slik', 'Slik'), ('wool', 'Woolen'), ('nylon', 'Nylon'),
         ('polyester', 'Polyester'), ('denim', 'Denim'), ('knitwear', 'KnitWear'), ('lace','Lace' ),
-        ('chifton', 'Chifton'), ('cashmene', 'Cashmene'), ('spandex', 'Spandex'))
+        ('chiffon', 'Chiffon'), ('cashmere', 'Cashmere'), ('spandex', 'Spandex'))
     
-    choices_print=(('',''),('striped', 'Stripped'), ('floral', 'Floral'), ('geometric', 'Geometric'), ('checked','Checked'))
+    choices_print=(('',''), ('plain', 'Plain'),('striped', 'Striped'), ('floral', 'Floral'), ('geometric', 'Geometric'), ('checked','Checked'))
     
     helper = FormHelper()
     helper.form_tag =False
