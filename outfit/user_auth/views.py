@@ -244,10 +244,11 @@ def user_activites(request):
             messages.info(request, "No Activities")
             return HttpResponseRedirect('/auth/dash')
             
-        client=yweather.Client()
-        weather_id=client.fetch_woeid('Nairobi, Kenya')
-        weather_berlin=client.fetch_weather(weather_id)
-        weather=weather_berlin['condition']
+        #client=yweather.Client()
+        #weather_id=client.fetch_woeid('Berlin, China')
+        #weather_berlin=client.fetch_weather(weather_id)
+        #weather=weather_berlin['condition']
+        weather={}
         
         return render(request,
                       'user_auth/user_activity.html',
