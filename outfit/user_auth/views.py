@@ -7,6 +7,8 @@ from django.contrib.auth.models import User
 
 from user_auth.forms import UserForm, UserDetailsForm, ClothDescriptionForm, UserActivityForm, ClothFactForm
 from models import UserDetails, ClothDescription, UserActivity, ClothFactBase
+#weather api
+import yweather
 
 def index(request):
     
@@ -22,6 +24,10 @@ def index(request):
     # Note that the first parameter is the template we wish to use.
 
     return render(request, 'user_auth/base.html', context_dict)
+
+#trial of google api
+def google(request):
+    return render(request, 'user_auth/google.html', {})
 
 
 
@@ -238,9 +244,14 @@ def user_activites(request):
             messages.info(request, "No Activities")
             return HttpResponseRedirect('/auth/dash')
             
+        client=yweather.Client()
+        weather_id=client.fetch_woeid('Nairobi, Kenya')
+        weather_berlin=client.fetch_weather(weather_id)
+        weather=weather_berlin['condition']
+        
         return render(request,
                       'user_auth/user_activity.html',
-                      {'activities': activities, 'userdetails': user})    
+                      {'activities': activities, 'userdetails': user, 'weather': weather})    
     
 #delete activity
 @login_required

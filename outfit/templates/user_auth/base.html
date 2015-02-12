@@ -18,6 +18,11 @@
     <link href="{{ STATIC_URL}}css/main.css" rel="stylesheet">
     <!--javascript/jquery links-->
     <script src="{{STATIC_URL}}js/bootstrap.min.js"></script>
+    <script src="{{STATIC_URL}}js/placeautocomplete.js"></script>
+    
+    <!--Google API-->
+    <link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=places"></script>
     <!--form media link-->
     {%block link%}{%endblock%}
 
@@ -28,7 +33,7 @@
     <![endif]-->
   </head>
 
-  <body>
+  <body onload="initialize()">
 
     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
       <div class="container-fluid">
@@ -154,8 +159,7 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
    
-    <script src="{{STATIC_URL}}js/main.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
    <!--<script src="{{STATIC_URL}}/js/ie10-viewport-bug-workaround.js"></script>-->
   </body>
-</html>
+</html>p

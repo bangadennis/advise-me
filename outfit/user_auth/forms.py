@@ -26,7 +26,7 @@ class UserDetailsForm(forms.ModelForm):
     helper.form_tag = False
     gender=forms.ChoiceField(widget=forms.Select(),choices=choices, label="Gender", )
     dateofbirth = forms.DateField(label="Date Of Birh ",
-        widget=DateWidget(usel10n=True, bootstrap_version=3), required=True,
+        widget=DateWidget(usel10n=True, bootstrap_version=3), required=True
         )
     skintone=forms.CharField(label="Skin Tone ", required=True,)
     occupation=forms.CharField(label="Occupation", required=True,)
@@ -49,6 +49,9 @@ class UserActivityForm(forms.ModelForm):
     category_choices=(('',''),('Wedding', 'Wedding'),('Funeral', 'Funeral'), ('Work', 'Work'), ('Party', 'Party'),)
     helper = FormHelper()
     helper.form_tag = False
+    
+    event_location=forms.CharField(widget=forms.TextInput(attrs={'id': 'autocomplete', 'onFocus':'geolocate()'}))
+    
     event_date= forms.DateField(label="Date Of Event",
         widget=DateWidget(usel10n=True, bootstrap_version=3), required=True,
         )
@@ -75,7 +78,8 @@ class ClothFactForm(forms.ModelForm):
         ('polyester', 'Polyester'), ('denim', 'Denim'), ('knitwear', 'KnitWear'), ('lace','Lace' ),
         ('chiffon', 'Chiffon'), ('cashmere', 'Cashmere'), ('spandex', 'Spandex'))
     
-    choices_print=(('',''), ('plain', 'Plain'),('striped', 'Striped'), ('floral', 'Floral'), ('geometric', 'Geometric'), ('checked','Checked'))
+    choices_print=(('',''), ('plain', 'Plain'),('striped', 'Striped'), ('floral', 'Floral'), ('geometric', 'Geometric'),
+        ('checked','Checked'))
     
     helper = FormHelper()
     helper.form_tag =False
@@ -87,6 +91,7 @@ class ClothFactForm(forms.ModelForm):
     class Meta:
         model=ClothFactBase
         exclude=('cloth_id',)
+        
         
         
         

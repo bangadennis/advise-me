@@ -6,6 +6,9 @@ urlpatterns = patterns('',
     # url(r'^$', 'outfit.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
 
+    #trial
+    url(r'^google/$', views.google, name='google'),
+    #urls
     url(r'^register/$', views.register, name='register'),
     url(r'^login/$', views.login_view, name='login'),
     url(r'^closet_upload/', views.closet_upload, name='closet_upload'),

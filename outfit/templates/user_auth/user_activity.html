@@ -40,6 +40,14 @@
                 {% endfor %}
                             
             </table>
+            <p>
+                <h3>Weather Predicitions</h3>
+                <h4>Condition: {{weather.text}} <br/> tempratures: {{weather.temp}}
+                <br/> Date: {{weather.date}}</h4>
+                <img src="{{weather.image }}"/>
+                <br/>
+                {{weather}}
+            </p>
            
         </div>
     </div>

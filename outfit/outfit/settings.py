@@ -44,6 +44,8 @@ INSTALLED_APPS = (
     'password_reset',
     'bootstrap_toolkit',
     'datetimewidget',
+    'debug_toolbar',
+
     
     
 )
