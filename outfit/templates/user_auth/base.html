@@ -19,12 +19,12 @@
     <!--javascript/jquery links-->
     <script src="{{STATIC_URL}}js/bootstrap.min.js"></script>
     <script src="{{STATIC_URL}}js/placeautocomplete.js"></script>
-    
+    {%block link%}{%endblock%}
     <!--Google API-->
     <link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=places"></script>
     <!--form media link-->
-    {%block link%}{%endblock%}
+    
 
     <!--[if lt IE 9]>
     <!--
@@ -81,6 +81,10 @@
                 <a href="{% url 'trya' %}">
                 <p class='text-info' >{{ user.username|capfirst }}</p>  <br/>
                 <img src="{{ userdetails.profile_picture.url }}"  class='img-thumbnail img-circle' alt="{{user.username}}"/>
+                </a>
+                <a href="/auth/edit_userdetails/{{userdetails.id}}">
+                <span class="glyphicon glyphicon-edit text-warning" aria-hidden="true">Edit profile
+                </span> 
                 </a>
                 <br/>
                 <h4>ES Links</h4>

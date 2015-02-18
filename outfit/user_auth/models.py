@@ -21,6 +21,10 @@ class UserDetails(models.Model):
     def __unicode__(self):
         return self.user.username
     
+    def get_absolute_url(self):
+        return reverse('edit_userdetails', kwargs={'user_id': self.user_id})
+    
+    
 class ClothDescription(models.Model):
     user=models.ForeignKey(User)
     cloth_image=ProcessedImageField(upload_to='images/wadrobe',blank=False,

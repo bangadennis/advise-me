@@ -19,15 +19,30 @@
 <div class="row">
     <div class='success'>
         <div class='col-md-4'>
+            
             <h3 class='text-info'>Cloth </h3>
             <img src="{{ cloth.cloth_image.url }}"  class="img-rounded" alt="{{cloth.cloth_description}}"/>
             <p> {{cloth.cloth_description }} </p>
+          
+            <a href="/auth/dash/">
+                <span class="glyphicon glyphicon-arrow-left text-danger" aria-hidden="true">back
+                </span> 
+            </a>
+          
           
             <a href="/auth/delete_cloth/{{cloth.id}}/delete">
                 <span class="glyphicon glyphicon-remove-circle text-error" aria-hidden="true">
                     <button type='button' class='btn btn-danger'>Delete</button>
                 </span> 
             </a>
+            {%if clothfacts %}
+            <a href="/auth/update_cloth_facts/{{cloth.id}}/view">
+                <span class="glyphicon glyphicon-edit text-success" aria-hidden="true">
+                    <button type='button' class='btn btn-info'>Update</button>
+                </span> 
+            </a>
+            {%endif%}
+            
         </div>
         
         <div class='col-md-6'>
@@ -47,7 +62,7 @@
             {% crispy clothform %}
             </fieldset>
             
-            <button type="submit" class="btn btn-default">Add</button>
+            <button type="submit" class="btn btn-success">Add</button>
         </form>
         {%endif%}
         </div>

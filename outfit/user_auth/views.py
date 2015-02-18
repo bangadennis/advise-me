@@ -4,6 +4,8 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.views.generic.edit import UpdateView
+from django.core.urlresolvers import reverse_lazy
 
 from user_auth.forms import UserForm, UserDetailsForm, ClothDescriptionForm, UserActivityForm, ClothFactForm
 from models import UserDetails, ClothDescription, UserActivity, ClothFactBase
@@ -194,7 +196,17 @@ def closet_upload(request):
                       {"clothform": clothdetails, 'userdetails': userdetails})
 
 
-
+#edit userdetails
+class UserDetailsUpdate(UpdateView):
+    model=UserDetails
+    form_class= UserDetailsForm
+    success_url = reverse_lazy('trya')
+    def get(self, request, **kwargs):
+        self.object = UserDetails.objects.get(user=self.request.user)
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+        context = self.get_context_data(object=self.object, form=form)
+        return self.render_to_response(context)
 
 #add activity details view
 @login_required
@@ -324,7 +336,7 @@ def add_cloth_facts(request, cloth_id):
 #delete a cloth
 @login_required
 def delete_cloth(request, cloth_id):
-       #check if the user details are completed
+    #check if the user details are completed
     if not UserDetails.objects.filter(user=request.user).exists():
             return HttpResponseRedirect('/auth/userdetails')
     else:
@@ -339,9 +351,57 @@ def delete_cloth(request, cloth_id):
             except:
                 messages.error(request, "Invalid Option")
                 return HttpResponseRedirect('/auth/dash') 
+
+
+#Edit cloth details
+@login_required
+def update_cloth_facts(request, cloth_id):
+    #check if the user details are completed
+    if not UserDetails.objects.filter(user=request.user).exists():
+            return HttpResponseRedirect('/auth/userdetails')
+    else:
+        
+        if cloth_id:
+            user=User.objects.get(username=request.user.username)
+            try :
+                cloth_data=user.clothdescription_set.get(id=cloth_id)
+            except:
+                messages.error(request, "Invalid Option")
+                return HttpResponseRedirect('/auth/dash') 
+                
+        else:
+            return HttpResponseRedirect('auth/dash')
+        
+        if request.method=="POST":
+            cloth_fact=ClothFactForm(data=request.POST)
             
+            if cloth_fact.is_valid():
+                ClothFactBase.objects.get(cloth_id=cloth_id).delete()
+                cloth=cloth_fact.save(commit=False)
+                cloth.cloth_id=cloth_data
+                cloth.save()
+                messages.info(request, "Cloth facts updated successfully")
+        
+                return HttpResponseRedirect('/auth/dash')
+                
+            else:
+                
+                print cloth_fact.errors
+        else:
+            cloth_fact=ClothFactForm()
+        userdetails=UserDetails.objects.get(user=request.user)
+        #return render to response depending on the context
+        return render(request,
+                      "user_auth/update_cloth_facts.html",
+                      {"clothform": cloth_fact, 'userdetails': userdetails,
+                       'cloth': cloth_data, })
+    
+
+
+
     
     
+
 
     
     
