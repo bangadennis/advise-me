@@ -50,6 +50,7 @@
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
             {% if user.is_authenticated %}
+            <li><a href="{% url 'index' %}">Day's Outfit</a></li>
             <li><a href="{% url 'closet_upload' %}">Closet Upload</a></li>
             <li><a href="{% url 'add_user_activity' %}">Add Activity</a></li>
             <li><a href="{% url 'user_activities' %}">Activities</a></li>
@@ -81,7 +82,13 @@
                 <h4>Profile</h3>
                 <a href="{% url 'trya' %}">
                 <p class='text-info' >{{ user.username|capfirst }}</p>  <br/>
-                <img src="{{ userdetails.profile_picture.url }}"  class='img-thumbnail img-circle' alt="{{user.username}}"/>
+                {% if userdetails.profile_picture %}
+                <img src="{{ userdetails.profile_picture.url }}"  class='img-thumbnail img-circle'
+                     alt="{{ user.username}}"/>
+                {%else%}
+                <img src="{% static "images/default.jpg" %}" class='img-thumbnail img-circle'
+                     alt="{{user.username}}"/>
+                {% endif%}
                 </a>
                 <a href="/auth/edit_userdetails/{{userdetails.id}}">
                 <span class="glyphicon glyphicon-edit text-warning" aria-hidden="true">Edit profile
@@ -89,7 +96,9 @@
                 </a>
                 <br/>
                 <h4>ES Links</h4>
-                <a href="/admin/">AdminLogin</a> <br />
+                {% if user.is_superuser %}
+                <a href="/admin/">Admin Panel</a> <br />
+                {%endif %}
                 <a href="{% url 'trya' %}">MyCloset</a><br />
                 <a href="{% url 'closet_upload' %}">Upload Cloth</a><br/>
                 <a href="{% url 'add_user_activity' %}">Add Activity</a>

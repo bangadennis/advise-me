@@ -13,7 +13,7 @@ class UserDetails(models.Model):
     skintone=models.CharField(max_length=50,blank=False, null=False)
     occupation=models.CharField(max_length=50,blank=False, null=False)
     profile_picture= ProcessedImageField(upload_to='images/profileImages',blank=True,
-                                         default='images/profileImages/take_care_of_my_heart.jpg',
+                                         default='images/profileImages/default.jpg',
                                            processors=[ResizeToFill(100, 100)],
                                            format='JPEG',
                                            options={'quality': 100})
@@ -22,7 +22,7 @@ class UserDetails(models.Model):
         return self.user.username
     
     def get_absolute_url(self):
-        return reverse('edit_userdetails', kwargs={'user_id': self.user_id})
+        return reverse('edit_userdetails', kwargs={'pk': self.pk})
     
     
 class ClothDescription(models.Model):

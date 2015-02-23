@@ -6,11 +6,14 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.views.generic.edit import UpdateView
 from django.core.urlresolvers import reverse_lazy
+from django.utils.decorators import method_decorator
 
 from user_auth.forms import UserForm, UserDetailsForm, ClothDescriptionForm, UserActivityForm, ClothFactForm
 from models import UserDetails, ClothDescription, UserActivity, ClothFactBase
 #weather api
 import yweather
+#datetime
+import datetime
 
 def index(request):
     
@@ -167,7 +170,8 @@ def completeuserdetails(request):
 def closet_upload(request):
     #check if the user details are completed
     if not UserDetails.objects.filter(user=request.user).exists():
-            return HttpResponseRedirect('/auth/userdetails')
+        messages.info(request, "Complete User Details")
+        return HttpResponseRedirect('/auth/userdetails')
     else:
         if request.method=="POST":
             
@@ -201,12 +205,19 @@ class UserDetailsUpdate(UpdateView):
     model=UserDetails
     form_class= UserDetailsForm
     success_url = reverse_lazy('trya')
+    
+    @method_decorator(login_required)
     def get(self, request, **kwargs):
         self.object = UserDetails.objects.get(user=self.request.user)
         form_class = self.get_form_class()
         form = self.get_form(form_class)
         context = self.get_context_data(object=self.object, form=form)
         return self.render_to_response(context)
+    
+    #@method_decorator(login_required)
+    #def form_valid(self, form):
+    #    messages.info(self.request, "updated profile successfully")
+    #    return super(UserDetailsUpdate, self).form_valid(form)
 
 #add activity details view
 @login_required
@@ -214,7 +225,8 @@ def add_user_activity(request):
     #check if the user details are completed
     
     if not UserDetails.objects.filter(user=request.user).exists():
-            return HttpResponseRedirect('/auth/userdetails')
+        messages.info(request, "Complete User Details")
+        return HttpResponseRedirect('/auth/userdetails')
     else:
         if request.method=="POST":
             
@@ -247,7 +259,8 @@ def add_user_activity(request):
 @login_required
 def user_activites(request):
     if not UserDetails.objects.filter(user=request.user).exists():
-            return HttpResponseRedirect('/auth/userdetails')
+        messages.info(request, "Complete User Details")
+        return HttpResponseRedirect('/auth/userdetails')
     else:
         user=UserDetails.objects.get(user=request.user)
         activities=UserActivity.objects.all().filter(user=request.user)
@@ -255,16 +268,19 @@ def user_activites(request):
         if activities.count()==0:
             messages.info(request, "No Activities")
             return HttpResponseRedirect('/auth/dash')
-            
-        #client=yweather.Client()
-        #weather_id=client.fetch_woeid('Berlin, China')
-        #weather_berlin=client.fetch_weather(weather_id)
-        #weather=weather_berlin['condition']
-        weather={}
+        
+        weather=[]
+        for item in activities:
+            client=yweather.Client()
+            weather_id=client.fetch_woeid(item.event_location)
+            if weather_id is None:
+                weather_id=client.fetch_woeid('Nairobi,Kenya')
+            weather_st=client.fetch_weather(weather_id)
+            weather.append(weather_st['condition'])
         
         return render(request,
                       'user_auth/user_activity.html',
-                      {'activities': activities, 'userdetails': user, 'weather': weather})    
+                      {'activities': activities, 'userdetails': user, 'weather_st':weather})    
     
 #delete activity
 @login_required
@@ -396,9 +412,68 @@ def update_cloth_facts(request, cloth_id):
                       {"clothform": cloth_fact, 'userdetails': userdetails,
                        'cloth': cloth_data, })
     
+@login_required()
+def todays_outfit(request):
+    if not UserDetails.objects.filter(user=request.user).exists():
+        messages.info(request, "Complete User Details")
+        return HttpResponseRedirect('/auth/userdetails')
+    else:
+        
+        userdetails=UserDetails.objects.get(user=request.user)
+        activities=UserActivity.objects.all().filter(user=request.user)
+        typeofcloth=check_todays_activity(activities)
+        if not typeofcloth:
+            clothobj={}
+        else:
+            cloths=ClothDescription.objects.all().filter(user=request.user)
+            clothobj=knowledge_engine(cloths, typeofcloth);
+            
+        return render(request,
+                      "user_auth/index.html",
+                      {"cloths": clothobj, 'userdetails': userdetails})
+            
+        
+#Fuction to check if there is an activity and the weather conditions
+def check_todays_activity(activities):
+    """This function checks the day's activity"""
+    now = datetime.datetime.now()
+    date=now.strftime("%Y-%m-%d")
+    event=0
+    for activity in activities:
+        if str(activity.event_date)==str(date):
+            client=yweather.Client()
+            weather_id=client.fetch_woeid(activity.event_location)
+            if weather_id is None:
+                weather_id=client.fetch_woeid('Nairobi,Kenya')
+            weather_st=client.fetch_weather(weather_id)
+            weather=weather_st['condition']
+            event=1
+            break;
+    
+    if event:
+        if int(weather['temp'])>50:
+            typecloth ='light'
+        else:
+            typecloth ='heavy'
+    else:
+        return False
 
-
-
+    return typecloth
+        
+#Knowledge Engine
+def knowledge_engine(cloths, typeofcloth):
+    """Knwoledge Engine"""
+    clothobj=[]
+    for cloth in cloths:
+                clothfactobj=cloth.clothfactbase_set.all()
+                if typeofcloth=='light':
+                    clothsf=clothfactobj.filter(cloth_material__startswith='wool')
+                    if clothsf:
+                        clothobj.append(cloth)
+                        
+                
+    
+    return clothobj
     
     
 

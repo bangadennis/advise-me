@@ -33,6 +33,7 @@ class UserDetailsForm(forms.ModelForm):
     class Meta:
         model=UserDetails
         fields=('gender','dateofbirth', 'skintone', 'occupation', 'profile_picture',)
+        
     
 #Cloths Description Form and Q&A
 class ClothDescriptionForm(forms.ModelForm):

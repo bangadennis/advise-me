@@ -1,18 +1,40 @@
-<!DOCTYPE html>
 
-{% load staticfiles %} <!-- New line -->
+{% extends "user_auth/base.html" %}
+{% load staticfiles %}
 
-<html>
 
-    <head>
-        <title>Rango</title>
-    </head>
-
-    <body>
-        <h1>OutFit says...</h1>
-        hello world! <strong>{{ boldmessage }}</strong><br />
-        <a href="/rango/about/">About</a><br />
-        <!-- New line -->
-    </body>
-
-</html>
+{% block body_block %}
+     <h1 class='text-info'>Day's Outfit</h1>
+    {% if messages %}
+        <ul class="messages success">
+        {% for message in messages %}
+        <p{% if message.tags %} class="{{ message.tags }}"{% endif %}>
+            {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                <span class="glyphicon glyphicon-warning-sign text-error bg-danger" aria-hidden="true"> {{ message }}</span>
+                {%else%}
+                    <span class="glyphicon glyphicon-info-sign text-success bg-info" aria-hidden="true"> {{ message }}</span>
+            {% endif %}
+            
+            </p>
+        {% endfor %}
+        </ul>
+    {% endif %}
+    
+    <div class="row">
+        {% if not cloths %}
+            <p class='text-danger'>No activity for the Day</p>
+        {%endif%}
+        {% for cloth in cloths%}
+        <div class='col-md-4'>
+            <a href="/auth/get_facts/{{cloth.id}}/view/">
+                
+            <img src="{{ cloth.cloth_image.url }}" class='img-rounded' alt="{{cloth.cloth_description}}" />
+            </a>
+            <p class="text-center"> <strong><i> {{cloth.cloth_description }} </i> </strong> </p>
+        
+        </div>
+        {% endfor %}
+    </div>
+        
+{% endblock %}
+   

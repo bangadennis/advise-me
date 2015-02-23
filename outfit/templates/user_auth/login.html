@@ -4,11 +4,12 @@
 
     <div class='col-md-5 col-md-offset-3'>   
         <form id="login_form" method="post" action="{% url 'login' %}">
+             {% csrf_token %}
             <div class='form-group'>
             {% if invalid %}
             <p class='infoWarning'>Invalid Login details</p>
             {% endif %}
-            {% csrf_token %}
+           
             Username: <input type="text" class="form-control" name="username" value="" size="50" />
             <br />
             Password: <input type="password" class="form-control" name="password" value="" size="50" />
