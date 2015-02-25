@@ -265,22 +265,25 @@ def user_activites(request):
         return HttpResponseRedirect('/auth/userdetails')
     else:
         user=UserDetails.objects.get(user=request.user)
-        activities=UserActivity.objects.all().filter(user=request.user)
+        activities=UserActivity.objects.all().filter(user=request.user).order_by("-event_date")
         
         if activities.count()==0:
             messages.info(request, "No Activities")
             return HttpResponseRedirect('/auth/dash')
         
         weather=[]
+        now = datetime.datetime.now()
+        date=now.strftime("%Y-%m-%d")
         for item in activities:
             client=yweather.Client()
-            print(item.event_location)
-            weather_id=client.fetch_woeid("Nairobi, Kenya")
-            print(weather_id)
-            if weather_id is None:
-                weather_id=client.fetch_woeid('Nairobi,Kenya')
-            weather_st=client.fetch_weather(weather_id)
-            weather.append(weather_st['condition'])
+            if str(item.event_date)==str(date):
+                #print(item.event_location)
+                weather_id=client.fetch_woeid(item.event_location)
+                #print(weather_id)
+                if weather_id is None:
+                    weather_id=client.fetch_woeid('Nairobi,Kenya')
+                weather_st=client.fetch_weather(weather_id)
+                weather.append(weather_st)
         
         return render(request,
                       'user_auth/user_activity.html',

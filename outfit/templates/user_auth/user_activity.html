@@ -25,6 +25,7 @@
                     <td>Start Time</td>
                     <td>End Time</td>
                 </thead>
+                
                 {% for item in activities %}
                     <tr>
                         <td>{{item.category}} </td>
@@ -37,19 +38,47 @@
                             <span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>
                         </a> </td>
                     </tr>
-                {% endfor %}
-                            
+                {%endfor%}            
             </table>
-            <p>
-                <h3>Weather Predicitions</h3>
+            
+            <div>
+                <h3>Today's Weather:</h3>
                 {% for weather in weather_st%}
-                <h4>Condition: {{weather.text}} <br/> tempratures: {{weather.temp}}
-                <br/> Date: {{weather.date}}</h4>
-                <img src="{{weather.image }}"/>
+                <div class='col-md-3'>
+                <label>Region</label>
+                {{ weather.location.city }},
+                {{ weather.location.kenya }}
                 <br/>
-            {%endfor%}
-            {{weather_st}}
-            </p>
+                <strong>Date:
+                {{ weather.lastBuildDate}}</strong>
+                <span>Temp:
+                {{ weather.condition.temp}}
+                </span>
+                <span>Code:
+                 {{ weather.condition.code}}
+                 </span>
+                <br/>
+                <span>
+                <img src="{{weather.condition.image }}"/>
+                 {{ weather.condition.text}}
+                </span>
+                <h4>Forecast for the region</h4>
+                {% for forecast in weather.forecast %}
+                 <h5><strong>{{ forecast.date}}</strong></h5>
+                 <span>Temp:
+                High={{ forecast.high}}, Low={{ forecast.low}}</span>
+                <span>Code:
+                 {{ forecast.code}}</span>
+                <span>Condition:
+                 {{ forecast.text}}
+                </span>
+                <br/>
+               {%endfor%}
+               </div>
+                {% endfor %}
+                
+            </div>
+           
            
         </div>
     </div>
