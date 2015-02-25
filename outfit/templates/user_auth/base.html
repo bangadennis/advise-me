@@ -52,9 +52,10 @@
           <ul class="nav navbar-nav navbar-right">
             {% if user.is_authenticated %}
             <li><a href="{% url 'index' %}">Day's Outfit</a></li>
-            <li><a href="{% url 'closet_upload' %}">Closet Upload</a></li>
-            <li><a href="{% url 'add_user_activity' %}">Add Activity</a></li>
+            <li> <a href="{% url 'trya' %}">MyCloset</a></li>
+            <li><a href="{% url 'closet_upload' %}">UploadToMyCloset</a></li>
             <li><a href="{% url 'user_activities' %}">Activities</a></li>
+            <li><a href="{% url 'add_user_activity' %}">Add Activity</a></li>
            <li><a href="{% url 'trya' %}"> {{user.username}} </a></li>
            <li><a href="{% url 'logout' %}">Logout</a></li>
            <li><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>
@@ -99,12 +100,22 @@
                 <h4>ES Links</h4>
                 {% if user.is_superuser %}
                 <a href="/admin/">Admin Panel</a> <br />
-                {%endif %}
-                <a href="{% url 'trya' %}">MyCloset</a><br />
-                <a href="{% url 'closet_upload' %}">Upload Cloth</a><br/>
-                <a href="{% url 'add_user_activity' %}">Add Activity</a>
+              {%endif %}
+                <div class="text-danger">
+                  <span>
+                  <label> First Name:</label> <br/>
+                  <span class='text-warning'>{{user.first_name|capfirst}} </span> <br/>
+                  <label> Last Name:</label> <br/>
+                  <span class='text-warning'>{{user.last_name|capfirst}} </span> <br/>
+                  <label> Occupation:</label> <br/>
+                  <span class='text-warning'>{{userdetails.occupation|capfirst}} </span><br/>
+                  <label> Email:</label><br/>
+                  <span class='text-warning'> {{user.email}} </span>
+                  </span>
+                
+                </div>
                 {% else %}
-                <h4 class='text-info'>ES Links</h4>
+                <h4 class='text-info'>System Links</h4>
                 <a href="{% url 'register' %}">Register</a> <br />
                 <a href="{% url 'password_reset_recover'%}">Password Reset</a>
                

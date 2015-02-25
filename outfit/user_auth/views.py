@@ -105,6 +105,8 @@ def login_view(request):
                 # If the account is valid and active, we can log the user in.
                 # We'll send the user back to the homepage.
                 login(request, user)
+                message="Last Login was at %s" %(user.last_login)
+                messages.info(request, message)
                 return HttpResponseRedirect('/auth/dash')
             else:
                 # An inactive account was used - no logging in!
@@ -272,7 +274,9 @@ def user_activites(request):
         weather=[]
         for item in activities:
             client=yweather.Client()
-            weather_id=client.fetch_woeid(item.event_location)
+            print(item.event_location)
+            weather_id=client.fetch_woeid("Nairobi, Kenya")
+            print(weather_id)
             if weather_id is None:
                 weather_id=client.fetch_woeid('Nairobi,Kenya')
             weather_st=client.fetch_weather(weather_id)
@@ -421,7 +425,12 @@ def todays_outfit(request):
         
         userdetails=UserDetails.objects.get(user=request.user)
         activities=UserActivity.objects.all().filter(user=request.user)
-        typeofcloth=check_todays_activity(activities)
+        try:
+            typeofcloth=check_todays_activity(activities)
+        except:
+            messages.info(request, "Unable to Connect to Yahoo Weather, Check Internet Connection")
+            return HttpResponseRedirect('/auth/dash')
+            
         if not typeofcloth:
             clothobj={}
         else:
