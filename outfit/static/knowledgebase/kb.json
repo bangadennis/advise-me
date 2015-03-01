@@ -1,0 +1,39 @@
+{
+    "male":{
+        
+        "casual": {
+            "weather":{
+                
+                "hot": {
+                    "fabric": ["silk","linen", "jute", "Bamboo","Cotton", "Chiffon"],
+                    "type" :["vest", "short"]
+                    
+                    },
+                    
+                "cold":{
+                    
+                    "fabric": ["Cashmene","Wool"],
+                    "type" :["vest", "short", "cardigan", "Sweater"]
+                    
+                    
+                    },
+                    
+                "rainy":{
+                    "fabric": ["Cashmene","Wool"],
+                    "type" :["gloves", "raincoat"]
+                    
+                    }
+            
+        },
+            
+        "colors": {
+                
+                "black": ["any"],
+                "gray":["black"]
+            }
+           
+        }
+
+         
+    }
+}

@@ -14,6 +14,12 @@ from models import UserDetails, ClothDescription, UserActivity, ClothFactBase
 import yweather
 #datetime
 import datetime
+#json
+import json
+#os
+import os
+#Base Directory
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 def index(request):
     
@@ -266,7 +272,14 @@ def user_activites(request):
     else:
         user=UserDetails.objects.get(user=request.user)
         activities=UserActivity.objects.all().filter(user=request.user).order_by("-event_date")
+        #jsonfilepath
+        json_file=os.path.join(BASE_DIR, 'static/knowledgebase/kb.json')
+        json_data = json.loads(open(json_file).read())
+        print(json_data)
+        json_data=json_data["male"]
+        json_data=json.dumps(json_data);
         
+        #data1 = json.loads(json_data)
         if activities.count()==0:
             messages.info(request, "No Activities")
             return HttpResponseRedirect('/auth/dash')
@@ -278,17 +291,17 @@ def user_activites(request):
             client=yweather.Client()
             if str(item.event_date)==str(date):
                 #print(item.event_location)
-                weather_id=client.fetch_woeid(item.event_location)
+               # weather_id=client.fetch_woeid(item.event_location)
                 #print(weather_id)
-                if weather_id is None:
-                    weather_id=client.fetch_woeid('Nairobi,Kenya')
-                weather_st=client.fetch_weather(weather_id)
-                weather.append(weather_st)
-        
+                weather_id=0
+                #if weather_id is None:
+                    #weather_id=client.fetch_woeid('Nairobi,Kenya')
+               # weather_st=client.fetch_weather(weather_id)
+                weather=[]
+                
         return render(request,
                       'user_auth/user_activity.html',
-                      {'activities': activities, 'userdetails': user, 'weather_st':weather})    
-    
+                      {'activities': activities, 'userdetails': user, 'weather_st':weather, "data": json_data}) 
 #delete activity
 @login_required
 def delete_activity(request, activity_id):
@@ -428,6 +441,8 @@ def todays_outfit(request):
         
         userdetails=UserDetails.objects.get(user=request.user)
         activities=UserActivity.objects.all().filter(user=request.user)
+       
+    
         try:
             typeofcloth=check_todays_activity(activities)
         except:
@@ -451,6 +466,7 @@ def check_todays_activity(activities):
     now = datetime.datetime.now()
     date=now.strftime("%Y-%m-%d")
     event=0
+   
     for activity in activities:
         if str(activity.event_date)==str(date):
             client=yweather.Client()
@@ -476,6 +492,7 @@ def check_todays_activity(activities):
 def knowledge_engine(cloths, typeofcloth):
     """Knwoledge Engine"""
     clothobj=[]
+    
     for cloth in cloths:
                 clothfactobj=cloth.clothfactbase_set.all()
                 if typeofcloth=='light':

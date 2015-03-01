@@ -4,16 +4,16 @@
 
 
 {% block body_block %}
-     <h2 class='text-info'>MyActivities</h2>
+    
     {% if messages %}
-        <ul class="messages">
+        <ul class="list-unstyled messages bg-info">
         {% for message in messages %}
         <p {% if message.tags %} class="{{ message.tags }} text-success"{% endif %}>
             <span class="glyphicon glyphicon-info-sign" aria-hidden="true"> {{ message }}</span></p>
         {% endfor %}
         </ul>
     {% endif %}
-    
+    <h2 class='text-info'>MyActivities</h2>
     <div class="row">
         <div class=''>
             <table class='table table-responsive table-stripped table-hover '>
@@ -42,7 +42,9 @@
             </table>
             
             <div>
+                
                 <h3>Today's Weather:</h3>
+                {{data|pprint}}
                 {% for weather in weather_st%}
                 <div class='col-md-3'>
                 <label>Region</label>

@@ -4,7 +4,7 @@
 
     {% if messages %}
         <b>{{ username }}</b><br/>
-        <ul class="messages info">
+        <ul class="messages bg-info">
         {% for message in messages %}
         <p {% if message.tags %} class="{{ message.tags }} text-success"{% endif %}>
             
@@ -14,7 +14,7 @@
 
 <div class='row'>
     <div class='col-md-offset-3 col-md-6'>
-        <h3 class='text-info'>Upload a Cloth to  your Wadrobe</h3>
+        <h3 class='text-info'>Upload Cloth to Your Closet</h3>
         <form role="form"  method="post" action="/auth/closet_upload/" enctype="multipart/form-data">
         <fieldset>
         {% csrf_token %}
