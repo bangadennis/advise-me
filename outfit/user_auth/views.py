@@ -20,6 +20,8 @@ import json
 import os
 #Base Directory
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+#KnowledgeBase
+KB=os.path.join(BASE_DIR, 'static/knowledgebase/kb.json')
 
 def index(request):
     
@@ -272,14 +274,7 @@ def user_activites(request):
     else:
         user=UserDetails.objects.get(user=request.user)
         activities=UserActivity.objects.all().filter(user=request.user).order_by("-event_date")
-        #jsonfilepath
-        json_file=os.path.join(BASE_DIR, 'static/knowledgebase/kb.json')
-        json_data = json.loads(open(json_file).read())
-        print(json_data)
-        json_data=json_data["male"]
-        json_data=json.dumps(json_data);
         
-        #data1 = json.loads(json_data)
         if activities.count()==0:
             messages.info(request, "No Activities")
             return HttpResponseRedirect('/auth/dash')
@@ -290,18 +285,18 @@ def user_activites(request):
         for item in activities:
             client=yweather.Client()
             if str(item.event_date)==str(date):
-                #print(item.event_location)
-               # weather_id=client.fetch_woeid(item.event_location)
-                #print(weather_id)
-                weather_id=0
-                #if weather_id is None:
-                    #weather_id=client.fetch_woeid('Nairobi,Kenya')
-               # weather_st=client.fetch_weather(weather_id)
-                weather=[]
+                print(item.event_location)
+                weather_id=client.fetch_woeid(item.event_location)
+                print(weather_id)
+                
+                if weather_id is None:
+                    weather_id=client.fetch_woeid('Nairobi,Kenya')
+                weather_st=client.fetch_weather(weather_id)
+                weather.append(weather_st)
                 
         return render(request,
                       'user_auth/user_activity.html',
-                      {'activities': activities, 'userdetails': user, 'weather_st':weather, "data": json_data}) 
+                      {'activities': activities, 'userdetails': user, 'weather_st':weather}) 
 #delete activity
 @login_required
 def delete_activity(request, activity_id):
@@ -441,25 +436,99 @@ def todays_outfit(request):
         
         userdetails=UserDetails.objects.get(user=request.user)
         activities=UserActivity.objects.all().filter(user=request.user)
-       
-    
         try:
-            typeofcloth=check_todays_activity(activities)
+            results=knowledge_engine(activities, request.user);
+            clothobj=results[0]
+            selection=results[1]
         except:
-            messages.info(request, "Unable to Connect to Yahoo Weather, Check Internet Connection")
+            messages.error(request, "Unable to Connect to Yahoo Weather, Check Internet Connection")
             return HttpResponseRedirect('/auth/dash')
             
-        if not typeofcloth:
-            clothobj={}
-        else:
-            cloths=ClothDescription.objects.all().filter(user=request.user)
-            clothobj=knowledge_engine(cloths, typeofcloth);
-            
+        
         return render(request,
                       "user_auth/index.html",
-                      {"cloths": clothobj, 'userdetails': userdetails})
+                      {"cloths": clothobj, 'userdetails': userdetails, "selection": selection})
             
         
+        
+        
+        
+#Knowledge Engine
+def knowledge_engine(activities, user):
+    """Knwoledge Engine"""
+    json_data = json.loads(open(KB).read())
+    kb_dataMale=json_data["male"]
+    
+    try:
+        weather_data=check_todays_activity(activities)
+    except:
+        messages.error(request, "No Event or Unable to Connect to Yahoo Weather, Check Internet Connection")
+        return HttpResponseRedirect('/auth/dash')
+            
+    if not weather_data:
+        clothobj={}
+    else:
+        if int(weather_data['temp'])>=69:
+            condition="hot"
+        elif int(weather_data['temp'])<69:
+            condition="hot"
+        elif weather_data['text']=="rainy":
+            condition="rainy"
+        else:
+            condition="hot"
+        
+            
+    cloths=ClothDescription.objects.all().filter(user=user)
+    clothobj=[]
+    selection=[]
+    collect=[]
+    dat=kb_dataMale['casual']['weather'][condition]
+    selection.append(condition)
+    for cloth in cloths:
+                clothfactobj=cloth.clothfactbase_set.all()
+                try:
+                    usercloths=ClothFactBase.objects.get(cloth_id=cloth)
+                    print(usercloths.cloth_type)
+                    dict={}
+                    typecloth=[]
+                    clothmaterial=[]
+                    typecloth.append(usercloths.cloth_type)
+                    clothmaterial.append(usercloths.cloth_material)
+                    dict['type']=typecloth
+                    dict['fabric']=clothmaterial
+                    collect.append(dict)
+                except:
+                    pass
+              
+                if condition=="hot":
+                    clothsf=clothfactobj.filter(cloth_material__in=dat['fabric'])
+                    if clothsf:
+                        clothobj.append(cloth)
+                        selection.append(cloth)
+                elif condition=="cold":
+                    clothsf=clothfactobj.filter(cloth_material__in=dat['fabric'])
+                    if clothsf:
+                        clothobj.append(cloth)
+                elif condition=="rainy":
+                    clothsf=clothfactobj.filter(cloth_material__in=dat['fabric'])
+                    if clothsf:
+                        clothobj.append(cloth)
+                else:
+                    pass
+    
+    
+    for d in collect:
+        if d==dat:
+            print("Yes")
+        else:
+            print("No")
+                       
+    
+    return [clothobj, collect]
+    
+    
+
+
 #Fuction to check if there is an activity and the weather conditions
 def check_todays_activity(activities):
     """This function checks the day's activity"""
@@ -479,33 +548,11 @@ def check_todays_activity(activities):
             break;
     
     if event:
-        if int(weather['temp'])>50:
-            typecloth ='light'
-        else:
-            typecloth ='heavy'
+        return weather
     else:
         return False
 
-    return typecloth
-        
-#Knowledge Engine
-def knowledge_engine(cloths, typeofcloth):
-    """Knwoledge Engine"""
-    clothobj=[]
     
-    for cloth in cloths:
-                clothfactobj=cloth.clothfactbase_set.all()
-                if typeofcloth=='light':
-                    clothsf=clothfactobj.filter(cloth_material__startswith='wool')
-                    if clothsf:
-                        clothobj.append(cloth)
-                        
-                
-    
-    return clothobj
-    
-    
-
 
     
     
