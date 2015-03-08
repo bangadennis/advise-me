@@ -339,7 +339,7 @@ def add_cloth_facts(request, cloth_id):
             if cloth_fact.is_valid():
     
                 cloth=cloth_fact.save(commit=False)
-                cloth.cloth_id=cloth_data
+                cloth.cloth=cloth_data
                 cloth.save()
                 messages.info(request, "Cloth facts added successfully")
         
@@ -409,7 +409,7 @@ def update_cloth_facts(request, cloth_id):
             if cloth_fact.is_valid():
                 ClothFactBase.objects.get(cloth_id=cloth_id).delete()
                 cloth=cloth_fact.save(commit=False)
-                cloth.cloth_id=cloth_data
+                cloth.cloth=cloth_data
                 cloth.save()
                 messages.info(request, "Cloth facts updated successfully")
         
@@ -494,30 +494,77 @@ def knowledge_engine(activities, user, userdetail):
                     pass
     
     if userdetail.gender=="Female": 
-        daysoutfit=outfit_rules_male(clothobjects, wcondition, activitytype);
-        print("HeLLOO")
-        for outfit in daysoutfit:
-            clothobj=ClothDescription.objects.get(id=outfit.cloth_id)
-            clothresults.append(clothobj)
-            print(outfit.cloth_id)
+        daysoutfit=outfit_rules_female(clothobjects, wcondition, activitytype);
+        try:
+            for outfit in daysoutfit:
+                clothobj=ClothDescription.objects.get(id=outfit.cloth_id)
+                clothresults.append(clothobj)
+                print(outfit.cloth_id)
+        except:
+            clothresults=[]
     else:
+        #Male part
         pass
     
     return clothresults
     
 
 #rules for males' outfit
-def outfit_rules_male(clothobjects, weathercondition, activitytype):
-    selectedCloths=[]
-    for clothobj in clothobjects:
-       # print(clothobj.cloth_print)
-        if weathercondition=="hot":
-            if activitytype:
-                print("dddddddd")
-                if clothobj.cloth_print in ["plain",]:
-                    print(clothobj.cloth_id)
-                    selectedCloths.append(clothobj);
+def outfit_rules_female(clothobjects, weathercondition, activitytype):
     
+    selectedCloths=[]
+    activitytype=activitytype[0]
+    HotWeatherMaterial=['Silk', 'Linen', 'Ramie', 'Jute', 'Hemp', 'Bamboo',  'Cotton', 'Chiffon']
+    
+    for clothobj in clothobjects:
+        if weathercondition=="hot":
+            #Material for Hot Weather
+            if clothobj.cloth_material in HotWeatherMaterial:
+                print(activitytype)
+                #Job Interview Occassion Cloths Type
+                if activitytype=="Job Interview":
+                    cloth_colors=["Gray", "Black", "Navy", "Brown", "Blue"]
+                    #Check the appropiate cloth
+                    print("Hello");
+                    if (clothobj.cloth_type=="Full Suit"):
+                        selectedCloths.append(clothobj)
+                    
+                    if (clothobj.cloth_type=="Skirt" and clothobj.cloth_color in cloth_colors and clothobj.cloth_print=="Plain"):
+                        selectedCloths.append(clothobj)
+                        
+                    if (clothobj.cloth_type=="Pants" and clothobj.cloth_color in cloth_colors and clothobj.cloth_print=="Plain"):
+                        selectedCloths.append(clothobj)
+                        
+                    if (clothobj.cloth_type=="Mid-length Dress" and clothobj.cloth_print=="Plain"):
+                        selectedCloths.append(clothobj)
+                        
+                    if ((clothobj.cloth_type=="Blazer" or clothobj.cloth_type=="Suit Jacket") and
+                    (clothobj.cloth_print=="Plain")):
+                        selectedCloths.append(clothobj)
+                        
+                    if ((clothobj.cloth_type=="Blouse") and (clothobj.cloth_print=="Plain" or
+                    clothobj.cloth_print=="Stripped")):
+                        selectedCloths.append(clothobj)
+                
+                #Activity Shopping/ CasualDay Out
+                if activitytype=="Shopping/Casual Day Out":
+                    if (clothobj.cloth_type=="Jeans"):
+                        selectedCloths.append(clothobj)
+                    if (clothobj.cloth_type=="Top"):
+                        selectedCloths.append(clothobj)
+                    if (clothobj.cloth_type=="Cardigan"):
+                        selectedCloths.append(clothobj)
+                
+                #Activity Date
+                if activitytype=="Date":
+                    if (clothobj.cloth_type=="Top"):
+                        selectedCloths.append(clothobj)
+                    if (clothobj.cloth_type=="Jeans"):
+                        selectedCloths.append(clothobj)
+                    if (clothobj.cloth_type=="Mid-Length Dress"):
+                        selectedCloths.append(clothobj)
+    
+    print(selectedCloths)   
     return selectedCloths
         
 

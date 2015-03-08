@@ -47,7 +47,10 @@ class ClothDescriptionForm(forms.ModelForm):
 
 #UserActivity Form 
 class UserActivityForm(forms.ModelForm):
-    category_choices=(('',''),('Wedding', 'Wedding'),('Funeral', 'Funeral'), ('Work', 'Work'), ('Party', 'Party'),)
+    category_choices=(('',''),('Job Interview', 'Job Interview'),('Business Formal', 'Business Formal'),
+        ('Business Casual', 'Business Casual'),('Semi Formal/Cocktail', 'Semi Formal/Cocktail'),
+        ('Date', 'Date'),('Religious', 'Religious'),('Funeral', 'Funeral'),('Wedding', 'Wedding'),
+        ('School Event', 'School Event'),('Shopping/Casual Day Out', 'Shopping/Casual Day Out'),)
     helper = FormHelper()
     helper.form_tag = False
     
@@ -69,18 +72,22 @@ class UserActivityForm(forms.ModelForm):
     
 #ClothFactbase Form
 class ClothFactForm(forms.ModelForm):
-    choices_type=(('',''), ('topbottom', 'Dress'),('bottom', 'Pants'), ('topc', 'Sweater'),
-        ('top', 'Shirt'), ('bottom', 'Skirt'),('jacket', 'Jacket'))
+    #Cloth Types Choices
+    choices_type=(('',''), ('Dress', 'Dress'),('Pants', 'Pants'), ('Sweater', 'Sweater'),
+        ('Shirt', 'Shirt'), ('Skirt', 'Skirt'),('Jacket', 'Jacket'), ('Full Suit', 'Full Suit'),
+        ('Top', 'Top'), ('Mid-Length Dress', 'Mid-Length Dress'),('Blazer', 'Blazer'),
+        ('Suit Jacket', 'Suit Jacket'), ('Cardigan', 'Cardigan'),('Jeans', 'Jeans'),)
+    #Color Choices
+    choices_color=(('',''),('Red', 'Red'), ('Blue', 'Blue'), ('black', 'Black'), ('White', 'White'),
+        ('Gray', 'Gray'),('Green', 'Green'), ('Pink', 'Pink'),('Purple','Purple'), ('Multicolor','MultiColored'))
     
-    choices_color=(('',''),('red', 'Red'), ('blue', 'Blue'), ('black', 'Black'), ('white', 'White'),
-        ('gray', 'Gray'),('green', 'Green'), ('pink', 'Pink'),('purple','Purple'), ('multicolor','MultiColored'))
-    
-    choices_material=(('',''),('cotton', 'Cotton'), ('slik', 'Slik'), ('wool', 'Woolen'), ('nylon', 'Nylon'),
-        ('polyester', 'Polyester'), ('denim', 'Denim'), ('knitwear', 'KnitWear'), ('lace','Lace' ),
-        ('chiffon', 'Chiffon'), ('cashmere', 'Cashmere'), ('spandex', 'Spandex'))
-    
-    choices_print=(('',''), ('plain', 'Plain'),('striped', 'Striped'), ('floral', 'Floral'), ('geometric', 'Geometric'),
-        ('checked','Checked'))
+    #Material Choices
+    choices_material=(('',''),('Cotton', 'Cotton'), ('Slik', 'Slik'), ('Wool', 'Wool'), ('Nylon', 'Nylon'),
+        ('Polyester', 'Polyester'), ('Denim', 'Denim'), ('Knitwear', 'Knitwear'), ('Lace','Lace' ),
+        ('Chiffon', 'Chiffon'), ('Cashmere', 'Cashmere'), ('Spandex', 'Spandex'))
+    #Cloth Print Choices
+    choices_print=(('',''), ('Plain', 'Plain'),('Striped', 'Striped'), ('Floral', 'Foral'), ('Geometric', 'Geometric'),
+        ('checked','checked'),)
     
     helper = FormHelper()
     helper.form_tag =False
@@ -95,7 +102,7 @@ class ClothFactForm(forms.ModelForm):
 
     class Meta:
         model=ClothFactBase
-        exclude=('cloth_id',)
+        exclude=('cloth',)
         
         
         
