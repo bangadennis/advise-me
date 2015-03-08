@@ -49,7 +49,7 @@ class UserActivity(models.Model):
    end_time=models.TimeField(blank=False, null=False)
 
 class ClothFactBase(models.Model):
-    cloth_id=models.ForeignKey(ClothDescription)
+    cloth=models.ForeignKey(ClothDescription)
     cloth_type=models.CharField(max_length=50, blank=False, null=False)
     cloth_color=models.CharField(max_length=50, blank=False, null=False)
     cloth_material=models.CharField(max_length=50, blank=False, null=False)

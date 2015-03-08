@@ -25,7 +25,7 @@ class UserDetailsForm(forms.ModelForm):
     helper = FormHelper()
     helper.form_tag = False
     gender=forms.ChoiceField(widget=forms.Select(),choices=choices, label="Gender", )
-    dateofbirth = forms.DateField(label="Date Of Birh ",
+    dateofbirth = forms.DateField(label="Date Of Birth ",
         widget=DateWidget(usel10n=True, bootstrap_version=3), required=True
         )
     skintone=forms.CharField(label="Skin Tone ", required=True,)
@@ -84,10 +84,14 @@ class ClothFactForm(forms.ModelForm):
     
     helper = FormHelper()
     helper.form_tag =False
-    cloth_type=forms.ChoiceField(widget=forms.Select(), choices=choices_type, label="Select The Cloth Type",)
-    cloth_color=forms.ChoiceField(widget=forms.Select(), choices=choices_color, label="Select The Color of the cloth",)
-    cloth_material=forms.ChoiceField(widget=forms.Select(), choices=choices_material, label="Select The Cloth Material",)
-    cloth_print=forms.ChoiceField(widget=forms.Select(), choices=choices_print, label="Select The Cloth Print",)
+    cloth_type=forms.ChoiceField(widget=forms.Select(), choices=choices_type,
+                                 label="Select The Cloth Type",)
+    cloth_color=forms.ChoiceField(widget=forms.Select(), choices=choices_color,
+                                  label="Select The Color of the cloth",)
+    cloth_material=forms.ChoiceField(widget=forms.Select(), choices=choices_material,
+                                     label="Select The Cloth Material",)
+    cloth_print=forms.ChoiceField(widget=forms.Select(), choices=choices_print,
+                                  label="Select The Cloth Print",)
 
     class Meta:
         model=ClothFactBase

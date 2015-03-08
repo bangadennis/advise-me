@@ -437,9 +437,7 @@ def todays_outfit(request):
         userdetails=UserDetails.objects.get(user=request.user)
         activities=UserActivity.objects.all().filter(user=request.user)
         try:
-            results=knowledge_engine(activities, request.user);
-            clothobj=results[0]
-            selection=results[1]
+            clothobj=knowledge_engine(activities, request.user, userdetails)
         except:
             messages.error(request, "Unable to Connect to Yahoo Weather, Check Internet Connection")
             return HttpResponseRedirect('/auth/dash')
@@ -447,87 +445,81 @@ def todays_outfit(request):
         
         return render(request,
                       "user_auth/index.html",
-                      {"cloths": clothobj, 'userdetails': userdetails, "selection": selection})
+                      {"cloths": clothobj, 'userdetails': userdetails})
             
         
         
         
         
 #Knowledge Engine
-def knowledge_engine(activities, user):
+def knowledge_engine(activities, user, userdetail):
     """Knwoledge Engine"""
-    json_data = json.loads(open(KB).read())
-    kb_dataMale=json_data["male"]
+   # json_data = json.loads(open(KB).read())
     
     try:
-        weather_data=check_todays_activity(activities)
+        data=check_todays_activity(activities)
     except:
-        messages.error(request, "No Event or Unable to Connect to Yahoo Weather, Check Internet Connection")
-        return HttpResponseRedirect('/auth/dash')
-            
-    if not weather_data:
-        clothobj={}
+        pass
+       # messages.error(request, "No Event/Unable to Connect to Yahoo Weather, Check Internet Connection")
+       # return HttpResponseRedirect('/auth/dash')
+         
+    
+    #Check the weather conditions   
+    if not data:
+        daysoutfit={}
     else:
+        weather_data=data["weather"]
+        activitytype=data["activitytype"]
+        
         if int(weather_data['temp'])>=69:
-            condition="hot"
+            wcondition="hot"
         elif int(weather_data['temp'])<69:
-            condition="hot"
+            wcondition="hot"
         elif weather_data['text']=="rainy":
-            condition="rainy"
+            wcondition="rainy"
         else:
-            condition="hot"
+            wcondition="hot"
         
             
     cloths=ClothDescription.objects.all().filter(user=user)
-    clothobj=[]
-    selection=[]
-    collect=[]
-    dat=kb_dataMale['casual']['weather'][condition]
-    selection.append(condition)
+    clothobjects=[]
+    clothresults=[]
     for cloth in cloths:
                 clothfactobj=cloth.clothfactbase_set.all()
                 try:
-                    usercloths=ClothFactBase.objects.get(cloth_id=cloth)
-                    print(usercloths.cloth_type)
-                    dict={}
-                    typecloth=[]
-                    clothmaterial=[]
-                    typecloth.append(usercloths.cloth_type)
-                    clothmaterial.append(usercloths.cloth_material)
-                    dict['type']=typecloth
-                    dict['fabric']=clothmaterial
-                    collect.append(dict)
+                    usercloth=ClothFactBase.objects.get(cloth_id=cloth)
+                    print(usercloth.cloth_type)
+                    clothobjects.append(usercloth)
                 except:
                     pass
-              
-                if condition=="hot":
-                    clothsf=clothfactobj.filter(cloth_material__in=dat['fabric'])
-                    if clothsf:
-                        clothobj.append(cloth)
-                        selection.append(cloth)
-                elif condition=="cold":
-                    clothsf=clothfactobj.filter(cloth_material__in=dat['fabric'])
-                    if clothsf:
-                        clothobj.append(cloth)
-                elif condition=="rainy":
-                    clothsf=clothfactobj.filter(cloth_material__in=dat['fabric'])
-                    if clothsf:
-                        clothobj.append(cloth)
-                else:
-                    pass
     
+    if userdetail.gender=="Female": 
+        daysoutfit=outfit_rules_male(clothobjects, wcondition, activitytype);
+        print("HeLLOO")
+        for outfit in daysoutfit:
+            clothobj=ClothDescription.objects.get(id=outfit.cloth_id)
+            clothresults.append(clothobj)
+            print(outfit.cloth_id)
+    else:
+        pass
     
-    for d in collect:
-        if d==dat:
-            print("Yes")
-        else:
-            print("No")
-                       
-    
-    return [clothobj, collect]
-    
+    return clothresults
     
 
+#rules for males' outfit
+def outfit_rules_male(clothobjects, weathercondition, activitytype):
+    selectedCloths=[]
+    for clothobj in clothobjects:
+       # print(clothobj.cloth_print)
+        if weathercondition=="hot":
+            if activitytype:
+                print("dddddddd")
+                if clothobj.cloth_print in ["plain",]:
+                    print(clothobj.cloth_id)
+                    selectedCloths.append(clothobj);
+    
+    return selectedCloths
+        
 
 #Fuction to check if there is an activity and the weather conditions
 def check_todays_activity(activities):
@@ -535,6 +527,7 @@ def check_todays_activity(activities):
     now = datetime.datetime.now()
     date=now.strftime("%Y-%m-%d")
     event=0
+    activitytype=[]
    
     for activity in activities:
         if str(activity.event_date)==str(date):
@@ -544,14 +537,14 @@ def check_todays_activity(activities):
                 weather_id=client.fetch_woeid('Nairobi,Kenya')
             weather_st=client.fetch_weather(weather_id)
             weather=weather_st['condition']
+            activitytype.append(activity.category)
             event=1
             break;
     
     if event:
-        return weather
+        return {"weather": weather,"activitytype": activitytype}
     else:
-        return False
-
+        ret
     
 
     
