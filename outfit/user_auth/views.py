@@ -435,8 +435,8 @@ def todays_outfit(request):
     else:
         
         userdetails=UserDetails.objects.get(user=request.user)
-        activities=UserActivity.objects.all().filter(user=request.user)
         try:
+            activities=UserActivity.objects.all().filter(user=request.user)
             clothobj=knowledge_engine(activities, request.user, userdetails)
         except:
             messages.error(request, "Unable to Connect to Yahoo Weather, Check Internet Connection")
@@ -460,16 +460,13 @@ def knowledge_engine(activities, user, userdetail):
         data=check_todays_activity(activities)
     except:
         pass
-       # messages.error(request, "No Event/Unable to Connect to Yahoo Weather, Check Internet Connection")
-       # return HttpResponseRedirect('/auth/dash')
-         
     
     #Check the weather conditions   
     if not data:
         daysoutfit={}
     else:
         weather_data=data["weather"]
-        activitytype=data["activitytype"]
+        activitytypes=data["activitytype"]
         
         if int(weather_data['temp'])>=69:
             wcondition="hot"
@@ -488,13 +485,13 @@ def knowledge_engine(activities, user, userdetail):
                 clothfactobj=cloth.clothfactbase_set.all()
                 try:
                     usercloth=ClothFactBase.objects.get(cloth_id=cloth)
-                    print(usercloth.cloth_type)
                     clothobjects.append(usercloth)
                 except:
                     pass
     
-    if userdetail.gender=="Female": 
-        daysoutfit=outfit_rules_female(clothobjects, wcondition, activitytype);
+    if userdetail.gender=="Female":
+        for activitytype in activitytypes:
+            daysoutfit=outfit_rules_female(clothobjects, wcondition, activitytypes[0])
         try:
             for outfit in daysoutfit:
                 clothobj=ClothDescription.objects.get(id=outfit.cloth_id)
@@ -513,19 +510,16 @@ def knowledge_engine(activities, user, userdetail):
 def outfit_rules_female(clothobjects, weathercondition, activitytype):
     
     selectedCloths=[]
-    activitytype=activitytype[0]
     HotWeatherMaterial=['Silk', 'Linen', 'Ramie', 'Jute', 'Hemp', 'Bamboo',  'Cotton', 'Chiffon']
     
     for clothobj in clothobjects:
         if weathercondition=="hot":
             #Material for Hot Weather
             if clothobj.cloth_material in HotWeatherMaterial:
-                print(activitytype)
                 #Job Interview Occassion Cloths Type
-                if activitytype=="Job Interview":
+                if (activitytype=="Job Interview"or activitytype=="School Event" or activitytype=="Business Casual" ):
                     cloth_colors=["Gray", "Black", "Navy", "Brown", "Blue"]
                     #Check the appropiate cloth
-                    print("Hello");
                     if (clothobj.cloth_type=="Full Suit"):
                         selectedCloths.append(clothobj)
                     
@@ -563,7 +557,47 @@ def outfit_rules_female(clothobjects, weathercondition, activitytype):
                         selectedCloths.append(clothobj)
                     if (clothobj.cloth_type=="Mid-Length Dress"):
                         selectedCloths.append(clothobj)
+                #Activity Wedding
+                if activitytype=="Wedding":
+                    if (clothobj.cloth_type=="Maxi Dress"):
+                        selectedCloths.append(clothobj)
+                    if (clothobj.cloth_type=="Brim hat"):
+                        selectedCloths.append(clothobj)
+                
+                #Activity Semi Formal/Cocktail
+                if activitytype=="Semi Formal/Cocktail":
+                    if ((clothobj.cloth_type=="Short Dress") and (clothobj.cloth_color=="Black")):
+                        selectedCloths.append(clothobj)
+                    if ((clothobj.cloth_type=="Mid-Length Dress")):
+                        selectedCloths.append(clothobj)
+                    if ((clothobj.cloth_type=="Blouse") and (clothobj.cloth_material=="Silk")):
+                        selectedCloths.append(clothobj)
     
+                #Activity Formal/Black Tie
+                if activitytype=="Formal/Black Tie":
+                    if (clothobj.cloth_type=="Long Dress"):
+                        selectedCloths.append(clothobj)
+                #Activity White Tie
+                if activitytype=="White Tie":
+                    if (clothobj.cloth_type=="Long Dress"):
+                        selectedCloths.append(clothobj)
+                    if (clothobj.cloth_type=="White Gloves"):
+                        selectedCloths.append(clothobj)
+                #Activity  Church/Religious Events
+                if activitytype=="Church/Religious":
+                    if ((clothobj.cloth_type=="Long Dress") or (clothobj.cloth_type=="Mid-Length Dress")
+                    or (clothobj.cloth_color in ['Red', 'Orange', 'Blue', 'Pink', 'Peach', 'Yellow'])
+                    and (clothobj.cloth_print=="Floral") ):
+                        selectedCloths.append(clothobj)
+                    
+                    if ((clothobj.cloth_type=="Long Skirt") or (clothobj.cloth_type=="Mid-Length Skirt")
+                    or (clothobj.cloth_color in ['Red', 'Orange', 'Blue', 'Pink', 'Peach', 'Yellow'])
+                    and (clothobj.cloth_print=="Floral") ):
+                        selectedCloths.append(clothobj)
+                    if (clothobj.cloth_type in ["Blouse", "Top"]):
+                        selectedCloths.append(clothobj)
+                #Activity Business Formal
+                   
     print(selectedCloths)   
     return selectedCloths
         
@@ -577,6 +611,7 @@ def check_todays_activity(activities):
     activitytype=[]
    
     for activity in activities:
+        print(activity.category)
         if str(activity.event_date)==str(date):
             client=yweather.Client()
             weather_id=client.fetch_woeid(activity.event_location)
@@ -584,14 +619,14 @@ def check_todays_activity(activities):
                 weather_id=client.fetch_woeid('Nairobi,Kenya')
             weather_st=client.fetch_weather(weather_id)
             weather=weather_st['condition']
+            #append activity type
             activitytype.append(activity.category)
             event=1
-            break;
-    
+        
     if event:
         return {"weather": weather,"activitytype": activitytype}
     else:
-        ret
+        return False
     
 
     

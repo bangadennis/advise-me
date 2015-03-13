@@ -48,6 +48,7 @@
         <div class='col-md-6'>
         {%if clothfacts %}    
         <h3 class='text-info'>Cloth Characteristics</h3>
+            <h4 class='text-success'>Type: {{ clothfacts.cloth_type|capfirst }}<h4>
             <h4 class='text-success'>Material: {{ clothfacts.cloth_material|capfirst }}<h4>
             <h4 class='text-success'>Color: {{ clothfacts.cloth_color|capfirst }}<h4>
             <h4 class='text-success'>Print: {{ clothfacts.cloth_print|capfirst }}<h4>

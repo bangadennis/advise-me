@@ -12,8 +12,7 @@ class UserDetails(models.Model):
     dateofbirth=models.DateField(blank=False, null=False)
     skintone=models.CharField(max_length=50,blank=False, null=False)
     occupation=models.CharField(max_length=50,blank=False, null=False)
-    profile_picture= ProcessedImageField(upload_to='images/profileImages',blank=True,
-                                         default='images/profileImages/default.jpg',
+    profile_picture= ProcessedImageField(upload_to='images/profileImages',blank=True,default=False,
                                            processors=[ResizeToFill(100, 100)],
                                            format='JPEG',
                                            options={'quality': 100})
