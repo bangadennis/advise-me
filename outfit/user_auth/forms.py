@@ -72,14 +72,24 @@ class UserActivityForm(forms.ModelForm):
     
 #ClothFactbase Form
 class ClothFactForm(forms.ModelForm):
+    
     #Cloth Types Choices
-    choices_type=(('',''), ('Dress', 'Dress'),('Pants', 'Pants'), ('Sweater', 'Sweater'),
-        ('Shirt', 'Shirt'), ('Skirt', 'Skirt'),('Jacket', 'Jacket'), ('Full Suit', 'Full Suit'),
-        ('Top', 'Top'), ('Mid-Length Dress', 'Mid-Length Dress'),('Blazer', 'Blazer'),
-        ('Suit Jacket', 'Suit Jacket'), ('Cardigan', 'Cardigan'),('Jeans', 'Jeans'),)
+    #choice male
+    choices_male=(('',''),('Shirt', 'Shirt'), ('T-Shirt', 'T-Shirt'),('Full Suit', 'Full Suit'),
+        ('Jacket', 'Jacket'),('Trouser', 'Trouser'),('Short', 'Short'),)
+    #choice female
+    choices_female=(('',''), ('Dress', 'Dress'),('Pants', 'Pants'), ('Sweater', 'Sweater'),
+        ('Shirt', 'Shirt'), ('Mid-Length Skirt', 'Mid-Length Skirt'),('Long Skirt', 'Long Skirt'),
+        ('Jacket', 'Jacket'),('Full Suit', 'Full Suit'),('Top', 'Top'),
+        ('Mid-Length Dress', 'Mid-Length Dress'),('Long Dress', 'Long Dress'),('Maxi Dress', 'Maxi Dress'),
+        ('Blazer', 'Blazer'),('Suit Jacket', 'Suit Jacket'), ('Cardigan', 'Cardigan'),
+        ('Jeans', 'Jeans'),('White Golves', 'White Gloves'),('Jacket', 'Jacket'),
+        ('Rain Coat','Rain Coat'), ('Scarf','Scarf'), ('Trench Coat', 'Trench Coat'), )
+    choices_type=()
     #Color Choices
-    choices_color=(('',''),('Red', 'Red'), ('Blue', 'Blue'), ('black', 'Black'), ('White', 'White'),
-        ('Gray', 'Gray'),('Green', 'Green'), ('Pink', 'Pink'),('Purple','Purple'), ('Multicolor','MultiColored'))
+    choices_color=(('',''),('Red', 'Red'), ('Blue', 'Blue'), ('Black', 'Black'),
+        ('White', 'White'),('Gray', 'Gray'),('Green', 'Green'), ('Pink', 'Pink'),
+        ('Purple','Purple'),('Brown','Brown'), ('Multi-Color','Multi-Color'))
     
     #Material Choices
     choices_material=(('',''),('Cotton', 'Cotton'), ('Slik', 'Slik'), ('Wool', 'Wool'), ('Nylon', 'Nylon'),
@@ -103,7 +113,16 @@ class ClothFactForm(forms.ModelForm):
     class Meta:
         model=ClothFactBase
         exclude=('cloth',)
-        
+    #constructor
+    
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        super(ClothFactForm, self).__init__(*args, **kwargs)
+        if self.user.gender=="Female":
+            self.fields['cloth_type'].choices=self.choices_female
+        else:
+            self.fields['cloth_type'].choices=self.choices_male
+            
         
         
         

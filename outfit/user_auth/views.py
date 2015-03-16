@@ -23,27 +23,17 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 #KnowledgeBase
 KB=os.path.join(BASE_DIR, 'static/knowledgebase/kb.json')
 
+##############################################################################################
+
 def index(request):
     
     if request.user.is_authenticated():
         return HttpResponseRedirect('/auth/dash')
     
-    # Construct a dictionary to pass to the template engine as its context.
-    # Note the key boldmessage is the same as {{ boldmessage }} in the template!
-    context_dict = {'message': "Welcome to Outfit.com", }
+    return render(request, 'user_auth/base.html', {})
 
-    # Return a rendered response to send to the client.
-    # We make use of the shortcut function to make our lives easier.
-    # Note that the first parameter is the template we wish to use.
-
-    return render(request, 'user_auth/base.html', context_dict)
-
-#trial of google api
-def google(request):
-    return render(request, 'user_auth/google.html', {})
-
-
-
+##############################################################################################
+#Dash/MyCloset
 @login_required
 def dash(request):
     if not UserDetails.objects.filter(user=request.user).exists():
@@ -57,7 +47,7 @@ def dash(request):
                       'user_auth/dash.html',
                       {'cloths': cloths, 'userdetails': user})
     
-    
+##############################################################################################
 #registration view
 def register(request):
     if request.user.is_authenticated():
@@ -95,7 +85,7 @@ def register(request):
                   "user_auth/registeration.html",
                   {"userform": userform})
 
-
+##############################################################################################
 #login view
 def login_view(request):
     if request.user.is_authenticated():
@@ -133,7 +123,7 @@ def login_view(request):
         return render(request, 'user_auth/login.html', {})
             
         
-        
+##############################################################################################     
 # Use the login_required() decorator to ensure only those logged in can access the view.
 @login_required
 def user_logout(request):
@@ -143,6 +133,7 @@ def user_logout(request):
     # Take the user back to the homepage.
     return HttpResponseRedirect('/')
 
+##############################################################################################
 @login_required
 def completeuserdetails(request):
     #check if the user details are completed
@@ -174,7 +165,8 @@ def completeuserdetails(request):
         return render(request,
                       "user_auth/userdetails.html",
                       {"userdetails": userdetails})
-   
+
+##############################################################################################  
 #closet upload cloth images
 @login_required
 def closet_upload(request):
@@ -209,7 +201,7 @@ def closet_upload(request):
                       "user_auth/closet_upload.html",
                       {"clothform": clothdetails, 'userdetails': userdetails})
 
-
+##############################################################################################
 #edit userdetails
 class UserDetailsUpdate(UpdateView):
     model=UserDetails
@@ -229,6 +221,7 @@ class UserDetailsUpdate(UpdateView):
     #    messages.info(self.request, "updated profile successfully")
     #    return super(UserDetailsUpdate, self).form_valid(form)
 
+##############################################################################################
 #add activity details view
 @login_required
 def add_user_activity(request):
@@ -264,7 +257,7 @@ def add_user_activity(request):
                       "user_auth/add_user_activity.html",
                       {"activitydetails": activitydetails, 'userdetails': userdetails})
 
-    
+############################################################################################## 
 #view for activities 
 @login_required
 def user_activites(request):
@@ -291,12 +284,14 @@ def user_activites(request):
                 
                 if weather_id is None:
                     weather_id=client.fetch_woeid('Nairobi,Kenya')
-                weather_st=client.fetch_weather(weather_id)
+                weather_st=client.fetch_weather(weather_id, metric=True)
                 weather.append(weather_st)
                 
         return render(request,
                       'user_auth/user_activity.html',
-                      {'activities': activities, 'userdetails': user, 'weather_st':weather}) 
+                      {'activities': activities, 'userdetails': user, 'weather_st':weather})
+    
+##############################################################################################
 #delete activity
 @login_required
 def delete_activity(request, activity_id):
@@ -315,7 +310,7 @@ def delete_activity(request, activity_id):
                 messages.info(request, "Invalid Delete Activity Option")
                 return HttpResponseRedirect('/auth/user_activities/')   
     
-    
+############################################################################################## 
 #add cloth facts
 @login_required
 def add_cloth_facts(request, cloth_id):
@@ -323,6 +318,7 @@ def add_cloth_facts(request, cloth_id):
     if not UserDetails.objects.filter(user=request.user).exists():
             return HttpResponseRedirect('/auth/userdetails')
     else:
+        userdetails=UserDetails.objects.get(user=request.user)
         if cloth_id:
             user=User.objects.get(username=request.user.username)
             try :
@@ -334,7 +330,7 @@ def add_cloth_facts(request, cloth_id):
         else:
             return HttpResponseRedirect('auth/dash')
         if request.method=="POST":
-            cloth_fact=ClothFactForm(data=request.POST)
+            cloth_fact=ClothFactForm(data=request.POST, user=userdetails)
             
             if cloth_fact.is_valid():
     
@@ -342,16 +338,14 @@ def add_cloth_facts(request, cloth_id):
                 cloth.cloth=cloth_data
                 cloth.save()
                 messages.info(request, "Cloth facts added successfully")
-        
                 return HttpResponseRedirect('/auth/dash')
                 
             else:
                 
                 print cloth_fact.errors
         else:
-            cloth_fact=ClothFactForm()
+            cloth_fact=ClothFactForm(user=userdetails)
         
-        userdetails=UserDetails.objects.get(user=request.user)
         data=ClothFactBase.objects.filter(cloth_id=cloth_id).exists()
         facts={}
         if data:
@@ -360,10 +354,10 @@ def add_cloth_facts(request, cloth_id):
         #return render to response depending on the context
         return render(request,
                       "user_auth/add_cloth_facts.html",
-                      {"clothform": cloth_fact, 'userdetails': userdetails,
+                      {'clothform': cloth_fact, 'userdetails': userdetails,
                        'cloth': cloth_data, 'clothfacts': facts})
     
-
+##############################################################################################
 #delete a cloth
 @login_required
 def delete_cloth(request, cloth_id):
@@ -383,7 +377,7 @@ def delete_cloth(request, cloth_id):
                 messages.error(request, "Invalid Option")
                 return HttpResponseRedirect('/auth/dash') 
 
-
+##############################################################################################
 #Edit cloth details
 @login_required
 def update_cloth_facts(request, cloth_id):
@@ -391,7 +385,7 @@ def update_cloth_facts(request, cloth_id):
     if not UserDetails.objects.filter(user=request.user).exists():
             return HttpResponseRedirect('/auth/userdetails')
     else:
-        
+        userdetails=UserDetails.objects.get(user=request.user)
         if cloth_id:
             user=User.objects.get(username=request.user.username)
             try :
@@ -404,7 +398,7 @@ def update_cloth_facts(request, cloth_id):
             return HttpResponseRedirect('auth/dash')
         
         if request.method=="POST":
-            cloth_fact=ClothFactForm(data=request.POST)
+            cloth_fact=ClothFactForm(data=request.POST, user=userdetails)
             
             if cloth_fact.is_valid():
                 ClothFactBase.objects.get(cloth_id=cloth_id).delete()
@@ -419,14 +413,16 @@ def update_cloth_facts(request, cloth_id):
                 
                 print cloth_fact.errors
         else:
-            cloth_fact=ClothFactForm()
-        userdetails=UserDetails.objects.get(user=request.user)
+            cloth_fact=ClothFactForm(user=userdetails)
+        
         #return render to response depending on the context
         return render(request,
                       "user_auth/update_cloth_facts.html",
                       {"clothform": cloth_fact, 'userdetails': userdetails,
                        'cloth': cloth_data, })
-    
+  
+
+##############################################################################################  
 @login_required()
 def todays_outfit(request):
     if not UserDetails.objects.filter(user=request.user).exists():
@@ -450,7 +446,7 @@ def todays_outfit(request):
         
         
         
-        
+##############################################################################################     
 #Knowledge Engine
 def knowledge_engine(activities, user, userdetail):
     """Knwoledge Engine"""
@@ -458,29 +454,32 @@ def knowledge_engine(activities, user, userdetail):
     
     try:
         data=check_todays_activity(activities)
-    except:
-        pass
-    
-    #Check the weather conditions   
-    if not data:
-        daysoutfit={}
-    else:
         weather_data=data["weather"]
         activitytypes=data["activitytype"]
-        
-        if int(weather_data['temp'])>=69:
-            wcondition="hot"
-        elif int(weather_data['temp'])<69:
-            wcondition="hot"
-        elif weather_data['text']=="rainy":
-            wcondition="rainy"
-        else:
-            wcondition="hot"
+    except:
+        messages.error(request, "Unable to Connect to Weather Server!")
+        return HttpResponseRedirect('/auth/dash')
+    
+    #Check the weather conditions   
+        #check the weather conditions
+    print(weather_data)
+    print(activitytypes)
+    
+    if int(weather_data['temp'])>=15:
+        wcondition="hot"
+    elif int(weather_data['temp'])<15:
+        wcondition="cold"
+    elif lower(weather_data['text']) in ["rain", "rain and snow"] and weather_data['temp']<15:
+        wcondition="rainy"
+    else:
+         pass
+        #wcondition="hot"
         
             
     cloths=ClothDescription.objects.all().filter(user=user)
     clothobjects=[]
-    clothresults=[]
+    
+    #Fetching the cloths' facts
     for cloth in cloths:
                 clothfactobj=cloth.clothfactbase_set.all()
                 try:
@@ -488,42 +487,81 @@ def knowledge_engine(activities, user, userdetail):
                     clothobjects.append(usercloth)
                 except:
                     pass
-    
+                
+    #Select Matching function to either male or female outfit
+    daysoutfits=[]
+    lock=True
     if userdetail.gender=="Female":
-        for activitytype in activitytypes:
-            daysoutfit=outfit_rules_female(clothobjects, wcondition, activitytypes[0])
         try:
+            for activitytype in activitytypes:
+                daysoutfits.append(outfit_rules_female(clothobjects, wcondition, activitytype.category))
+        except:
+            lock=False
+            
+    else:
+        for activitytype in activitytypes:
+            daysoutfits.append(outfit_rules_male(clothobjects, wcondition, activitytype.category))
+    
+    #Getting the cloths' description
+    clothresults=[]
+    print(daysoutfits)
+    if lock:
+        for dayoutfit in daysoutfits:
+            print(daysoutfit)
             for outfit in daysoutfit:
                 clothobj=ClothDescription.objects.get(id=outfit.cloth_id)
                 clothresults.append(clothobj)
                 print(outfit.cloth_id)
-        except:
-            clothresults=[]
-    else:
-        #Male part
-        pass
-    
+                
     return clothresults
-    
 
-#rules for males' outfit
-def outfit_rules_female(clothobjects, weathercondition, activitytype):
+##############################################################################################
+#Fuction to check if there is an activity and the weather conditions
+def check_todays_activity(activities):
+    """This function checks the day's activity"""
+    now = datetime.datetime.now()
+    date=now.strftime("%Y-%m-%d")
+    event=0
+    activitytype=[]
+   
+    for activity in activities:
+        print(activity.category)
+        if str(activity.event_date)==str(date):
+            client=yweather.Client()
+            weather_id=client.fetch_woeid(activity.event_location)
+            if weather_id is None:
+                weather_id=client.fetch_woeid('Nairobi,Kenya')
+            weather_st=client.fetch_weather(weather_id, metric=True)
+            weather=weather_st['condition']
+            #append activity type
+            activitytype.append(activity)
+            event=1
+        
+    if event:
+        return {"weather": weather,"activitytype": activitytype}
+    else:
+        return False
     
+    
+##############################################################################################
+#rules for females' outfit
+def outfit_rules_female(clothobjects, weathercondition, activitytype):
+    """Rules to Match Females Outfit"""
     selectedCloths=[]
     HotWeatherMaterial=['Silk', 'Linen', 'Ramie', 'Jute', 'Hemp', 'Bamboo',  'Cotton', 'Chiffon']
     
     for clothobj in clothobjects:
-        if weathercondition=="hot":
+        if weathercondition in ["hot", 'cold', 'rain']:
             #Material for Hot Weather
             if clothobj.cloth_material in HotWeatherMaterial:
                 #Job Interview Occassion Cloths Type
-                if (activitytype=="Job Interview"or activitytype=="School Event" or activitytype=="Business Casual" ):
+                if (activitytype=="Job Interview"or activitytype=="School Event" or activitytype=="Business Formal" ):
                     cloth_colors=["Gray", "Black", "Navy", "Brown", "Blue"]
                     #Check the appropiate cloth
                     if (clothobj.cloth_type=="Full Suit"):
                         selectedCloths.append(clothobj)
                     
-                    if (clothobj.cloth_type=="Skirt" and clothobj.cloth_color in cloth_colors and clothobj.cloth_print=="Plain"):
+                    if (clothobj.cloth_type=="Mid-lenght Skirt" and clothobj.cloth_color in cloth_colors and clothobj.cloth_print=="Plain"):
                         selectedCloths.append(clothobj)
                         
                     if (clothobj.cloth_type=="Pants" and clothobj.cloth_color in cloth_colors and clothobj.cloth_print=="Plain"):
@@ -586,6 +624,108 @@ def outfit_rules_female(clothobjects, weathercondition, activitytype):
                 #Activity  Church/Religious Events
                 if activitytype=="Church/Religious":
                     if ((clothobj.cloth_type=="Long Dress") or (clothobj.cloth_type=="Mid-Length Dress")
+                    or (clothobj.cloth_color in ['Red', 'Orange', 'Blue', 'Pink', 'Peach','Multi-Color','Yellow'])
+                    and (clothobj.cloth_print=="Floral") ):
+                        selectedCloths.append(clothobj)
+                    
+                    if ((clothobj.cloth_type=="Long Skirt") or (clothobj.cloth_type=="Mid-Length Skirt")
+                    or (clothobj.cloth_color in ['Red', 'Orange', 'Blue', 'Pink', 'Peach', 'Yellow'])
+                    and (clothobj.cloth_print=="Floral") ):
+                        selectedCloths.append(clothobj)
+                    if (clothobj.cloth_type in ["Blouse", "Top"]):
+                        selectedCloths.append(clothobj)
+                #Activity Business Formal
+               
+               
+               
+         #########################################
+            #cloths for cold days
+            if weathercondition=="cold":
+                if ((clothobj.cloth_type in ['Cardigan', 'Sweater', 'Jacket', 'Scarf', 'Gloves','Trench Coat']) and
+                (clothobj.cloth_material in ['Wool', 'Cashmere'])):
+                    selectedCloths.append(clothobj)
+            #cloths for rainy days
+            if weathercondition=="rainy":
+                  if (clothobj.cloth_type in ['Cardigan', 'Sweater', 'Jacket', 'Scarf', 'Gloves','Rain Coat']):
+                    selectedCloths.append(clothobj)
+                   
+    print(selectedCloths)   
+    return selectedCloths
+
+##############################################################################################
+#rules to match Males'  outfit
+def outfit_rules_male(clothobjects, weathercondition, activitytype):
+    selectedCloths=[]
+    HotWeatherMaterial=['Silk', 'Linen', 'Ramie', 'Jute', 'Hemp', 'Bamboo',  'Cotton', 'Chiffon']
+    
+    for clothobj in clothobjects:
+        if weathercondition in ["hot", "cold"]:
+            #Material for Hot Weather
+            if clothobj.cloth_material in HotWeatherMaterial:
+                #Job Interview Occassion Cloths Type
+                if (activitytype=="Job Interview"or activitytype=="School Event" or activitytype=="Business Casual" ):
+                    cloth_colors=["Gray", "Black", "Navy", "Brown", "Blue"]
+                    #Check the appropiate cloth
+                    if (clothobj.cloth_type=="Full Suit"):
+                        selectedCloths.append(clothobj)
+                    
+                    if (clothobj.cloth_type=="Trouser" and clothobj.cloth_color in cloth_colors and clothobj.cloth_print=="Plain"):
+                        selectedCloths.append(clothobj)
+                        
+                    if ((clothobj.cloth_type=="Blazer" or clothobj.cloth_type=="Suit Jacket") and
+                    (clothobj.cloth_print=="Plain")):
+                        selectedCloths.append(clothobj)
+                        
+                    if ((clothobj.cloth_type=="Shirt") and (clothobj.cloth_print=="Plain" or
+                    clothobj.cloth_print=="Stripped")):
+                        selectedCloths.append(clothobj)
+                
+                #Activity Shopping/ CasualDay Out
+                if activitytype=="Shopping/Casual Day Out":
+                    if (clothobj.cloth_type in ["Jeans","Short"]):
+                        selectedCloths.append(clothobj)
+                    if (clothobj.cloth_type=="T-Shirt"):
+                        selectedCloths.append(clothobj)
+                    if (clothobj.cloth_type=="Cardigan"):
+                        selectedCloths.append(clothobj)
+                
+                #Activity Date
+                if activitytype=="Date":
+                    if (clothobj.cloth_type=="T-Shirt"):
+                        selectedCloths.append(clothobj)
+                    if (clothobj.cloth_type=="Jeans"):
+                        selectedCloths.append(clothobj)
+                    if (clothobj.cloth_type=="Cardigan"):
+                        selectedCloths.append(clothobj)
+                #Activity Wedding
+                if activitytype=="Wedding":
+                    if (clothobj.cloth_type=="Maxi Dress"):
+                        selectedCloths.append(clothobj)
+                    if (clothobj.cloth_type=="Brim hat"):
+                        selectedCloths.append(clothobj)
+                
+                #Activity Semi Formal/Cocktail
+                if activitytype=="Semi Formal/Cocktail":
+                    if ((clothobj.cloth_type=="Short Dress") and (clothobj.cloth_color=="Black")):
+                        selectedCloths.append(clothobj)
+                    if ((clothobj.cloth_type=="Mid-Length Dress")):
+                        selectedCloths.append(clothobj)
+                    if ((clothobj.cloth_type=="Blouse") and (clothobj.cloth_material=="Silk")):
+                        selectedCloths.append(clothobj)
+    
+                #Activity Formal/Black Tie
+                if activitytype=="Formal/Black Tie":
+                    if (clothobj.cloth_type=="Long Dress"):
+                        selectedCloths.append(clothobj)
+                #Activity White Tie
+                if activitytype=="White Tie":
+                    if (clothobj.cloth_type=="Long Dress"):
+                        selectedCloths.append(clothobj)
+                    if (clothobj.cloth_type=="White Gloves"):
+                        selectedCloths.append(clothobj)
+                #Activity  Church/Religious Events
+                if activitytype=="Church/Religious":
+                    if ((clothobj.cloth_type=="Long Dress") or (clothobj.cloth_type=="Mid-Length Dress")
                     or (clothobj.cloth_color in ['Red', 'Orange', 'Blue', 'Pink', 'Peach', 'Yellow'])
                     and (clothobj.cloth_print=="Floral") ):
                         selectedCloths.append(clothobj)
@@ -600,34 +740,9 @@ def outfit_rules_female(clothobjects, weathercondition, activitytype):
                    
     print(selectedCloths)   
     return selectedCloths
-        
 
-#Fuction to check if there is an activity and the weather conditions
-def check_todays_activity(activities):
-    """This function checks the day's activity"""
-    now = datetime.datetime.now()
-    date=now.strftime("%Y-%m-%d")
-    event=0
-    activitytype=[]
-   
-    for activity in activities:
-        print(activity.category)
-        if str(activity.event_date)==str(date):
-            client=yweather.Client()
-            weather_id=client.fetch_woeid(activity.event_location)
-            if weather_id is None:
-                weather_id=client.fetch_woeid('Nairobi,Kenya')
-            weather_st=client.fetch_weather(weather_id)
-            weather=weather_st['condition']
-            #append activity type
-            activitytype.append(activity.category)
-            event=1
-        
-    if event:
-        return {"weather": weather,"activitytype": activitytype}
-    else:
-        return False
-    
+
+
 
     
     
