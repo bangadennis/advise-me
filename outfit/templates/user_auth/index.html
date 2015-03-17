@@ -1,7 +1,7 @@
 
 {% extends "user_auth/base.html" %}
 {% load staticfiles %}
-
+{% load i18n common %}
 
 {% block body_block %}
      <h1 class='text-info'>Day's Outfit</h1>
@@ -22,23 +22,33 @@
     
     <div class="row">
         {% if not activities %}
-            <p class='text-danger'>No activity for the Day</p>
+            <span class="glyphicon glyphicon-info-sign text-error" aria-hidden="true">
+            <span class='text-danger'>No activity available for the Day</span>
+             </span> <br/>
+            <a href="{% url 'add_user_activity' %}">Add Activity</a>
         {%endif%}
         
         {% for activity in activities %}
+        <dl>
+          <dt><span class='text-info'> Location:</span>
+          <span>&nbsp{{activity.event_location|capfirst }}</span>
+          <span class="text-info">EventName:</span>
+          <span>&nbsp{{activity.event_name|capfirst}}</span>
+          </dt>
             
-            <h4> Location:{{activity.event_location|capfirst }} EventName:{{activity.event_name|capfirst}}</h3>
-        {% for cloth in cloths.1 %}
-        <div class='col-md-4'>
+        {% for cloth in clothes.0 %}
+        <dd>
             <a href="/auth/get_facts/{{cloth.id}}/view/">
-            <img src="{{ cloth.cloth_image.url }}" class='img-rounded' alt="{{cloth.cloth_description}}" />
+            <img src="{{ cloth.cloth_image.url }}" class='img-rounded text-center' alt="{{cloth.cloth_description}}" />
             </a>
-            <p class="text-center"> <strong><i> {{cloth.cloth_description }} </i> </strong> </p>
-        </div>
+            <p class="text-left"> <strong><i> {{cloth.cloth_description }} </i> </strong> </p
+        </dd>
     {% endfor %}
-    <br>
     <hr>
+    </dl>
     {%endfor%}
+    
+    </div>
     </div>
         
 {% endblock %}

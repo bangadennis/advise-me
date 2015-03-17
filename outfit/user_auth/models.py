@@ -10,7 +10,6 @@ class UserDetails(models.Model):
     #additional details
     gender=models.CharField(max_length=10, blank=False, null=False, default="Male")
     dateofbirth=models.DateField(blank=False, null=False)
-    skintone=models.CharField(max_length=50,blank=False, null=False)
     occupation=models.CharField(max_length=50,blank=False, null=False)
     profile_picture= ProcessedImageField(upload_to='images/profileImages',blank=True,default=False,
                                            processors=[ResizeToFill(100, 100)],
@@ -45,7 +44,6 @@ class UserActivity(models.Model):
    event_name=models.CharField(max_length=50, blank=False, null=False)
    event_date=models.DateField(blank=False, null=False)
    start_time=models.TimeField(blank=False, null=False)
-   end_time=models.TimeField(blank=False, null=False)
 
 class ClothFactBase(models.Model):
     cloth=models.ForeignKey(ClothDescription)

@@ -30,7 +30,7 @@ def index(request):
     if request.user.is_authenticated():
         return HttpResponseRedirect('/auth/dash')
     
-    return render(request, 'user_auth/base.html', {})
+    return render(request, 'user_auth/base.html', {'active': 'active'})
 
 ##############################################################################################
 #Dash/MyCloset
@@ -45,7 +45,7 @@ def dash(request):
             
         return render(request,
                       'user_auth/dash.html',
-                      {'cloths': cloths, 'userdetails': user})
+                      {'cloths': cloths, 'userdetails': user , 'active': 'home'})
     
 ##############################################################################################
 #registration view
@@ -120,7 +120,7 @@ def login_view(request):
     else:
         # No context variables to pass to the template system, hence the
         # blank dictionary object...
-        return render(request, 'user_auth/login.html', {})
+        return render(request, 'user_auth/login.html', {'active': 'login'})
             
         
 ##############################################################################################     
@@ -199,7 +199,8 @@ def closet_upload(request):
         #return render to response depending on the context
         return render(request,
                       "user_auth/closet_upload.html",
-                      {"clothform": clothdetails, 'userdetails': userdetails})
+                      {"clothform": clothdetails, 'userdetails': userdetails
+                       , 'active': 'upload' })
 
 ##############################################################################################
 #edit userdetails
@@ -255,7 +256,8 @@ def add_user_activity(request):
         #return render to response depending on the context
         return render(request,
                       "user_auth/add_user_activity.html",
-                      {"activitydetails": activitydetails, 'userdetails': userdetails})
+                      {"activitydetails": activitydetails, 'userdetails': userdetails
+                       , 'active': 'add_activity'})
 
 ############################################################################################## 
 #view for activities 
@@ -269,8 +271,8 @@ def user_activites(request):
         activities=UserActivity.objects.all().filter(user=request.user).order_by("-event_date")
         
         if activities.count()==0:
-            messages.info(request, "No Activities")
-            return HttpResponseRedirect('/auth/dash')
+            messages.info(request, "No Activities, add new activities")
+            return HttpResponseRedirect('/auth/add_user_activity')
         
         weather=[]
         now = datetime.datetime.now()
@@ -289,7 +291,8 @@ def user_activites(request):
                 
         return render(request,
                       'user_auth/user_activity.html',
-                      {'activities': activities, 'userdetails': user, 'weather_st':weather})
+                      {'activities': activities, 'userdetails': user, 'weather_st':weather
+                       , 'active': 'activities'})
     
 ##############################################################################################
 #delete activity
@@ -355,7 +358,7 @@ def add_cloth_facts(request, cloth_id):
         return render(request,
                       "user_auth/add_cloth_facts.html",
                       {'clothform': cloth_fact, 'userdetails': userdetails,
-                       'cloth': cloth_data, 'clothfacts': facts})
+                       'cloth': cloth_data, 'clothfacts': facts , 'active': 'active'})
     
 ##############################################################################################
 #delete a cloth
@@ -443,8 +446,8 @@ def todays_outfit(request):
         
         return render(request,
                       "user_auth/index.html",
-                      {"cloths": clothobjs, 'userdetails': userdetails,
-                       'activities': activities
+                      {"clothes": clothobjs, 'userdetails': userdetails,
+                       'activities': activities, 'active': 'index'
                        })
             
         
@@ -537,6 +540,7 @@ def check_todays_activity(activities):
     event=0
     activitytype=[]
     weather=[]
+    count=0
     for activity in activities:
         print(activity.category)
         if str(activity.event_date)==str(date):
@@ -547,13 +551,11 @@ def check_todays_activity(activities):
             weather_st=client.fetch_weather(weather_id, metric=True)
             weather.append(weather_st['condition'])
             #append activity type
-            activitytype.update(activity)
+            activitytype.append(activity)
+            count=count+1
             event=1
-        
-    if event:
-        return {"weather": weather,"activitytype": activitytype}
-    else:
-        return False
+    print(activitytype)
+    return {"weather": weather,"activitytype": activitytype}
     
     
 ##############################################################################################
@@ -568,7 +570,7 @@ def outfit_rules_female(clothobjects, weathercondition, activitytype):
             #Material for Hot Weather
             if clothobj.cloth_material in HotWeatherMaterial:
                 #Job Interview Occassion Cloths Type
-                if (activitytype=="Job Interview"or activitytype=="School Event" or activitytype=="Business Formal" ):
+                if (activitytype=="Job Interview" or activitytype=="School Event" or activitytype=="Business Formal" ):
                     cloth_colors=["Gray", "Black", "Navy", "Brown", "Blue"]
                     #Check the appropiate cloth
                     if (clothobj.cloth_type=="Full Suit"):
@@ -590,9 +592,12 @@ def outfit_rules_female(clothobjects, weathercondition, activitytype):
                     if ((clothobj.cloth_type=="Blouse") and (clothobj.cloth_print=="Plain" or
                     clothobj.cloth_print=="Stripped")):
                         selectedCloths.append(clothobj)
+                    if ((clothobj.cloth_type=="Top") and (clothobj.cloth_print=="Plain" or
+                    clothobj.cloth_print=="Stripped")):
+                        selectedCloths.append(clothobj)
                 
                 #Activity Shopping/ CasualDay Out
-                if activitytype=="Shopping/Casual Day Out":
+                if activitytype=="Shopping":
                     if (clothobj.cloth_type=="Jeans"):
                         selectedCloths.append(clothobj)
                     if (clothobj.cloth_type=="Top"):
@@ -616,7 +621,7 @@ def outfit_rules_female(clothobjects, weathercondition, activitytype):
                         selectedCloths.append(clothobj)
                 
                 #Activity Semi Formal/Cocktail
-                if activitytype=="Semi Formal/Cocktail":
+                if activitytype=="Cocktail":
                     if ((clothobj.cloth_type=="Short Dress") and (clothobj.cloth_color=="Black")):
                         selectedCloths.append(clothobj)
                     if ((clothobj.cloth_type=="Mid-Length Dress")):
@@ -625,7 +630,7 @@ def outfit_rules_female(clothobjects, weathercondition, activitytype):
                         selectedCloths.append(clothobj)
     
                 #Activity Formal/Black Tie
-                if activitytype=="Formal/Black Tie":
+                if activitytype=="Black Tie":
                     if (clothobj.cloth_type=="Long Dress"):
                         selectedCloths.append(clothobj)
                 #Activity White Tie
@@ -635,15 +640,15 @@ def outfit_rules_female(clothobjects, weathercondition, activitytype):
                     if (clothobj.cloth_type=="White Gloves"):
                         selectedCloths.append(clothobj)
                 #Activity  Church/Religious Events
-                if activitytype=="Church/Religious":
+                if activitytype=="Religious":
                     if ((clothobj.cloth_type=="Long Dress") or (clothobj.cloth_type=="Mid-Length Dress")
                     or (clothobj.cloth_color in ['Red', 'Orange', 'Blue', 'Pink', 'Peach','Multi-Color','Yellow'])
-                    and (clothobj.cloth_print=="Floral") ):
+                    or (clothobj.cloth_print=="Floral") ):
                         selectedCloths.append(clothobj)
                     
                     if ((clothobj.cloth_type=="Long Skirt") or (clothobj.cloth_type=="Mid-Length Skirt")
                     or (clothobj.cloth_color in ['Red', 'Orange', 'Blue', 'Pink', 'Peach', 'Yellow'])
-                    and (clothobj.cloth_print=="Floral") ):
+                    or (clothobj.cloth_print=="Floral") ):
                         selectedCloths.append(clothobj)
                     if (clothobj.cloth_type in ["Blouse", "Top"]):
                         selectedCloths.append(clothobj)
@@ -652,12 +657,12 @@ def outfit_rules_female(clothobjects, weathercondition, activitytype):
                
                
          #########################################
-            #cloths for cold days
+            #clothes for cold days
             if weathercondition=="cold":
                 if ((clothobj.cloth_type in ['Cardigan', 'Sweater', 'Jacket', 'Scarf', 'Gloves','Trench Coat']) and
                 (clothobj.cloth_material in ['Wool', 'Cashmere'])):
                     selectedCloths.append(clothobj)
-            #cloths for rainy days
+            #clothes for rainy days
             if weathercondition=="rainy":
                   if (clothobj.cloth_type in ['Cardigan', 'Sweater', 'Jacket', 'Scarf', 'Gloves','Rain Coat']):
                     selectedCloths.append(clothobj)
@@ -668,15 +673,16 @@ def outfit_rules_female(clothobjects, weathercondition, activitytype):
 ##############################################################################################
 #rules to match Males'  outfit
 def outfit_rules_male(clothobjects, weathercondition, activitytype):
-    selectedCloths=[]
+    selectedCloth=[]
     HotWeatherMaterial=['Silk', 'Linen', 'Ramie', 'Jute', 'Hemp', 'Bamboo',  'Cotton', 'Chiffon']
     
     for clothobj in clothobjects:
         if weathercondition in ["hot", "cold"]:
             #Material for Hot Weather
             if clothobj.cloth_material in HotWeatherMaterial:
-                #Job Interview Occassion Cloths Type
-                if (activitytype=="Job Interview"or activitytype=="School Event" or activitytype=="Business Casual" ):
+                #Job Interview Occassion Clothes Type
+                if (activitytype=="Job Interview"or activitytype=="School Event" or activitytype=="Business Casual"
+                    or activitytype=="Business Formal"):
                     cloth_colors=["Gray", "Black", "Navy", "Brown", "Blue"]
                     #Check the appropiate cloth
                     if (clothobj.cloth_type=="Full Suit"):
@@ -694,7 +700,7 @@ def outfit_rules_male(clothobjects, weathercondition, activitytype):
                         selectedCloths.append(clothobj)
                 
                 #Activity Shopping/ CasualDay Out
-                if activitytype=="Shopping/Casual Day Out":
+                if activitytype=="Shopping":
                     if (clothobj.cloth_type in ["Jeans","Short"]):
                         selectedCloths.append(clothobj)
                     if (clothobj.cloth_type=="T-Shirt"):
@@ -712,42 +718,37 @@ def outfit_rules_male(clothobjects, weathercondition, activitytype):
                         selectedCloths.append(clothobj)
                 #Activity Wedding
                 if activitytype=="Wedding":
-                    if (clothobj.cloth_type=="Maxi Dress"):
+                    if (clothobj.cloth_type=="Trouser"):
                         selectedCloths.append(clothobj)
-                    if (clothobj.cloth_type=="Brim hat"):
+                    if (clothobj.cloth_type=="Full Suit"):
                         selectedCloths.append(clothobj)
                 
                 #Activity Semi Formal/Cocktail
-                if activitytype=="Semi Formal/Cocktail":
+                if activitytype=="Cocktail":
                     if ((clothobj.cloth_type=="Short Dress") and (clothobj.cloth_color=="Black")):
                         selectedCloths.append(clothobj)
-                    if ((clothobj.cloth_type=="Mid-Length Dress")):
+                    if ((clothobj.cloth_type=="Full Suit")):
                         selectedCloths.append(clothobj)
-                    if ((clothobj.cloth_type=="Blouse") and (clothobj.cloth_material=="Silk")):
+                    if ((clothobj.cloth_type=="Shirt") and (clothobj.cloth_print=="plain")):
                         selectedCloths.append(clothobj)
     
                 #Activity Formal/Black Tie
-                if activitytype=="Formal/Black Tie":
+                if activitytype=="Black Tie":
                     if (clothobj.cloth_type=="Long Dress"):
                         selectedCloths.append(clothobj)
                 #Activity White Tie
                 if activitytype=="White Tie":
-                    if (clothobj.cloth_type=="Long Dress"):
+                    if ((clothobj.cloth_type=="Full Suit") and
+                    (clothobj.color_=="Black")):
                         selectedCloths.append(clothobj)
-                    if (clothobj.cloth_type=="White Gloves"):
+                    if ((clothobj.cloth_type=="Shirt") and
+                    (clothobj.cloth_color=="White")):
                         selectedCloths.append(clothobj)
                 #Activity  Church/Religious Events
-                if activitytype=="Church/Religious":
-                    if ((clothobj.cloth_type=="Long Dress") or (clothobj.cloth_type=="Mid-Length Dress")
-                    or (clothobj.cloth_color in ['Red', 'Orange', 'Blue', 'Pink', 'Peach', 'Yellow'])
-                    and (clothobj.cloth_print=="Floral") ):
+                if activitytype=="Religious":
+                    if ((clothobj.cloth_type=="Jeans") or (clothobj.cloth_type=="T-Shirt")):
                         selectedCloths.append(clothobj)
-                    
-                    if ((clothobj.cloth_type=="Long Skirt") or (clothobj.cloth_type=="Mid-Length Skirt")
-                    or (clothobj.cloth_color in ['Red', 'Orange', 'Blue', 'Pink', 'Peach', 'Yellow'])
-                    and (clothobj.cloth_print=="Floral") ):
-                        selectedCloths.append(clothobj)
-                    if (clothobj.cloth_type in ["Blouse", "Top"]):
+                    if (clothobj.cloth_type in ["Trouser", "Cardigan"]):
                         selectedCloths.append(clothobj)
                 #Activity Business Formal
                    

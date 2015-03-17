@@ -28,11 +28,10 @@ class UserDetailsForm(forms.ModelForm):
     dateofbirth = forms.DateField(label="Date Of Birth ",
         widget=DateWidget(usel10n=True, bootstrap_version=3), required=True
         )
-    skintone=forms.CharField(label="Skin Tone ", required=True,)
     occupation=forms.CharField(label="Occupation", required=True,)
     class Meta:
         model=UserDetails
-        fields=('gender','dateofbirth', 'skintone', 'occupation', 'profile_picture',)
+        fields=('gender','dateofbirth' , 'occupation', 'profile_picture',)
         
     
 #Cloths Description Form and Q&A
@@ -47,25 +46,25 @@ class ClothDescriptionForm(forms.ModelForm):
 
 #UserActivity Form 
 class UserActivityForm(forms.ModelForm):
+    
     category_choices=(('',''),('Job Interview', 'Job Interview'),('Business Formal', 'Business Formal'),
-        ('Business Casual', 'Business Casual'),('Semi Formal/Cocktail', 'Semi Formal/Cocktail'),
+        ('Business Casual', 'Business Casual'),('Cocktail', 'Cocktail'),
         ('Date', 'Date'),('Religious', 'Religious'),('Funeral', 'Funeral'),('Wedding', 'Wedding'),
-        ('School Event', 'School Event'),('Shopping/Casual Day Out', 'Shopping/Casual Day Out'),)
+        ('School Event', 'School Event'),('Shopping', 'Shopping'),)
     helper = FormHelper()
     helper.form_tag = False
     
     event_location=forms.CharField(widget=forms.TextInput(attrs={'id': 'autocomplete', 'onFocus':'geolocate()'}))
     
-    event_date= forms.DateField(label="Date Of Event",
+    event_date= forms.DateField(label="Date of Event",
         widget=DateWidget(usel10n=True, bootstrap_version=3), required=True,
         )
     start_time= forms.TimeField(label="Start Time",
         widget=TimeWidget(usel10n=True, bootstrap_version=3), required=True,
         )
-    end_time= forms.TimeField(label="End Time",
-        widget=TimeWidget(usel10n=True, bootstrap_version=3), required=True,
-        )
-    category=forms.ChoiceField(widget=forms.Select(), choices=category_choices, )
+    
+    category=forms.ChoiceField(widget=forms.Select(), choices=category_choices,
+                               label="Category/Dress Codes",)
     class Meta:
         model=UserActivity
         exclude=('user',)
@@ -83,7 +82,7 @@ class ClothFactForm(forms.ModelForm):
         ('Jacket', 'Jacket'),('Full Suit', 'Full Suit'),('Top', 'Top'),
         ('Mid-Length Dress', 'Mid-Length Dress'),('Long Dress', 'Long Dress'),('Maxi Dress', 'Maxi Dress'),
         ('Blazer', 'Blazer'),('Suit Jacket', 'Suit Jacket'), ('Cardigan', 'Cardigan'),
-        ('Jeans', 'Jeans'),('White Golves', 'White Gloves'),('Jacket', 'Jacket'),
+        ('Jeans', 'Jeans'),('White Gloves', 'White Gloves'),('Jacket', 'Jacket'),
         ('Rain Coat','Rain Coat'), ('Scarf','Scarf'), ('Trench Coat', 'Trench Coat'), )
     choices_type=()
     #Color Choices
@@ -92,23 +91,23 @@ class ClothFactForm(forms.ModelForm):
         ('Purple','Purple'),('Brown','Brown'), ('Multi-Color','Multi-Color'))
     
     #Material Choices
-    choices_material=(('',''),('Cotton', 'Cotton'), ('Slik', 'Slik'), ('Wool', 'Wool'), ('Nylon', 'Nylon'),
+    choices_material=(('',''),('Cotton', 'Cotton'), ('Silk', 'Silk'), ('Wool', 'Wool'), ('Nylon', 'Nylon'),
         ('Polyester', 'Polyester'), ('Denim', 'Denim'), ('Knitwear', 'Knitwear'), ('Lace','Lace' ),
         ('Chiffon', 'Chiffon'), ('Cashmere', 'Cashmere'), ('Spandex', 'Spandex'))
     #Cloth Print Choices
-    choices_print=(('',''), ('Plain', 'Plain'),('Striped', 'Striped'), ('Floral', 'Foral'), ('Geometric', 'Geometric'),
+    choices_print=(('',''), ('Plain', 'Plain'),('Striped', 'Striped'), ('Floral', 'Floral'), ('Geometric', 'Geometric'),
         ('checked','checked'),)
     
     helper = FormHelper()
     helper.form_tag =False
     cloth_type=forms.ChoiceField(widget=forms.Select(), choices=choices_type,
-                                 label="Select The Cloth Type",)
+                                 label="Select Type of Cloth",)
     cloth_color=forms.ChoiceField(widget=forms.Select(), choices=choices_color,
-                                  label="Select The Color of the cloth",)
+                                  label="Select The Color of the Cloth",)
     cloth_material=forms.ChoiceField(widget=forms.Select(), choices=choices_material,
-                                     label="Select The Cloth Material",)
+                                     label="Select Material/Fabric of Cloth",)
     cloth_print=forms.ChoiceField(widget=forms.Select(), choices=choices_print,
-                                  label="Select The Cloth Print",)
+                                  label="Select The Print of the Cloth",)
 
     class Meta:
         model=ClothFactBase

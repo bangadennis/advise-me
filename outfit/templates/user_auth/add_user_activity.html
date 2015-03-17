@@ -5,12 +5,14 @@
 {% block body_block %}
 {% if user.is_authenticated %}
     {% if messages %}
-        <b>{{ username }}</b><br/>
-        <ul class="messages success">
+        <ul class="messages bg-info">
         {% for message in messages %}
-        <li {% if message.tags %} class="{{ message.tags }} text-success"{% endif %}>
-            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"> {{ message }}</span>
-            </li>
+            <div class="text-success bg-info">
+                 <p{% if message.tags %} class="{{ message.tags }}"{% endif %}>
+                <span class="glyphicon glyphicon-info-sign" aria-hidden="true"> {{ message }}</span>
+                 </p>
+            </div>
+           
         {% endfor %}
         </ul>
     {% endif %}
