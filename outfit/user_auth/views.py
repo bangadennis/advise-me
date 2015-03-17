@@ -433,7 +433,9 @@ def todays_outfit(request):
         userdetails=UserDetails.objects.get(user=request.user)
         try:
             activities=UserActivity.objects.all().filter(user=request.user)
-            clothobj=knowledge_engine(activities, request.user, userdetails)
+            results=knowledge_engine(activities, request.user, userdetails)
+            clothobjs=results['clothresults']
+            activities=results['activities']
         except:
             messages.error(request, "Unable to Connect to Yahoo Weather, Check Internet Connection")
             return HttpResponseRedirect('/auth/dash')
@@ -441,7 +443,9 @@ def todays_outfit(request):
         
         return render(request,
                       "user_auth/index.html",
-                      {"cloths": clothobj, 'userdetails': userdetails})
+                      {"cloths": clothobjs, 'userdetails': userdetails,
+                       'activities': activities
+                       })
             
         
         
@@ -454,7 +458,7 @@ def knowledge_engine(activities, user, userdetail):
     
     try:
         data=check_todays_activity(activities)
-        weather_data=data["weather"]
+        weather=data["weather"]
         activitytypes=data["activitytype"]
     except:
         messages.error(request, "Unable to Connect to Weather Server!")
@@ -462,17 +466,19 @@ def knowledge_engine(activities, user, userdetail):
     
     #Check the weather conditions   
         #check the weather conditions
-    print(weather_data)
+    print(weather)
     print(activitytypes)
-    
-    if int(weather_data['temp'])>=15:
-        wcondition="hot"
-    elif int(weather_data['temp'])<15:
-        wcondition="cold"
-    elif lower(weather_data['text']) in ["rain", "rain and snow"] and weather_data['temp']<15:
-        wcondition="rainy"
-    else:
-         pass
+    wcondition=[]
+    for weather_data in weather:
+        if int(weather_data['temp'])>=15:
+            wcondition.append("hot")
+        elif int(weather_data['temp'])<15:
+            wcondition.append("cold")
+        #to be changed
+        elif lower(weather_data['text']) in ["rain", "rain and snow"] and weather_data['temp']<15:
+            wcondition.append("rainy")
+        else:
+             pass
         #wcondition="hot"
         
             
@@ -493,27 +499,34 @@ def knowledge_engine(activities, user, userdetail):
     lock=True
     if userdetail.gender=="Female":
         try:
+            count=0
             for activitytype in activitytypes:
-                daysoutfits.append(outfit_rules_female(clothobjects, wcondition, activitytype.category))
+                daysoutfits.append(outfit_rules_female(clothobjects, wcondition[count], activitytype.category))
+                count=count+1
         except:
             lock=False
             
     else:
+        count=0
         for activitytype in activitytypes:
-            daysoutfits.append(outfit_rules_male(clothobjects, wcondition, activitytype.category))
-    
+            daysoutfits.append(outfit_rules_male(clothobjects, wcondition[count], activitytype.category))
+            count=count+1
     #Getting the cloths' description
     clothresults=[]
+    print("Daysoutfits")
     print(daysoutfits)
     if lock:
         for dayoutfit in daysoutfits:
-            print(daysoutfit)
-            for outfit in daysoutfit:
+            count=0
+            temp=[]
+            for outfit in dayoutfit:
                 clothobj=ClothDescription.objects.get(id=outfit.cloth_id)
-                clothresults.append(clothobj)
+                temp.append(clothobj)
                 print(outfit.cloth_id)
-                
-    return clothresults
+            clothresults.append(temp)
+            count=count+1
+
+    return {"clothresults": clothresults, "activities": activitytypes}
 
 ##############################################################################################
 #Fuction to check if there is an activity and the weather conditions
@@ -523,6 +536,7 @@ def check_todays_activity(activities):
     date=now.strftime("%Y-%m-%d")
     event=0
     activitytype=[]
+    weather=[]
    
     for activity in activities:
         print(activity.category)
@@ -532,7 +546,7 @@ def check_todays_activity(activities):
             if weather_id is None:
                 weather_id=client.fetch_woeid('Nairobi,Kenya')
             weather_st=client.fetch_weather(weather_id, metric=True)
-            weather=weather_st['condition']
+            weather.append(weather_st['condition'])
             #append activity type
             activitytype.append(activity)
             event=1
@@ -549,7 +563,7 @@ def outfit_rules_female(clothobjects, weathercondition, activitytype):
     """Rules to Match Females Outfit"""
     selectedCloths=[]
     HotWeatherMaterial=['Silk', 'Linen', 'Ramie', 'Jute', 'Hemp', 'Bamboo',  'Cotton', 'Chiffon']
-    
+    print(weathercondition)
     for clothobj in clothobjects:
         if weathercondition in ["hot", 'cold', 'rain']:
             #Material for Hot Weather
@@ -738,7 +752,7 @@ def outfit_rules_male(clothobjects, weathercondition, activitytype):
                         selectedCloths.append(clothobj)
                 #Activity Business Formal
                    
-    print(selectedCloths)   
+    #print(selectedCloths)   
     return selectedCloths
 
 

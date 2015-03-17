@@ -21,10 +21,14 @@
     {% endif %}
     
     <div class="row">
-        {% if not cloths %}
+        {% if not activities %}
             <p class='text-danger'>No activity for the Day</p>
         {%endif%}
-        {% for cloth in cloths%}
+        
+        {% for activity in activities %}
+            {%count=0%}
+            <h3> {{activity.event_location|capfirst }} {{activity.event_name|capfirst}}</h3>
+        {% for cloth in cloths.count %}
         <div class='col-md-4'>
             <a href="/auth/get_facts/{{cloth.id}}/view/">
                 
@@ -32,7 +36,10 @@
             </a>
             <p class="text-center"> <strong><i> {{cloth.cloth_description }} </i> </strong> </p>
         </div>
-        {% endfor %}
+    {% endfor %}
+    {% count=count+1 %}
+    <hr>
+    {%endfor%}
     </div>
         
 {% endblock %}
