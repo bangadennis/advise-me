@@ -26,18 +26,17 @@
         {%endif%}
         
         {% for activity in activities %}
-            {%count=0%}
-            <h3> {{activity.event_location|capfirst }} {{activity.event_name|capfirst}}</h3>
-        {% for cloth in cloths.count %}
+            
+            <h4> Location:{{activity.event_location|capfirst }} EventName:{{activity.event_name|capfirst}}</h3>
+        {% for cloth in cloths.1 %}
         <div class='col-md-4'>
             <a href="/auth/get_facts/{{cloth.id}}/view/">
-                
             <img src="{{ cloth.cloth_image.url }}" class='img-rounded' alt="{{cloth.cloth_description}}" />
             </a>
             <p class="text-center"> <strong><i> {{cloth.cloth_description }} </i> </strong> </p>
         </div>
     {% endfor %}
-    {% count=count+1 %}
+    <br>
     <hr>
     {%endfor%}
     </div>

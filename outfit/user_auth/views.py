@@ -537,7 +537,6 @@ def check_todays_activity(activities):
     event=0
     activitytype=[]
     weather=[]
-   
     for activity in activities:
         print(activity.category)
         if str(activity.event_date)==str(date):
@@ -548,7 +547,7 @@ def check_todays_activity(activities):
             weather_st=client.fetch_weather(weather_id, metric=True)
             weather.append(weather_st['condition'])
             #append activity type
-            activitytype.append(activity)
+            activitytype.update(activity)
             event=1
         
     if event:
