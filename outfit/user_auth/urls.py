@@ -18,7 +18,7 @@ urlpatterns = patterns('',
     url(r'^userdetails/$', views.completeuserdetails, name='userdetails'),
     url(r'^edit_userdetails/(?P<pk>\d+)$', views.UserDetailsUpdate.as_view(), name='edit_userdetails'),
     url(r'^add_user_activity/$', views.add_user_activity, name='add_user_activity'),
-    url(r'^delete_activity/(?P<activity_id>\d+)/delete/$', views.delete_activity, name='delete_activity'),
+    url(r'^delete_activity/$', views.delete_activity, name='delete_activity'),
     url(r'^user_activities/$', views.user_activites, name='user_activities'),
     
     url(r'^get_facts/(?P<cloth_id>\d+)/view/$', views.add_cloth_facts, name='cloth_facts'),

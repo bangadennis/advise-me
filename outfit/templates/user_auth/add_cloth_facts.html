@@ -27,16 +27,15 @@
             <a href="/auth/dash/">
                 <button type='button' class='btn btn-info'>Back</button>
             </a>
-          
-          
-            <a href="/auth/delete_cloth/{{cloth.id}}/delete">
-                    <button type='button' class='btn btn-danger'>Delete</button>
-            </a>
             {%if clothfacts %}
             <a href="/auth/update_cloth_facts/{{cloth.id}}/view">
                 <button type='button' class='btn btn-success'>Update</button>
             </a>
             {%endif%}
+          
+            <a href="/auth/delete_cloth/{{cloth.id}}/delete">
+                    <button type='button' id="{{cloth.id}}" class='btn btn-danger delete_cloth'>Delete</button>
+            </a>
             
         </div>
         

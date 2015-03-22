@@ -297,21 +297,19 @@ def user_activites(request):
 ##############################################################################################
 #delete activity
 @login_required
-def delete_activity(request, activity_id):
+def delete_activity(request):
     if not UserDetails.objects.filter(user=request.user).exists():
             return HttpResponseRedirect('/auth/userdetails')
     else:
-        if activity_id:
-            try:
+        if request.method=='GET':
+            activity_id=request.GET['activity_id']
+            if activity_id:
                 user=User.objects.get(username=request.user.username)
                 activity=user.useractivity_set.get(activity_id=activity_id)
                 activity.delete()
-                
-                messages.info(request, "Activity Deleted")
-                return HttpResponseRedirect('/auth/user_activities')
-            except:
-                messages.info(request, "Invalid Delete Activity Option")
-                return HttpResponseRedirect('/auth/user_activities/')   
+                #messages.info(request, "Activity Deleted")
+                #return HttpResponseRedirect('/auth/user_activities')
+                return HttpResponse(activity_id)
     
 ############################################################################################## 
 #add cloth facts
@@ -438,7 +436,7 @@ def todays_outfit(request):
             activities=UserActivity.objects.all().filter(user=request.user)
             results=knowledge_engine(activities, request.user, userdetails)
             clothobjs=results['clothresults']
-            activities=results['activities']
+            #activities=results['activities']
         except:
             messages.error(request, "Unable to Connect to Yahoo Weather, Check Internet Connection")
             return HttpResponseRedirect('/auth/dash')
@@ -446,8 +444,7 @@ def todays_outfit(request):
         
         return render(request,
                       "user_auth/index.html",
-                      {"clothes": clothobjs, 'userdetails': userdetails,
-                       'activities': activities, 'active': 'index'
+                      {"clothes": clothobjs, 'userdetails': userdetails, 'active': 'index'
                        })
             
         
@@ -515,21 +512,23 @@ def knowledge_engine(activities, user, userdetail):
             daysoutfits.append(outfit_rules_male(clothobjects, wcondition[count], activitytype.category))
             count=count+1
     #Getting the cloths' description
-    clothresults=[]
+    clothresults={}
     print("Daysoutfits")
     print(daysoutfits)
     if lock:
-        for dayoutfit in daysoutfits:
-            count=0
-            temp=[]
-            for outfit in dayoutfit:
-                clothobj=ClothDescription.objects.get(id=outfit.cloth_id)
-                temp.append(clothobj)
-                print(outfit.cloth_id)
-            clothresults.append(temp)
-            count=count+1
+        for activities in activitytypes:
+            for dayoutfit in daysoutfits:
+                count=0
+                temp=[]
+                for outfit in dayoutfit:
+                    clothobj=ClothDescription.objects.get(id=outfit.cloth_id)
+                    temp.append(clothobj)
+                    print(outfit.cloth_id)
+                clothresults.update(activities, temp)
+                count=count+1
+    
 
-    return {"clothresults": clothresults, "activities": activitytypes}
+    return {"clothresults": clothresults}
 
 ##############################################################################################
 #Fuction to check if there is an activity and the weather conditions

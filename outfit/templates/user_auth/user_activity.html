@@ -28,15 +28,16 @@
                 </thead>
                 
                 {% for item in activities %}
-                    <tr>
+                    <tr id="{{item.activity_id}}">
                         <td>{{item.category}} </td>
                         <td>{{item.event_name}} </td>
                         <td>{{item.event_location}} </td>
                         <td>{{item.event_date}} </td>
                         <td>{{item.start_time}} </td>
-                        <td> <a href="/auth/delete_activity/{{item.activity_id}}/delete/" class="text-danger">
+                        <td Class="delete_activity">
+                        <button class="btn btn-danger btn-small">
                             <span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>
-                        </a> </td>
+                        </button> </td>
                     </tr>
                 {%endfor%}            
             </table>
