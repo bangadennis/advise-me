@@ -26,7 +26,7 @@
                     <td>Start Time</td>
                     </strong></i>
                 </thead>
-                
+                <tbody>
                 {% for item in activities %}
                     <tr id="{{item.activity_id}}">
                         <td>{{item.category}} </td>
@@ -39,7 +39,8 @@
                             <span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>
                         </button> </td>
                     </tr>
-                {%endfor%}            
+                {%endfor%}
+                </tbody>
             </table>
             
             <div>

@@ -436,7 +436,10 @@ def todays_outfit(request):
             activities=UserActivity.objects.all().filter(user=request.user)
             results=knowledge_engine(activities, request.user, userdetails)
             clothobjs=results['clothresults']
-            #activities=results['activities']
+            activities=results['activities']
+            
+            datazip=zip(activities, clothobjs)   
+                
         except:
             messages.error(request, "Unable to Connect to Yahoo Weather, Check Internet Connection")
             return HttpResponseRedirect('/auth/dash')
@@ -444,8 +447,7 @@ def todays_outfit(request):
         
         return render(request,
                       "user_auth/index.html",
-                      {"clothes": clothobjs, 'userdetails': userdetails, 'active': 'index'
-                       })
+                      {"activities": datazip, 'userdetails': userdetails, 'active': 'index'})
             
         
         
@@ -494,6 +496,7 @@ def knowledge_engine(activities, user, userdetail):
                 except:
                     pass
                 
+    
     #Select Matching function to either male or female outfit
     daysoutfits=[]
     lock=True
@@ -511,24 +514,19 @@ def knowledge_engine(activities, user, userdetail):
         for activitytype in activitytypes:
             daysoutfits.append(outfit_rules_male(clothobjects, wcondition[count], activitytype.category))
             count=count+1
-    #Getting the cloths' description
-    clothresults={}
-    print("Daysoutfits")
-    print(daysoutfits)
-    if lock:
-        for activities in activitytypes:
-            for dayoutfit in daysoutfits:
-                count=0
-                temp=[]
-                for outfit in dayoutfit:
-                    clothobj=ClothDescription.objects.get(id=outfit.cloth_id)
-                    temp.append(clothobj)
-                    print(outfit.cloth_id)
-                clothresults.update(activities, temp)
-                count=count+1
     
-
-    return {"clothresults": clothresults}
+    #Getting the cloths' description
+    clothresults=[]
+    if lock:
+        for dayoutfit in daysoutfits:
+            temp=[]
+            for outfit in dayoutfit:
+                clothobj=ClothDescription.objects.get(id=outfit.cloth_id)
+                temp.append(clothobj)
+                print(outfit.cloth_id)
+            clothresults.append(temp)
+    
+    return {"clothresults": clothresults, "activities": activitytypes}
 
 ##############################################################################################
 #Fuction to check if there is an activity and the weather conditions

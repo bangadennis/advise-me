@@ -27,25 +27,28 @@
              </span> <br/>
             <a href="{% url 'add_user_activity' %}">Add Activity</a>
         {%endif%}
-        
-        {% for activity, clothi in clothes %}
-        <dl>
-          <dt><span class='text-info'> Location:</span>
-          <span>&nbsp{{activity.event_location|capfirst }}</span>
+        <div class="col-md-8">
+        {% for activity in activities %}
+          <span class='text-info'> Location:</span>
+          <span>&nbsp{{activity.0.event_location|capfirst }}</span>
           <span class="text-info">EventName:</span>
-          <span>&nbsp{{activity.event_name|capfirst}}</span>
-          </dt>
-        {% for cloth in clothi %}
-        <dd>
+          <span>&nbsp{{activity.0.event_name|capfirst}}</span>
+        <table>
+        <tr>
+        {% for cloth in activity.1 %}
+        <td>
             <a href="/auth/get_facts/{{cloth.id}}/view/">
             <img src="{{ cloth.cloth_image.url }}" class='img-rounded text-center' alt="{{cloth.cloth_description}}" />
             </a>
             <p class="text-left"> <strong><i> {{cloth.cloth_description }} </i> </strong> </p
-        </dd>
-    {% endfor %}
+        </td>
+        {% endfor %}
+        </tr>
+    </table>
     <hr>
-    </dl>
     {%endfor%}
+    </div>
+    
     
     </div>
     </div>
