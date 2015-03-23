@@ -103,7 +103,9 @@ def login_view(request):
                 # If the account is valid and active, we can log the user in.
                 # We'll send the user back to the homepage.
                 login(request, user)
-                message="Last Login was at %s" %(user.last_login)
+                last_logindate=user.last_login
+                logintime=last_logindate.strftime("Date:%Y-%m-%d Time:%H:%M:%S")
+                message="Last Login was at %s" %(logintime)
                 messages.info(request, message)
                 return HttpResponseRedirect('/auth/dash')
             else:
@@ -433,12 +435,13 @@ def todays_outfit(request):
         
         userdetails=UserDetails.objects.get(user=request.user)
         try:
-            activities=UserActivity.objects.all().filter(user=request.user)
+            activities=UserActivity.objects.all().filter(user=request.user).order_by('start_time')
             results=knowledge_engine(activities, request.user, userdetails)
             clothobjs=results['clothresults']
             activities=results['activities']
+            weatherdata=results['weatherdata']
             
-            datazip=zip(activities, clothobjs)   
+            datazip=zip(activities, clothobjs, weatherdata)   
                 
         except:
             messages.error(request, "Unable to Connect to Yahoo Weather, Check Internet Connection")
@@ -462,6 +465,7 @@ def knowledge_engine(activities, user, userdetail):
         data=check_todays_activity(activities)
         weather=data["weather"]
         activitytypes=data["activitytype"]
+        weatherdata=data["weatherdata"]
     except:
         messages.error(request, "Unable to Connect to Weather Server!")
         return HttpResponseRedirect('/auth/dash')
@@ -515,7 +519,7 @@ def knowledge_engine(activities, user, userdetail):
             daysoutfits.append(outfit_rules_male(clothobjects, wcondition[count], activitytype.category))
             count=count+1
     
-    #Getting the cloths' description
+    #Getting the clothes' description
     clothresults=[]
     if lock:
         for dayoutfit in daysoutfits:
@@ -526,7 +530,8 @@ def knowledge_engine(activities, user, userdetail):
                 print(outfit.cloth_id)
             clothresults.append(temp)
     
-    return {"clothresults": clothresults, "activities": activitytypes}
+    return {"clothresults": clothresults, "activities": activitytypes,
+            "weatherdata": weatherdata}
 
 ##############################################################################################
 #Fuction to check if there is an activity and the weather conditions
@@ -538,6 +543,7 @@ def check_todays_activity(activities):
     activitytype=[]
     weather=[]
     count=0
+    weatherdata=[]
     for activity in activities:
         print(activity.category)
         if str(activity.event_date)==str(date):
@@ -547,12 +553,13 @@ def check_todays_activity(activities):
                 weather_id=client.fetch_woeid('Nairobi,Kenya')
             weather_st=client.fetch_weather(weather_id, metric=True)
             weather.append(weather_st['condition'])
+            weatherdata.append(weather_st)
             #append activity type
             activitytype.append(activity)
             count=count+1
             event=1
     print(activitytype)
-    return {"weather": weather,"activitytype": activitytype}
+    return {"weather": weather,"activitytype": activitytype, "weatherdata": weatherdata}
     
     
 ##############################################################################################
@@ -752,7 +759,9 @@ def outfit_rules_male(clothobjects, weathercondition, activitytype):
     #print(selectedCloths)   
     return selectedCloths
 
-
+#Function to Sort the selected clothes
+def sortclothes(selectedclothes):
+    pass
 
 
     

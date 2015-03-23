@@ -24,15 +24,40 @@
         {% if not activities %}
             <span class="glyphicon glyphicon-info-sign text-error" aria-hidden="true">
             <span class='text-danger'>No activity available for the Day</span>
-             </span> <br/>
-            <a href="{% url 'add_user_activity' %}">Add Activity</a>
+             </span>
+            <span>
+                <a href="{% url 'add_user_activity' %}">
+                    <button class="btn btn-success">Add Activity</button>
+                 </a>
+            </span>
+                 
         {%endif%}
         <div class="col-md-8">
         {% for activity in activities %}
-          <span class='text-info'> Location:</span>
-          <span>&nbsp{{activity.0.event_location|capfirst }}</span>
-          <span class="text-info">EventName:</span>
-          <span>&nbsp{{activity.0.event_name|capfirst}}</span>
+            <div>
+                <h3>Event_{{forloop.counter}}</h3>
+                <span class='text-info'> Type:</span>
+                <span>&nbsp{{activity.0.category|capfirst }}</span>
+                <span class="text-info">Start Time:</span>
+                <span>&nbsp{{activity.0.start_time|capfirst}}</span>  
+                <span class='text-info'> Location:</span>
+                <span>&nbsp{{activity.0.event_location|capfirst }}</span>
+                <span class="text-info">EventName:</span>
+                <span>&nbsp{{activity.0.event_name|capfirst}}</span>  
+            </div>
+          
+          <div>
+            <h4>Weather</h4>
+            <span>Tempratures:
+                {{ activity.2.condition.temp}}
+                </span>
+                <br/>
+                <span>
+                <img src="{{activity.2.condition.image }}"/>
+                 {{ activity.2.condition.text}}
+                </span>
+            </div>
+        <h4>Clothes</h4>
         <table>
         <tr>
         {% for cloth in activity.1 %}
