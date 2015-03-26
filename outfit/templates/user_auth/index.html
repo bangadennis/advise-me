@@ -59,14 +59,34 @@
             </div>
         <h4>Clothes</h4>
         <table>
-        <tr>
+        {% if not activity.1 %}
+            
+            <span class="glyphicon glyphicon-info-sign text-error" aria-hidden="true">
+            <span class='text-danger'>No appropiate Match in the closet</span>
+             </span>
+            <span>
+                <a href="{% url 'closet_upload' %}">
+                    <button class="btn btn-success">Add Clothes</button>
+                 </a>
+            </span>
+            
+        {%endif%}
         {% for cloth in activity.1 %}
+        
+        {% ifequal forloop.counter 1 %}
+            <tr>
+        {%endifequal%}
         <td>
             <a href="/auth/get_facts/{{cloth.id}}/view/">
             <img src="{{ cloth.cloth_image.url }}" class='img-rounded text-center' alt="{{cloth.cloth_description}}" />
             </a>
             <p class="text-left"> <strong><i> {{cloth.cloth_description }} </i> </strong> </p
         </td>
+        {% if forloop.counter in ui_list.1 %}
+            </tr>
+            <tr>
+        {%endif%}
+        
         {% endfor %}
         </tr>
     </table>

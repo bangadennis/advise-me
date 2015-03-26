@@ -448,9 +448,13 @@ def todays_outfit(request):
             return HttpResponseRedirect('/auth/dash')
             
         
+        list1=[(i)*3+1 for i in range(0,6)]
+        list2=[i*3 for i in range(1,6)]
+        ui_list=[list1, list2]
         return render(request,
                       "user_auth/index.html",
-                      {"activities": datazip, 'userdetails': userdetails, 'active': 'index'})
+                      {"activities": datazip, 'userdetails':
+                        userdetails, 'active': 'index', "ui_list": ui_list })
             
         
         
@@ -530,8 +534,9 @@ def knowledge_engine(activities, user, userdetail):
                 print(outfit.cloth_id)
             clothresults.append(temp)
     
+    
     return {"clothresults": clothresults, "activities": activitytypes,
-            "weatherdata": weatherdata}
+            "weatherdata": weatherdata, }
 
 ##############################################################################################
 #Fuction to check if there is an activity and the weather conditions
@@ -645,15 +650,16 @@ def outfit_rules_female(clothobjects, weathercondition, activitytype):
                         selectedCloths.append(clothobj)
                 #Activity  Church/Religious Events
                 if activitytype=="Religious":
-                    if ((clothobj.cloth_type=="Long Dress") or (clothobj.cloth_type=="Mid-Length Dress")
-                    or (clothobj.cloth_color in ['Red', 'Orange', 'Blue', 'Pink', 'Peach','Multi-Color','Yellow'])
-                    or (clothobj.cloth_print=="Floral") ):
+                    if (((clothobj.cloth_type=="Long Dress") or (clothobj.cloth_type=="Mid-Length Dress"))
+                    and((clothobj.cloth_color in ['Red', 'Orange', 'Blue', 'Pink', 'Peach','Multi-Color','Yellow'])
+                    or (clothobj.cloth_print=="Floral"))):
                         selectedCloths.append(clothobj)
                     
-                    if ((clothobj.cloth_type=="Long Skirt") or (clothobj.cloth_type=="Mid-Length Skirt")
-                    or (clothobj.cloth_color in ['Red', 'Orange', 'Blue', 'Pink', 'Peach', 'Yellow'])
-                    or (clothobj.cloth_print=="Floral") ):
+                    if (((clothobj.cloth_type=="Long Skirt") or (clothobj.cloth_type=="Mid-Length Skirt"))
+                    and (((clothobj.cloth_color in ['Red', 'Orange', 'Blue', 'Pink', 'Peach', 'Yellow'])
+                    and (clothobj.cloth_print=="Floral") ))):
                         selectedCloths.append(clothobj)
+                        
                     if (clothobj.cloth_type in ["Blouse", "Top"]):
                         selectedCloths.append(clothobj)
                 #Activity Business Formal
@@ -761,7 +767,9 @@ def outfit_rules_male(clothobjects, weathercondition, activitytype):
 
 #Function to Sort the selected clothes
 def sortclothes(selectedclothes):
+    #sort throught the clothes
     pass
+        
 
 
     
