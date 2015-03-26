@@ -585,7 +585,7 @@ def outfit_rules_female(clothobjects, weathercondition, activitytype):
                     if (clothobj.cloth_type=="Full Suit"):
                         selectedCloths.append(clothobj)
                     
-                    if (clothobj.cloth_type=="Mid-lenght Skirt" and clothobj.cloth_color in cloth_colors and clothobj.cloth_print=="Plain"):
+                    if (clothobj.cloth_type=="Mid-Length Skirt" and clothobj.cloth_color in cloth_colors and clothobj.cloth_print=="Plain"):
                         selectedCloths.append(clothobj)
                         
                     if (clothobj.cloth_type=="Pants" and clothobj.cloth_color in cloth_colors and clothobj.cloth_print=="Plain"):
