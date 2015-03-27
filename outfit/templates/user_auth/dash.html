@@ -27,7 +27,18 @@
         </ul>
     {% endif %}
     <h3 class="text-info">Closet</h3>
+        {%if not cloths.1 %}
+        <span class="glyphicon glyphicon-info-sign text-error" aria-hidden="true">
+            <span class='text-danger'>No Clothes in Closet.</span>
+        </span>
+        <span>
+                <a href="{% url 'closet_upload' %}">
+                <button class="btn btn-success">Upload to Closet</button>
+                 </a>
+        </span> 
+        {%endif%}
         {% for clothi in cloths%}
+            
         {% if clothi %}
         <div class="panel panel-default">
             <div class="panel-heading" role="tab" id="Event_{{forloop.counter}}">
