@@ -6,7 +6,7 @@ urlpatterns = patterns('',
     # url(r'^$', 'outfit.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
 
-    #trial
+    #
     url(r'^index/$', views.todays_outfit, name='index'),
     #urls
     url(r'^register/$', views.register, name='register'),
@@ -14,6 +14,7 @@ urlpatterns = patterns('',
     url(r'^closet_upload/', views.closet_upload, name='closet_upload'),
     url(r'^dash/', views.dash, name='trya'),
     url(r'^logout/$', views.user_logout, name='logout'),
+    
     
     url(r'^userdetails/$', views.completeuserdetails, name='userdetails'),
     url(r'^edit_userdetails/(?P<pk>\d+)$', views.UserDetailsUpdate.as_view(), name='edit_userdetails'),
@@ -25,8 +26,8 @@ urlpatterns = patterns('',
     url(r'^delete_cloth/(?P<cloth_id>\d+)/delete/$', views.delete_cloth, name='delete_cloth'),
     
     url(r'^update_cloth_facts/(?P<cloth_id>\d+)/view/$', views.update_cloth_facts, name='update_cloth_facts'),
-    
-    
+    #admin panel reports
+    url(r'^panel/$', views.admin_panel, name='admin_panel'),
      
 
 )

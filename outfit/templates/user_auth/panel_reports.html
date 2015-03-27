@@ -1,8 +1,7 @@
 {% extends "user_auth/base.html" %}
 
-{%block link%} {{ activitydetails.media }} {%endblock%}
-
 {% block body_block %}
+
 {% if user.is_authenticated %}
     {% if messages %}
         <ul class="messages bg-info">
@@ -16,25 +15,12 @@
         {% endfor %}
         </ul>
     {% endif %}
-
-<div class='row'>
-    <div class='col-md-offset-3 col-md-6'>
-        <div class="jumbotron">
-        <h3 class='text-info'>Add Activity/Event</h3>
-        <form role="form"  method="post" action="/auth/add_user_activity/" >
-        
-        <fieldset>
-        {% csrf_token %}
-        
-        {% load crispy_forms_tags %}
-        {% crispy activitydetails %}
-        </fieldset>
-        <button type="submit" class="btn btn-success">Add</button>
-        </form>
-    </div>
-    </div>
     
-</div>
+<div class="row">
+    <div class='col-md-12'>
+       
+    </div>
 
+</div>
 {% endif %}
 {% endblock %}

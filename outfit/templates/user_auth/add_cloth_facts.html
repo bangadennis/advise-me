@@ -39,7 +39,7 @@
             
         </div>
         
-        <div class='col-md-3'>
+        <div class='col-md-6'>
         {%if clothfacts %}    
         <h3 class='text-info'>Cloth Characteristics</h3>
             <span style="font-size: large">Type: &nbsp{{ clothfacts.cloth_type|capfirst }}</span><br/>
@@ -48,6 +48,7 @@
             <span style="font-size: large">Print: &nbsp {{ clothfacts.cloth_print|capfirst }}</span><br/>
         
         {%else%}
+        <div class="jumbotron">
         <h3 class='text-info'>Add Cloth Facts</h3>
         <form role="form"  method="post" action="/auth/get_facts/{{cloth.id}}/view/" >
             <fieldset>
@@ -60,6 +61,7 @@
             <button type="submit" class="btn btn-success">Add</button>
         </form>
         {%endif%}
+        </div>
         </div>
     </div>
 

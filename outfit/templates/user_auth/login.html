@@ -2,7 +2,9 @@
 {% extends 'user_auth/base.html' %}
 {% block body_block %}
 
-    <div class='col-md-5 col-md-offset-3'>   
+    <div class='col-md-6 col-md-offset-3'>
+        <div class="jumbotron">
+        <h3>Login</h3>
         <form id="login_form" method="post" action="{% url 'login' %}">
              {% csrf_token %}
             <div class='form-group'>
@@ -18,5 +20,6 @@
     
             <input type="submit" class="btn btn-large btn-success" value="Login" />
         </form>
-    </div> 
+    </div>
+</div>
 {% endblock %}

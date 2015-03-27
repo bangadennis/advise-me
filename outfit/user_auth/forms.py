@@ -82,8 +82,8 @@ class ClothFactForm(forms.ModelForm):
         ('Jacket', 'Jacket'),('Full Suit', 'Full Suit'),('Top', 'Top'),
         ('Mid-Length Dress', 'Mid-Length Dress'),('Long Dress', 'Long Dress'),('Maxi Dress', 'Maxi Dress'),
         ('Blazer', 'Blazer'),('Suit Jacket', 'Suit Jacket'), ('Cardigan', 'Cardigan'),
-        ('Jeans', 'Jeans'),('White Gloves', 'White Gloves'),('Jacket', 'Jacket'),
-        ('Rain Coat','Rain Coat'), ('Scarf','Scarf'), ('Trench Coat', 'Trench Coat'), )
+        ('Jeans', 'Jeans'),('White Gloves', 'White Gloves'),('Rain Coat','Rain Coat'),
+        ('Scarf','Scarf'), ('Trench Coat', 'Trench Coat'), )
     choices_type=()
     #Color Choices
     choices_color=(('',''),('Red', 'Red'), ('Blue', 'Blue'), ('Black', 'Black'),

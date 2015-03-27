@@ -52,6 +52,12 @@
             
             <div>
                 <h4 class="text-info">Weather Details For Today's Events:</h4>
+                {% if not weather_st%}
+                    <span>No Today's Weather Details </span>
+                    <a href="{% url 'add_user_activity' %}">
+                    <button class="btn btn-success">Add today's Activity</button>
+                    </a>
+                {%endif%}
                 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
                     {% for weather in weather_st%}
                     <div class="panel panel-default">

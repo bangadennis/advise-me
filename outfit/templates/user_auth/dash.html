@@ -25,9 +25,13 @@
         {% endfor %}
         </ul>
     {% endif %}
-    <h1 class='text-info'>Closet</h1>
-    
-        {% for cloth in cloths%}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Closet</h3>
+        </div>
+    <div class="panel-body">
+        {% for clothi in cloths%}
+            {%for cloth in clothi %}
         <div class='col-md-4'>
             <a href="/auth/get_facts/{{cloth.id}}/view/">
                 
@@ -36,7 +40,9 @@
             <p class="text-center"> <strong><i> {{cloth.cloth_description }} </i> </strong> </p>
         
         </div>
+            {%endfor%}
         {% endfor %}
+     </div>
     </div>
         
 {% endblock %}

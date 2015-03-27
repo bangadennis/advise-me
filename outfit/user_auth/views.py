@@ -39,15 +39,90 @@ def dash(request):
     if not UserDetails.objects.filter(user=request.user).exists():
             return HttpResponseRedirect('/auth/userdetails')
     else:
-        hello="Welcome, to Our Outfit Expert System:"
         user=UserDetails.objects.get(user=request.user)
-        cloths=ClothDescription.objects.all().filter(user=request.user)
+        cloths=ClothDescription.objects.all().filter(user=request.user).order_by('-id');
+        if user.gender=="Female":
+            category_1=["Top", "Shirt",]
+            category_2=["Dress", "Mid-Length Dress", "Long Dress", "Mid-Length Skirt", "Long Skirt",
+                        "Maxi Dress"]
+            category_3=["Full Suit", "Suit Jacket"]
+            category_4=["Jeans", "Pants", "Short"]
+            category_5=["Rain Coat", "Blazer", "Cardigan", "Trench Coat", "Jacket", "Sweater"]
+            category_6=["Scarf", "White Gloves", ""]
+            
+            clothobjects=[[],[]]
+            for cloth in cloths:
+                try:
+                    usercloth=ClothFactBase.objects.get(cloth_id=cloth)
+                    if usercloth.cloth_type in category_1:
+                        clothobjects[0].append(cloth)
+                    if usercloth.cloth_type in category_2:
+                        clothobjects[1].append(cloth)
+                    if usercloth.cloth_type in category_3:
+                        clothobjects[2].append(cloth)
+                    if usercloth.cloth_type in category_4:
+                        clothobjects[3].append(cloth)
+                    if usercloth.cloth_type in category_5:
+                        clothobjects[4].append(cloth)
+                    if usercloth.cloth_type in category_6:
+                        clothobjects[5].append(cloth)
+                    if not usercloth.cloth_type:
+                        clothobjects[6].append(cloth)    
+                except:
+                    pass
+            cloths=clothobjects
+        else:
+            #MALE
+            category_1=["Shirt", "T-Shirt"]
+            category_2=["Full Suit"]
+            category_3=["Jeans", "Trouser", "Short"]
+            category_4=["Rain Coat", "Blazer", "Cardigan", "Trench Coat", "Jacket", "Sweater"]
+            category_5=["Scarf", "Gloves", ""]
+            
+            clothobjects=[[],[]]
+            for cloth in cloths:
+                try:
+                    usercloth=ClothFactBase.objects.get(cloth_id=cloth)
+                    if usercloth.cloth_type in category_1:
+                        clothobjects[0].append(cloth)
+                    if usercloth.cloth_type in category_2:
+                        clothobjects[1].append(cloth)
+                    if usercloth.cloth_type in category_3:
+                        clothobjects[2].append(cloth)
+                    if usercloth.cloth_type in category_4:
+                        clothobjects[3].append(cloth)
+                    if usercloth.cloth_type in category_5:
+                        clothobjects[4].append(cloth)
+                    if not usercloth.cloth_type:
+                        clothobjects[6].append(cloth)    
+                except:
+                    pass
+            cloths=clothobjects
             
         return render(request,
                       'user_auth/dash.html',
                       {'cloths': cloths, 'userdetails': user , 'active': 'home'})
     
 ##############################################################################################
+#control panel-admin
+@login_required
+def admin_panel(request):
+    if not UserDetails.objects.filter(user=request.user).exists():
+            return HttpResponseRedirect('/auth/userdetails')
+    else:
+        user=UserDetails.objects.get(user=request.user)
+        if not request.user.is_superuser:
+            messages.info(request, "Panel For Admins Only")
+            return HttpResponseRedirect('/auth/dash')
+            
+            
+        return render(request,
+                      'user_auth/panel_reports.html',
+                      {'userdetails': user , 'active': 'home'})
+        
+
+
+
 #registration view
 def register(request):
     if request.user.is_authenticated():
@@ -273,7 +348,7 @@ def user_activites(request):
         activities=UserActivity.objects.all().filter(user=request.user).order_by("-event_date").order_by("start_time")
         
         if activities.count()==0:
-            messages.info(request, "No Activities, add new activities")
+            messages.info(request, "No Activities!, Add new activities")
             return HttpResponseRedirect('/auth/add_user_activity')
         
         weather=[]
@@ -495,9 +570,9 @@ def knowledge_engine(activities, user, userdetail):
     print(activitytypes)
     wcondition=[]
     for weather_data in weather:
-        if int(weather_data['temp'])>=15:
+        if int(weather_data['temp'])>=17:
             wcondition.append("hot")
-        elif int(weather_data['temp'])<15:
+        elif int(weather_data['temp'])<17:
             wcondition.append("cold")
         #to be changed
         elif lower(weather_data['text']) in ["rain", "rain and snow"] and weather_data['temp']<15:
