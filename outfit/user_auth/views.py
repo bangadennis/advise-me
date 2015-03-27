@@ -270,7 +270,7 @@ def user_activites(request):
         return HttpResponseRedirect('/auth/userdetails')
     else:
         user=UserDetails.objects.get(user=request.user)
-        activities=UserActivity.objects.all().filter(user=request.user).order_by("-event_date")
+        activities=UserActivity.objects.all().filter(user=request.user).order_by("-event_date").order_by("start_time")
         
         if activities.count()==0:
             messages.info(request, "No Activities, add new activities")
@@ -279,17 +279,22 @@ def user_activites(request):
         weather=[]
         now = datetime.datetime.now()
         date=now.strftime("%Y-%m-%d")
-        for item in activities:
-            client=yweather.Client()
-            if str(item.event_date)==str(date):
-                print(item.event_location)
-                weather_id=client.fetch_woeid(item.event_location)
-                print(weather_id)
-                
-                if weather_id is None:
-                    weather_id=client.fetch_woeid('Nairobi,Kenya')
-                weather_st=client.fetch_weather(weather_id, metric=True)
-                weather.append(weather_st)
+        try:
+            for item in activities:
+                client=yweather.Client()
+                if str(item.event_date)==str(date):
+                    print(item.event_location)
+                    weather_id=client.fetch_woeid(item.event_location)
+                    print(weather_id)
+                    
+                    if weather_id is None:
+                        weather_id=client.fetch_woeid('Nairobi,Kenya')
+                    weather_st=client.fetch_weather(weather_id, metric=True)
+                    weather.append(weather_st)
+        except:
+            messages.error(request, "No Internet Connection!")
+            return HttpResponseRedirect('/auth/dash')
+            
                 
         return render(request,
                       'user_auth/user_activity.html',
@@ -563,6 +568,7 @@ def check_todays_activity(activities):
             activitytype.append(activity)
             count=count+1
             event=1
+
     print(activitytype)
     return {"weather": weather,"activitytype": activitytype, "weatherdata": weatherdata}
     

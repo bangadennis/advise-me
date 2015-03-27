@@ -5,16 +5,17 @@ $(document).ready(function() {
             title: "Delete Activity",
             confirm: function(button) {
                 var parent = $('.delete_activity').parent();
+                alert(parent.attr('id'));
                     $.ajax({
                             type: 'get',
                             url: '/auth/delete_activity/',
                             data: {activity_id: parent.attr('id')},
                             beforeSend: function() {
-                                    parent.animate({'backgroundColor':'#fb6c6c'},300);
+                                $(parent.attr('id')).animate({'backgroundColor':'#fb6c6c'},300);
                             },
                             success: function() {
                                     parent.slideUp(300,function() {
-                                            parent.remove();
+                                            $(parent.attr('id')).remove();
                                     });
                             }
                     });

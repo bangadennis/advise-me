@@ -6,13 +6,18 @@
 {% block body_block %}
     
     {% if messages %}
-        <ul class="messages success bg-info">
+        <ul class="messages success">
         {% for message in messages %}
         <p{% if message.tags %} class="{{ message.tags }}"{% endif %}>
             {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                <div class="bg-danger">
                 <span class="glyphicon glyphicon-warning-sign text-error" aria-hidden="true"> {{ message }}</span>
+                </div>
                 {%else%}
-                    <span class="glyphicon glyphicon-info-sign text-success" aria-hidden="true"> {{ message }}</span>
+                    <div class="bg-info">
+                    <span class="glyphicon glyphicon-info-sign text-success" aria-hidden="true">
+                    {{ message }}</span>
+                    </div>
             {% endif %}
             
             </p>
