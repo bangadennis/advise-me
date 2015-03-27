@@ -5,19 +5,20 @@
 
 {% block body_block %}
     
-    {% if messages %}
+    <div class="row">
+        {% if messages %}
         <ul class="messages success">
         {% for message in messages %}
         <p{% if message.tags %} class="{{ message.tags }}"{% endif %}>
             {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
-                <div class="bg-danger">
+                <li class="bg-danger">
                 <span class="glyphicon glyphicon-warning-sign text-error" aria-hidden="true"> {{ message }}</span>
-                </div>
+                </li>
                 {%else%}
-                    <div class="bg-info">
+                    <li class="bg-info">
                     <span class="glyphicon glyphicon-info-sign text-success" aria-hidden="true">
                     {{ message }}</span>
-                    </div>
+                    </li>
             {% endif %}
             
             </p>
@@ -25,7 +26,7 @@
         </ul>
     {% endif %}
     <h1 class='text-info'>Closet</h1>
-    <div class="row">
+    
         {% for cloth in cloths%}
         <div class='col-md-4'>
             <a href="/auth/get_facts/{{cloth.id}}/view/">

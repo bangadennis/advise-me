@@ -294,8 +294,18 @@ def user_activites(request):
         except:
             messages.error(request, "No Internet Connection!")
             return HttpResponseRedirect('/auth/dash')
+        #Adding the active activities
+        display=[]
+        for activity in activities:
+            if str(activity.event_date)==str(date):
+                display.append("active")
+            elif str(activity.event_date)>str(date):
+                display.append("info")
+            else:
+                display.append("danger")
             
-                
+        activities=zip(activities, display)
+        
         return render(request,
                       'user_auth/user_activity.html',
                       {'activities': activities, 'userdetails': user, 'weather_st':weather

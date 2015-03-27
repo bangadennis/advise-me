@@ -4,7 +4,7 @@
 {% load i18n common %}
 
 {% block body_block %}
-     <h1 class='text-info'>Day's Outfit</h1>
+     <h2 class='text-info'>Day's Outfit</h2>
     {% if messages %}
         <ul class="messages bg-info">
         {% for message in messages %}
@@ -21,6 +21,7 @@
     {% endif %}
     
     <div class="row">
+        
         {% if not activities %}
             <span class="glyphicon glyphicon-info-sign text-error" aria-hidden="true">
             <span class='text-danger'>No activity available for the Day</span>
@@ -29,13 +30,26 @@
                 <a href="{% url 'add_user_activity' %}">
                     <button class="btn btn-success">Add Activity</button>
                  </a>
-            </span>
-                 
+            </span>      
         {%endif%}
-        <div class="col-md-8">
+        <div class="col-md-12">
+            
+        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+        
         {% for activity in activities %}
+            <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="Event_{{forloop.counter}}">
+                <h4 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#accordion" href="#id_{{forloop.counter}}" aria-expanded="true" aria-controls="collapseOne">
+                    Event {{forloop.counter}}-{{activity.0.category|capfirst }}
+                    <span class="glyphicon glyphicon-menu-down" aria-hidden="true"></span>
+                  </a>
+                </h4>
+              </div>
+            
+            <div id="id_{{forloop.counter}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="Event_{{forloop.counter}}">
+            <div class="panel-body">
             <div>
-                <h3>Event_{{forloop.counter}}</h3>
                 <span class='text-info'> Type:</span>
                 <span>&nbsp{{activity.0.category|capfirst }}</span>
                 <span class="text-info">Start Time:</span>
@@ -91,9 +105,12 @@
         </tr>
     </table>
     <hr>
+    </div>
+    </div>
+            </div>
     {%endfor%}
     </div>
-    
+    </div>
     
     </div>
     </div>

@@ -13,73 +13,93 @@
         {% endfor %}
         </ul>
     {% endif %}
-    <h2 class='text-info'>MyActivities</h2>
+    
     <div class="row">
-        <div class=''>
-            <table class='table table-responsive table-stripped table-hover '>
-                <thead>
-                    <i><strong>
-                    <td>Category</td>
-                    <td>Event</td>
-                    <td>Location</td>
-                    <td>Date</td>
-                    <td>Start Time</td>
-                    </strong></i>
-                </thead>
-                <tbody>
+        <div class='col-md-12'>
+            <h3 class='text-info'>MyActivities</h3>
+            <div class="panel panel-default">
+            <div class="table-responsive">
+            <table class='table table-stripped table-hover '>
+                <tr>
+                    <td>#</td>
+                    <td><strong>Category</strong></td>
+                    <td><strong>Event</strong></td>
+                    <td><strong>Location</strong></td>
+                    <td><strong>Date</strong></td>
+                    <td><strong>StartTime</strong></td>
+                </tr>
+            
                 {% for item in activities %}
-                    <tr id="{{item.activity_id}}" >
-                        <td>{{item.category}} </td>
-                        <td>{{item.event_name}} </td>
-                        <td>{{item.event_location}} </td>
-                        <td>{{item.event_date}} </td>
-                        <td>{{item.start_time}} </td>
+                    
+                    <tr id="{{item.0.activity_id}}" class="{{item.1}}" >
+                        <td>{{forloop.counter}} </td>
+                        <td>{{item.0.category}} </td>
+                        <td>{{item.0.event_name}} </td>
+                        <td>{{item.0.event_location}} </td>
+                        <td>{{item.0.event_date}} </td>
+                        <td>{{item.0.start_time}} </td>
                         <td Class="delete_activity">
                         <button class="btn btn-danger btn-small">
                             <span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>
                         </button> </td>
                     </tr>
                 {%endfor%}
-                </tbody>
+        
             </table>
+            </div>
+            </div>
+            
             
             <div>
-                
-                <h3>Today's Weather:</h3>
-                {% for weather in weather_st%}
-                <div class='col-md-3'>
-                <label>Region</label>
-                {{ weather.location.city }},
-                {{ weather.location.kenya }}
-                <br/>
-                <strong>Date:
-                {{ weather.lastBuildDate}}</strong>
-                <span>Temp:
-                {{ weather.condition.temp}}
-                </span>
-                <span>Code:
-                 {{ weather.condition.code}}
-                 </span>
-                <br/>
-                <span>
-                <img src="{{weather.condition.image }}"/>
-                 {{ weather.condition.text}}
-                </span>
-                <h4>Forecast for the region</h4>
-                {% for forecast in weather.forecast %}
-                 <h5><strong>{{ forecast.date}}</strong></h5>
-                 <span>Temp:
-                High={{ forecast.high}}, Low={{ forecast.low}}</span>
-                <span>Code:
-                 {{ forecast.code}}</span>
-                <span>Condition:
-                 {{ forecast.text}}
-                </span>
-                <br/>
-               {%endfor%}
-               </div>
-                {% endfor %}
-                
+                <h4 class="text-info">Weather Details For Today's Events:</h4>
+                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                    {% for weather in weather_st%}
+                    <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="id_{{forloop.counter}}">
+                      <h4 class="panel-title text-info">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#item_{{forloop.counter}}" aria-expanded="true" aria-controls="collapseOne">
+                         {{forloop.counter}}-{{ weather.location.city }},{{ weather.location.country }}
+                        <span class="glyphicon glyphicon-menu-down" aria-hidden="true"></span>
+                        </a>
+                      </h4>
+                    </div>
+                    <div id="item_{{forloop.counter}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="id_{{forloop.counter}}">
+                      <div class="panel-body">       
+                        <div class='col-md-6'>
+                        <h4>Today's Weather</h4>
+                        <strong>Date:
+                        {{ weather.lastBuildDate}}</strong>
+                        <span>Temp:
+                        {{ weather.condition.temp}}
+                        </span>
+                        <span>Code:
+                         {{ weather.condition.code}}
+                         </span>
+                        <br/>
+                        <span>
+                        <img src="{{weather.condition.image }}"/>
+                         {{ weather.condition.text}}
+                        </span>
+                        <h4>Forecast for the region</h4>
+                        {% for forecast in weather.forecast %}
+                         <h5><strong>{{ forecast.date}}</strong></h5>
+                         <span>Temp:
+                        High={{ forecast.high}}, Low={{ forecast.low}}</span>
+                        <span>Code:
+                         {{ forecast.code}}</span>
+                        <span>Condition:
+                         {{ forecast.text}}
+                        </span>
+                        <br/>
+                       {%endfor%}
+                       </div>
+                        <h4>MAP</h4>
+                        <div id="googleMap" style="width:500px;height:380px;"></div>
+                      </div>
+                    </div>
+                </div>
+                    {% endfor %}
+                </div>
             </div>
            
            
