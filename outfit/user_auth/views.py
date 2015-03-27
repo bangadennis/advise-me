@@ -50,7 +50,7 @@ def dash(request):
             category_5=["Rain Coat", "Blazer", "Cardigan", "Trench Coat", "Jacket", "Sweater"]
             category_6=["Scarf", "White Gloves", ""]
             
-            clothobjects=[[],[]]
+            clothobjects=[[],[],[],[],[],[],[]]
             for cloth in cloths:
                 try:
                     usercloth=ClothFactBase.objects.get(cloth_id=cloth)
@@ -66,10 +66,9 @@ def dash(request):
                         clothobjects[4].append(cloth)
                     if usercloth.cloth_type in category_6:
                         clothobjects[5].append(cloth)
-                    if not usercloth.cloth_type:
-                        clothobjects[6].append(cloth)    
+                          
                 except:
-                    pass
+                    clothobjects[6].append(cloth)  
             cloths=clothobjects
         else:
             #MALE

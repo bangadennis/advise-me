@@ -6,6 +6,7 @@
 {% block body_block %}
     
     <div class="row">
+        <div class="col-md-12">
         {% if messages %}
         <ul class="messages success">
         {% for message in messages %}
@@ -25,13 +26,21 @@
         {% endfor %}
         </ul>
     {% endif %}
-    <div class="panel panel-default">
-        <div class="panel-heading">
-          <h3 class="panel-title">Closet</h3>
-        </div>
-    <div class="panel-body">
+    <h3 class="text-info">Closet</h3>
         {% for clothi in cloths%}
-            {%for cloth in clothi %}
+        {% if clothi %}
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="Event_{{forloop.counter}}">
+                <h4 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#accordion" href="#id_{{forloop.counter}}" aria-expanded="true" aria-controls="collapseOne">
+                    Group-{{forloop.counter}}
+                    <span class="glyphicon glyphicon-menu-down" aria-hidden="true"></span>
+                  </a>
+                </h4>
+            </div>
+        <div id="id_{{forloop.counter}}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="Event_{{forloop.counter}}">
+        <div class="panel-body">
+        {%for cloth in clothi %}
         <div class='col-md-4'>
             <a href="/auth/get_facts/{{cloth.id}}/view/">
                 
@@ -40,9 +49,13 @@
             <p class="text-center"> <strong><i> {{cloth.cloth_description }} </i> </strong> </p>
         
         </div>
-            {%endfor%}
+        {%endfor%}
+         </div>
+        </div>
+        </div>
+        {%endif%}
         {% endfor %}
-     </div>
+    </div>
     </div>
         
 {% endblock %}
