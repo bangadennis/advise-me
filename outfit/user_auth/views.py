@@ -18,6 +18,7 @@ import datetime
 import json
 #os
 import os
+import random
 #Base Directory
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 #KnowledgeBase
@@ -113,11 +114,21 @@ def admin_panel(request):
         if not request.user.is_superuser:
             messages.info(request, "Panel For Admins Only")
             return HttpResponseRedirect('/auth/dash')
+        else:
+            userslist=[]
+            users=User.objects.all();
+            for userobj in users:
+                totalcloths=ClothDescription.objects.all().filter(user=userobj).count()
+                print(totalcloths)
+                totalactivities=UserActivity.objects.all().filter(user=userobj).count()
+                print(totalactivities)
+                panellist=[userobj, totalcloths, totalactivities]
+                userslist.append(panellist)
             
             
         return render(request,
                       'user_auth/panel_reports.html',
-                      {'userdetails': user , 'active': 'home'})
+                      {'userdetails': user ,'userslist':userslist,'active': 'home'})
         
 
 
@@ -240,7 +251,7 @@ def completeuserdetails(request):
         #return render to response depending on the context
         return render(request,
                       "user_auth/userdetails.html",
-                      {"userdetails": userdetails})
+                      {"userdetail": userdetails})
 
 ##############################################################################################  
 #closet upload cloth images
@@ -344,7 +355,7 @@ def user_activites(request):
         return HttpResponseRedirect('/auth/userdetails')
     else:
         user=UserDetails.objects.get(user=request.user)
-        activities=UserActivity.objects.all().filter(user=request.user).order_by("-event_date").order_by("start_time")
+        activities=UserActivity.objects.all().filter(user=request.user).order_by("start_time").order_by("-event_date")
         
         if activities.count()==0:
             messages.info(request, "No Activities!, Add new activities")
@@ -706,11 +717,14 @@ def outfit_rules_female(clothobjects, weathercondition, activitytype):
                 
                 #Activity Date
                 if activitytype=="Date":
-                    if (clothobj.cloth_type=="Top"):
+                    if (clothobj.cloth_type in ["Top", "Blouse"]):
                         selectedCloths.append(clothobj)
-                    if (clothobj.cloth_type=="Jeans"):
+                    if (clothobj.cloth_type in ["Jeans","Pants"]):
                         selectedCloths.append(clothobj)
                     if (clothobj.cloth_type=="Mid-Length Dress"):
+                        selectedCloths.append(clothobj)
+                    if (clothobj.cloth_type=="Mid-Length Skirt" and
+                        clothobj.cloth_material=="Denim"):
                         selectedCloths.append(clothobj)
                 #Activity Wedding
                 if activitytype=="Wedding":
@@ -767,7 +781,8 @@ def outfit_rules_female(clothobjects, weathercondition, activitytype):
                   if (clothobj.cloth_type in ['Cardigan', 'Sweater', 'Jacket', 'Scarf', 'Gloves','Rain Coat']):
                     selectedCloths.append(clothobj)
                    
-    print(selectedCloths)   
+    print(selectedCloths)
+    selectedCloths=sortclothes(selectedCloths, "Female")
     return selectedCloths
 
 ##############################################################################################
@@ -856,9 +871,52 @@ def outfit_rules_male(clothobjects, weathercondition, activitytype):
     return selectedCloths
 
 #Function to Sort the selected clothes
-def sortclothes(selectedclothes):
+def sortclothes(selectedclothes, gender):
     #sort throught the clothes
-    pass
+    print("Helloooo")
+    category_1=["Top", "Shirt",]
+    category_2=["Dress", "Mid-Length Dress", "Long Dress", "Mid-Length Skirt", "Long Skirt",
+                "Maxi Dress"]
+    category_3=["Full Suit"]
+    category_4=["Jeans", "Pants", "Short"]
+    category_5=["Blazer", "Cardigan", "Trench Coat", "Jacket", "Sweater","Suit Jacket"]
+    category_6=["Scarf", "White Gloves","Rain Coat"]
+    
+    selected_category_1,selected_category_2, selected_category_3,selected_category_4,selected_category_5, selected_category_6=[],[],[],[],[],[]
+    selected=[]
+    if gender=="Female":
+        print("Helloooo  in female")
+        print(selectedclothes)
+        for clothobj in selectedclothes:
+            print(clothobj.cloth_type)
+            if clothobj.cloth_type in category_1:
+                selected_category_1.append(clothobj)
+            if clothobj.cloth_type in category_2:
+                selected_category_2.append(clothobj)
+            if clothobj.cloth_type in category_3:
+                selected_category_3.append(clothobj)
+            if clothobj.cloth_type in category_4:
+                selected_category_4.append(clothobj)
+            if clothobj.cloth_type in category_5:
+                selected_category_5.append(clothobj)
+            if clothobj.cloth_type in category_6:
+                selected_category_6.append(clothobj)
+            
+        if selected_category_1 and selected_category_4:
+            selected.append(random.choice(selected_category_1))
+            selected.append(random.choice(selected_category_4))
+        if selected_category_1 and selected_category_2:
+            selected.append(random.choice(selected_category_1))
+            selected.append(random.choice(selected_category_2))
+        if selected_category_3:
+            selected.append(random.choice(selected_category_3))
+        if selected_category_5:
+            selected.append(random.choice(selected_category_5))
+        if selected_category_6:
+            selected.append(random.choice(selected_category_5))
+            
+    print("Helloooo return") 
+    return selected     
         
 
 

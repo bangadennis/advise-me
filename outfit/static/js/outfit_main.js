@@ -1,11 +1,11 @@
 $(document).ready(function() {
     //delete activity
-      $('.delete_activity').confirm({
-            text: "Are you sure you want to delete that Activity",
-            title: "Delete Activity",
-            confirm: function(button) {
-                var parent = $('.delete_activity').parent();
-                alert(parent.attr('id'));
+      $('.delete_activity').click(function()
+            {
+            var ans=confirm("Are you sure you want to delete that Activity/Event");
+            if (ans) {
+            var parent = $(this).parent();
+                    
                     $.ajax({
                             type: 'get',
                             url: '/auth/delete_activity/',
@@ -19,17 +19,8 @@ $(document).ready(function() {
                                     });
                             }
                     });
-            },
-            cancel: function(button) {
-                // nothing to do
-            },
-            confirmButton: "Yes",
-            cancelButton: "No",
-            post: true,
-            confirmButtonClass: "btn-danger",
-            cancelButtonClass: "btn-default",
-            dialogClass: "modal-dialog modal-sm" // Bootstrap classes for large modal
-        });
+            }
+      });
         //end_delete activity
         
         //delete Cloth

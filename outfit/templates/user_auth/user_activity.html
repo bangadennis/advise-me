@@ -31,15 +31,15 @@
             
                 {% for item in activities %}
                     
-                    <tr id="{{item.0.activity_id}}" class="{{item.1}}" >
+                    <tr id="{{item.0.activity_id}}" >
                         <td>{{forloop.counter}} </td>
                         <td>{{item.0.category}} </td>
                         <td>{{item.0.event_name}} </td>
                         <td>{{item.0.event_location}} </td>
                         <td>{{item.0.event_date}} </td>
                         <td>{{item.0.start_time}} </td>
-                        <td Class="delete_activity">
-                        <button class="btn btn-danger btn-small">
+                        <td class="delete_activity">
+                        <button class="btn btn-danger btn-small" id="{{item.0.activity_id}}">
                             <span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>
                         </button> </td>
                     </tr>

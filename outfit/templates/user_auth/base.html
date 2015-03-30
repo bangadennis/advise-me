@@ -91,23 +91,28 @@
                 <h4>Profile</h3>
                 <a href="{% url 'trya' %}">
                 <p class='text-info' >{{ user.username|capfirst }}</p>  <br/>
+                {% if userdetails %}
                 {% if userdetails.profile_picture %}
                 <img src="{{ userdetails.profile_picture.url }}"  class='img-thumbnail img-circle'
                      alt="{{ user.username}}"/>
                 {%else%}
                 <img src="{% static "images/default.jpg" %}" class='img-thumbnail img-circle'
                      alt="{{user.username}}"/>
+                
                 {% endif%}
+                {%endif %}
                 </a>
                 <a href="/auth/edit_userdetails/{{userdetails.id}}">
                 <span class="glyphicon glyphicon-edit text-success" aria-hidden="true">Edit profile
                 </span> 
                 </a>
                 <br/>
+                
                 {% if user.is_superuser %}
                 <a href="/admin/">Admin</a> <br />
                 <a href="{% url 'admin_panel' %}">Panel Reports</a> <br />
-              {%endif %}
+              
+               {%endif%}
                 <div>
                   <span>
                   <label> Name:</label> <br/>
@@ -187,11 +192,6 @@
       </div>
     </div>
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-   
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
    <!--<script src="{{STATIC_URL}}/js/ie10-viewport-bug-workaround.js"></script>-->
   </body>
 </html>
