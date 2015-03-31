@@ -25,22 +25,45 @@
                 <tr>
                     <td><strong>User</strong></td>
                     <td><strong>Date Joined</strong></td>
-                    <td><strong>Is Active</strong></td>
-                    <td><strong>Number Of Clothes</strong></td>
-                    <td><strong>Number Of Activities</strong></td>
+                    <td><strong>User Active</strong></td>
+                    <td><strong>SuperUser</strong></td>
+                    <td><strong># Of Clothes</strong></td>
+                    <td><strong># Of Activities</strong></td>
+                    <td><strong>Today's Activities</strong></td>
                 </tr>
             
                 {% for user in userslist %}
                     
-                    <tr>
+                    <tr class="bg-info">
                         <td>{{user.0.username}} </td>
                         <td>{{user.0.date_joined}} </td>
                         <td>{{user.0.is_active}} </td>
+                        <td>{{user.0.is_superuser}} </td>
                         <td>{{user.1}} </td>
                         <td>{{user.2}} </td>
+                        <td>{{user.3}} </td>
                     </tr>
                 {%endfor%}
-        
+                
+                <tr class="bg-warning">
+                    <td>Totals</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>{{calculations.totalC}}</td>
+                    <td>{{calculations.totalA}}</td>
+                    <td>{{calculations.totalT}}</td>
+                </tr>
+                
+                <tr class="bg-warning">
+                    <td>Averages</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>{{calculations.avgC}}</td>
+                    <td>{{calculations.avgA}}</td>
+                    <td>{{calculations.avgT}}</td>
+                </tr>
             </table>
        
     </div>

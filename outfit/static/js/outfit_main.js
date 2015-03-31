@@ -42,4 +42,8 @@ $(document).ready(function() {
             cancelButtonClass: "btn-default",
             dialogClass: "modal-dialog modal-sm" // Bootstrap classes for large modal
         });//delete cloth
+      
+      $(".btn-show").click(function(){
+        $(this).hide();
+    });
 });

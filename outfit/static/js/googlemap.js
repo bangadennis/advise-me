@@ -1,24 +1,31 @@
 
-
-function initialized()
-{
-var a=1.2833;
-var b=36.8167;
-var marker;
-var myCenter=new google.maps.LatLng(a, b);
-var mapProp = {
-  center:myCenter,
-  zoom:4,
-  mapTypeId:google.maps.MapTypeId.ROADMAP
-  };
-
-var map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
-
-var marker=new google.maps.Marker({
-  position:myCenter,
-  animation:google.maps.Animation.BOUNCE
-  });
-
-marker.setMap(map);
+var geocoder;
+var map;
+function initialized() {
+  geocoder = new google.maps.Geocoder();
+  var latlng = new google.maps.LatLng(-1.141038, 37.288865);
+  var mapOptions = {
+    zoom: 8,
+    center: latlng,
+    mapTypeId:google.maps.MapTypeId.ROADMAP
+  }
+  map = new google.maps.Map(document.getElementById('googleMap'), mapOptions);
 }
-google.maps.event.addDomListener(window, 'load', initialized);
+
+function codeAddress() {
+  var address = document.getElementById('address').value;
+  geocoder.geocode( { 'address': address}, function(results, status) {
+    if (status == google.maps.GeocoderStatus.OK) {
+      map.setCenter(results[0].geometry.location);
+      var marker = new google.maps.Marker({
+          map: map,
+          position: results[0].geometry.location,
+          animation:google.maps.Animation.BOUNCE
+      });
+    } else {
+      alert('Geocode was not successful for the following reason: ' + status);
+    }
+  });
+}
+
+google.maps.event.addDomListener(window, 'load',initialized);

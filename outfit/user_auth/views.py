@@ -116,19 +116,38 @@ def admin_panel(request):
             return HttpResponseRedirect('/auth/dash')
         else:
             userslist=[]
-            users=User.objects.all();
+            calculations={}
+            now = datetime.datetime.now()
+            date=now.strftime("%Y-%m-%d")
+            users=User.objects.all()
+            sumactivities=0
+            sumtodays=0
+            sumclothes=0
+            count=0
             for userobj in users:
-                totalcloths=ClothDescription.objects.all().filter(user=userobj).count()
-                print(totalcloths)
+                totalclothes=ClothDescription.objects.all().filter(user=userobj).count()
+                print(totalclothes)
                 totalactivities=UserActivity.objects.all().filter(user=userobj).count()
-                print(totalactivities)
-                panellist=[userobj, totalcloths, totalactivities]
+                todayactivities=UserActivity.objects.all().filter(user=userobj).filter(event_date=date).count()
+                sumactivities=sumactivities+totalactivities
+                sumtodays=sumtodays+todayactivities
+                sumclothes=sumclothes+totalclothes
+                print(todayactivities)
+                panellist=[userobj, totalclothes, totalactivities, todayactivities]
                 userslist.append(panellist)
+                count=count+1
+            averageactivities=sumactivities/count;
+            averageclothes=sumclothes/count
+            averagetoday=sumtodays/count
             
+            calculations={"totalA": sumactivities, "totalT": sumtodays, "totalC": sumclothes,
+                          "avgA": averageactivities, "avgT": averagetoday, "avgC": averageclothes,
+                          }
             
         return render(request,
                       'user_auth/panel_reports.html',
-                      {'userdetails': user ,'userslist':userslist,'active': 'home'})
+                      {'userdetails': user ,'userslist':userslist,'active': 'home',
+                       "calculations": calculations})
         
 
 
@@ -840,7 +859,7 @@ def outfit_rules_male(clothobjects, weathercondition, activitytype):
                 
                 #Activity Semi Formal/Cocktail
                 if activitytype=="Cocktail":
-                    if ((clothobj.cloth_type=="Short Dress") and (clothobj.cloth_color=="Black")):
+                    if ((clothobj.cloth_type=="Trouser") and (clothobj.cloth_color=="Black")):
                         selectedCloths.append(clothobj)
                     if ((clothobj.cloth_type=="Full Suit")):
                         selectedCloths.append(clothobj)
