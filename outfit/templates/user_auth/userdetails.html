@@ -1,8 +1,4 @@
 {% extends "user_auth/base.html" %}
-{% load bootstrap_toolkit %}
-
-{%block link%} {{ userdetails.media }} {%endblock%}
-
 {% block body_block %}
 
 {% if user.is_authenticated %}

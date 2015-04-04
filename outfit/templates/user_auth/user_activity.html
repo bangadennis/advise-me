@@ -27,28 +27,48 @@
                     <td><strong>Location</strong></td>
                     <td><strong>Date</strong></td>
                     <td><strong>StartTime</strong></td>
+                    <td><strong>Edit</strong></td>
+                    <td><strong>Delete</strong></td>
                 </tr>
             
                 {% for item in activities %}
                     
-                    <tr id="{{item.0.activity_id}}" >
+                    <tr id="{{item.0.activity_id}}" class="{{item.1}}" >
                         <td>{{forloop.counter}} </td>
                         <td>{{item.0.category}} </td>
                         <td>{{item.0.event_name}} </td>
                         <td>{{item.0.event_location}} </td>
                         <td>{{item.0.event_date}} </td>
                         <td>{{item.0.start_time}} </td>
+                        
+                        <td>
+                        <a href="/auth/edit_useractivity/{{item.0.activity_id}}">
+                        <button class="btn btn-small btn-success">
+                        <span class="glyphicon glyphicon-edit " aria-hidden="true">
+                        </span>
+                        </button>
+                        </a>
+                        </td>
                         <td class="delete_activity">
                         <button class="btn btn-danger btn-small" id="{{item.0.activity_id}}">
                             <span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>
                         </button> </td>
                     </tr>
                 {%endfor%}
-        
+               
             </table>
+            
             </div>
             </div>
             
+            <label>Label</label>
+            <table>
+                <tr class="bg-default">
+                    <td class="bg-info">Upcoming Events<td>
+                     <td class="bg-success">Today's Events<td>
+                     <td class="bg-danger">Past Events<td>
+                </tr>
+            </table>
             
             <div>
                 <h4 class="text-info">Weather Details For Today's Events:</h4>

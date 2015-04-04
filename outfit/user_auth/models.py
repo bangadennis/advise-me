@@ -44,6 +44,9 @@ class UserActivity(models.Model):
    event_name=models.CharField(max_length=50, blank=False, null=False)
    event_date=models.DateField(blank=False, null=False)
    start_time=models.TimeField(blank=False, null=False)
+   
+   def get_absolute_url(self):
+        return reverse('edit_useractivity', kwargs={'pk': self.pk})
 
 class ClothFactBase(models.Model):
     cloth=models.ForeignKey(ClothDescription)

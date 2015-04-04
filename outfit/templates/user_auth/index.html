@@ -33,15 +33,15 @@
             </span>      
         {%endif%}
         <div class="col-md-12">
-            
+
         <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
         
         {% for activity in activities %}
-            <div class="panel panel-default">
+            <div class="panel {{activity.3}}">
             <div class="panel-heading" role="tab" id="Event_{{forloop.counter}}">
                 <h4 class="panel-title">
                   <a data-toggle="collapse" data-parent="#accordion" href="#id_{{forloop.counter}}" aria-expanded="true" aria-controls="collapseOne">
-                    Event {{forloop.counter}}-{{activity.0.category|capfirst }}
+                    Event {{forloop.counter}}-{{activity.0.category|capfirst }}->{{activity.0.event_date}}
                     <span class="glyphicon glyphicon-menu-down" aria-hidden="true"></span>
                   </a>
                 </h4>
@@ -62,14 +62,29 @@
           
           <div>
             <h4>Weather</h4>
-            <span>Tempratures:
-                {{ activity.2.condition.temp}}
-                </span>
-                <br/>
-                <span>
-                <img src="{{activity.2.condition.image }}"/>
-                 {{ activity.2.condition.text}}
-                </span>
+           
+            {% if activity.2.condition %}
+                
+                   <span class="text-info">Tempratures:</span>
+                   <span>
+                   {{ activity.2.condition.temp}}
+                   </span>
+                   <br/>
+                   <span>
+                   <img src="{{activity.2.condition.image }}"/>
+                    {{ activity.2.condition.text}}
+                   </span>
+                
+            {%else%}
+                     
+                    <span class="text-info">Tempratures:</span>
+                    <span>{{ activity.2.temp}}</span>
+                    <br/>
+                    <span class="text-info"> Condition:</span>
+                    <span>{{ activity.2.text}}</span>
+                 
+            {%endif%}
+                
             </div>
         <h4>Clothes</h4>
         <table>
@@ -107,11 +122,20 @@
     <hr>
     </div>
     </div>
-            </div>
+    </div>
+        
     {%endfor%}
-    </div>
-    </div>
     
+     <label>Label</label>
+    <table>
+            <tr class="bg-default">
+                <td class="bg-success">Today's Event<td>
+                <td class="bg-info">Upcoming Event  <td>
+            </tr>
+    </table>
+        
+    </div>
+    </div>
     </div>
     </div>
         

@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.views.generic.edit import UpdateView
 from django.core.urlresolvers import reverse_lazy
 from django.utils.decorators import method_decorator
+from django.contrib.messages.views import SuccessMessageMixin
 
 from user_auth.forms import UserForm, UserDetailsForm, ClothDescriptionForm, UserActivityForm, ClothFactForm
 from models import UserDetails, ClothDescription, UserActivity, ClothFactBase
@@ -139,6 +140,7 @@ def admin_panel(request):
             averageactivities=sumactivities/count;
             averageclothes=sumclothes/count
             averagetoday=sumtodays/count
+            
             
             calculations={"totalA": sumactivities, "totalT": sumtodays, "totalC": sumclothes,
                           "avgA": averageactivities, "avgT": averagetoday, "avgC": averageclothes,
@@ -310,10 +312,11 @@ def closet_upload(request):
 
 ##############################################################################################
 #edit userdetails
-class UserDetailsUpdate(UpdateView):
+class UserDetailsUpdate(SuccessMessageMixin,UpdateView):
     model=UserDetails
     form_class= UserDetailsForm
     success_url = reverse_lazy('trya')
+    success_messsage="profile updated successfully"
     
     @method_decorator(login_required)
     def get(self, request, **kwargs):
@@ -402,7 +405,7 @@ def user_activites(request):
         display=[]
         for activity in activities:
             if str(activity.event_date)==str(date):
-                display.append("active")
+                display.append("success")
             elif str(activity.event_date)>str(date):
                 display.append("info")
             else:
@@ -416,7 +419,27 @@ def user_activites(request):
                        , 'active': 'activities'})
     
 ##############################################################################################
-#delete activity
+
+#edit userdetails
+class UserActivityUpdate(SuccessMessageMixin,UpdateView):
+    model=UserActivity
+    form_class= UserActivityForm
+    template_name="user_auth/user_activity_form.html"
+    success_url = reverse_lazy('user_activities')
+    success_message="Activity/Event updated sucessfully"
+
+    
+    @method_decorator(login_required)
+    def get(self, request, **kwargs):
+        self.object = UserActivity.objects.get(activity_id=self.kwargs['pk'])
+        userdetails=UserDetails.objects.get(user=request.user)
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+        context = self.get_context_data(object=self.object, form=form, userdetails=userdetails)
+        return self.render_to_response(context)
+
+################################################################################################
+ #delete activity
 @login_required
 def delete_activity(request):
     if not UserDetails.objects.filter(user=request.user).exists():
@@ -554,22 +577,37 @@ def todays_outfit(request):
         
         userdetails=UserDetails.objects.get(user=request.user)
         try:
-            activities=UserActivity.objects.all().filter(user=request.user).order_by('start_time')
+            activities=UserActivity.objects.all().filter(user=request.user).order_by('start_time').order_by('event_date')
             results=knowledge_engine(activities, request.user, userdetails)
             clothobjs=results['clothresults']
             activities=results['activities']
             weatherdata=results['weatherdata']
             
-            datazip=zip(activities, clothobjs, weatherdata)   
+            #formatting activities with date
+            now = datetime.datetime.now()
+            date=now.strftime("%Y-%m-%d")
+            display=[]
+            for activity in activities:
+                if str(activity.event_date)==str(date):
+                    display.append("panel-success")
+                elif str(activity.event_date)>str(date):
+                    display.append("panel-info")
+                else:
+                    pass
+            
+        
+            datazip=zip(activities, clothobjs, weatherdata, display)   
                 
         except:
             messages.error(request, "Unable to Connect to Yahoo Weather, Check Internet Connection")
             return HttpResponseRedirect('/auth/dash')
             
-        
+        #for displaying the selected clothes 3 objects per row
         list1=[(i)*3+1 for i in range(0,6)]
         list2=[i*3 for i in range(1,6)]
         ui_list=[list1, list2]
+        
+        
         return render(request,
                       "user_auth/index.html",
                       {"activities": datazip, 'userdetails':
@@ -590,8 +628,7 @@ def knowledge_engine(activities, user, userdetail):
         activitytypes=data["activitytype"]
         weatherdata=data["weatherdata"]
     except:
-        messages.error(request, "Unable to Connect to Weather Server!")
-        return HttpResponseRedirect('/auth/dash')
+        return False
     
     #Check the weather conditions   
         #check the weather conditions
@@ -599,9 +636,9 @@ def knowledge_engine(activities, user, userdetail):
     print(activitytypes)
     wcondition=[]
     for weather_data in weather:
-        if int(weather_data['temp'])>=17:
+        if (int(weather_data['temp'])>17):
             wcondition.append("hot")
-        elif int(weather_data['temp'])<17:
+        elif (int(weather_data['temp'])<=17 ):
             wcondition.append("cold")
         #to be changed
         elif lower(weather_data['text']) in ["rain", "rain and snow"] and weather_data['temp']<15:
@@ -662,15 +699,25 @@ def knowledge_engine(activities, user, userdetail):
 def check_todays_activity(activities):
     """This function checks the day's activity"""
     now = datetime.datetime.now()
-    date=now.strftime("%Y-%m-%d")
-    event=0
+    todays_date=now.strftime("%Y-%m-%d")
+    try:
+        start_date=datetime.datetime.strptime(todays_date,"%Y-%m-%d")
+        #Adding 5 days
+        end_date= start_date+datetime.timedelta(days=5)
+        
+        start_date=datetime.datetime.strftime(start_date,"%Y-%m-%d")
+        end_date=datetime.datetime.strftime(end_date,"%Y-%m-%d")
+       
+    except:
+        pass
+    
     activitytype=[]
     weather=[]
-    count=0
     weatherdata=[]
+    
     for activity in activities:
         print(activity.category)
-        if str(activity.event_date)==str(date):
+        if str(activity.event_date)==str(todays_date):
             client=yweather.Client()
             weather_id=client.fetch_woeid(activity.event_location)
             if weather_id is None:
@@ -680,9 +727,31 @@ def check_todays_activity(activities):
             weatherdata.append(weather_st)
             #append activity type
             activitytype.append(activity)
-            count=count+1
-            event=1
-
+            
+        elif (str(activity.event_date)>str(todays_date) and str(activity.event_date)<str(end_date)):
+            client=yweather.Client()
+            weather_id=client.fetch_woeid(activity.event_location)
+            if weather_id is None:
+                weather_id=client.fetch_woeid('Nairobi,Kenya')
+            weather_st=client.fetch_weather(weather_id, metric=True)
+            print(weather_st)
+            for forecast in weather_st['forecast']:
+                #formating the date form d/m/Y to Y/m/d
+                forecast_date=datetime.datetime.strptime(forecast['date'],"%d %b %Y")
+                forecast_date=datetime.datetime.strftime(forecast_date,"%Y-%m-%d")
+                if forecast_date==str(activity.event_date):
+                    temp=forecast['low']
+                    text=forecast['text']
+                    date=forecast['date']
+                    details={"temp": temp, "text": text, "date": date}
+                    weather.append(details)
+                    print("Okay")
+            weatherdata.append(details)
+            #append activity type
+            activitytype.append(activity)
+        else:
+            pass
+            
     print(activitytype)
     return {"weather": weather,"activitytype": activitytype, "weatherdata": weatherdata}
     

@@ -34,7 +34,7 @@ class UserDetailsForm(forms.ModelForm):
         fields=('gender','dateofbirth' , 'occupation', 'profile_picture',)
         
     
-#Cloths Description Form and Q&A
+#Cloths Description Form 
 class ClothDescriptionForm(forms.ModelForm):
     helper = FormHelper()
     helper.form_tag = False
