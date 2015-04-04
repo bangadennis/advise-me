@@ -22,7 +22,7 @@
             <div class="panel panel-default">
             <div class="table-responsive">
             <table class='table table-stripped table-hover '>
-                <tr>
+                <tr class="active">
                     <td><strong>User</strong></td>
                     <td><strong>Date Joined</strong></td>
                     <td><strong>User Active</strong></td>
@@ -34,7 +34,7 @@
             
                 {% for user in userslist %}
                     
-                    <tr class="bg-info">
+                    <tr class="">
                         <td>{{user.0.username}} </td>
                         <td>{{user.0.date_joined}} </td>
                         <td>{{user.0.is_active}} </td>

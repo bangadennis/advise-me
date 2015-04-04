@@ -20,7 +20,7 @@
             <div class="panel panel-default">
             <div class="table-responsive">
             <table class='table table-stripped table-hover '>
-                <tr>
+                <tr class="active">
                     <td>#</td>
                     <td><strong>Category</strong></td>
                     <td><strong>Event</strong></td>
@@ -80,7 +80,7 @@
                 {%endif%}
                 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
                     {% for weather in weather_st%}
-                    <div class="panel panel-default">
+                    <div class="panel panel-success">
                     <div class="panel-heading" role="tab" id="id_{{forloop.counter}}">
                       <h4 class="panel-title text-info">
                         <a data-toggle="collapse" data-parent="#accordion" href="#item_{{forloop.counter}}" aria-expanded="true" aria-controls="collapseOne">
