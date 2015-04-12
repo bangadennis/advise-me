@@ -32,9 +32,77 @@ def index(request):
     if request.user.is_authenticated():
         return HttpResponseRedirect('/auth/dash')
     
-    return render(request, 'user_auth/base.html', {'active': 'active'})
+    return render(request, 'user_auth/base.html', {'active': 'home'})
 
 ##############################################################################################
+#search closet
+def search_closet(request):
+    if request.method=='GET':
+        search_name=request.GET['search_name']
+        if search_name:
+            username=User.objects.get(username=request.user.username)
+            user=UserDetails.objects.get(user=username)
+            cloths=ClothDescription.objects.all().filter(user=username).filter(cloth_description=search_name);
+            if user.gender=="Female":
+                category_1=["Top", "Shirt","Blouse", "Turtleneck"]
+                category_2=["Dress", "Mid-Length Dress", "Long Dress", "Mid-Length Skirt", "Long Skirt",
+                            "Maxi Dress"]
+                category_3=["Full Suit", "Suit Jacket"]
+                category_4=["Jeans", "Pants", "Short", "Khakis"]
+                category_5=["Rain Coat", "Blazer", "Cardigan", "Trench Coat", "Jacket", "Sweater"]
+                category_6=["Scarf", "White Gloves", ""]
+                
+                clothobjects=[[],[],[],[],[],[],[]]
+                for cloth in cloths:
+                    try:
+                        usercloth=ClothFactBase.objects.get(cloth_id=cloth)
+                        if usercloth.cloth_type in category_1:
+                            clothobjects[0].append(cloth)
+                        if usercloth.cloth_type in category_2:
+                            clothobjects[1].append(cloth)
+                        if usercloth.cloth_type in category_3:
+                            clothobjects[2].append(cloth)
+                        if usercloth.cloth_type in category_4:
+                            clothobjects[3].append(cloth)
+                        if usercloth.cloth_type in category_5:
+                            clothobjects[4].append(cloth)
+                        if usercloth.cloth_type in category_6:
+                            clothobjects[5].append(cloth)
+                              
+                    except:
+                        clothobjects[6].append(cloth)  
+                cloths=clothobjects
+            else:
+                #MALE
+                
+                category_1=["Shirt", "T-Shirt",'Polo Shirt', 'Dressy Shirt',"Turtleneck"]
+                category_2=["Full Suit"]
+                category_3=["Jeans", "Trouser", "Short","Khakis",]
+                category_4=["Rain Coat", "Blazer", "Cardigan", "Trenchcoat", "Jacket", "Sweater",
+                            "Sport Coat", "Waistcoat", "Tailcoat"]
+                category_5=["Scarf","Gloves", "Hat"]
+                
+                clothobjects=[[],[],[],[],[],[]]
+                for cloth in cloths:
+                    try:
+                        usercloth=ClothFactBase.objects.get(cloth_id=cloth)
+                        if usercloth.cloth_type in category_1:
+                            clothobjects[0].append(cloth)
+                        if usercloth.cloth_type in category_2:
+                            clothobjects[1].append(cloth)
+                        if usercloth.cloth_type in category_3:
+                            clothobjects[2].append(cloth)
+                        if usercloth.cloth_type in category_4:
+                            clothobjects[3].append(cloth)
+                        if usercloth.cloth_type in category_5:
+                            clothobjects[4].append(cloth)
+                        if not usercloth.cloth_type:
+                            clothobjects[5].append(cloth)    
+                    except:
+                        pass
+                cloths=clothobjects
+            
+        return HttpResponse(cloths)
 #Dash/MyCloset
 @login_required
 def dash(request):
@@ -44,11 +112,11 @@ def dash(request):
         user=UserDetails.objects.get(user=request.user)
         cloths=ClothDescription.objects.all().filter(user=request.user).order_by('-id');
         if user.gender=="Female":
-            category_1=["Top", "Shirt",]
+            category_1=["Top", "Shirt","Blouse", "Turtleneck"]
             category_2=["Dress", "Mid-Length Dress", "Long Dress", "Mid-Length Skirt", "Long Skirt",
                         "Maxi Dress"]
             category_3=["Full Suit", "Suit Jacket"]
-            category_4=["Jeans", "Pants", "Short"]
+            category_4=["Jeans", "Pants", "Short", "Khakis"]
             category_5=["Rain Coat", "Blazer", "Cardigan", "Trench Coat", "Jacket", "Sweater"]
             category_6=["Scarf", "White Gloves", ""]
             
@@ -74,13 +142,15 @@ def dash(request):
             cloths=clothobjects
         else:
             #MALE
-            category_1=["Shirt", "T-Shirt"]
-            category_2=["Full Suit"]
-            category_3=["Jeans", "Trouser", "Short"]
-            category_4=["Rain Coat", "Blazer", "Cardigan", "Trench Coat", "Jacket", "Sweater"]
-            category_5=["Scarf", "Gloves", ""]
             
-            clothobjects=[[],[]]
+            category_1=["Shirt", "T-Shirt",'Polo Shirt', 'Dressy Shirt',"Turtleneck"]
+            category_2=["Full Suit"]
+            category_3=["Jeans", "Trouser", "Short","Khakis",]
+            category_4=["Rain Coat", "Blazer", "Cardigan", "Trenchcoat", "Jacket", "Sweater",
+                        "Sport Coat", "Waistcoat", "Tailcoat"]
+            category_5=["Scarf","Gloves", "Hat"]
+            
+            clothobjects=[[],[],[],[],[],[]]
             for cloth in cloths:
                 try:
                     usercloth=ClothFactBase.objects.get(cloth_id=cloth)
@@ -95,14 +165,14 @@ def dash(request):
                     if usercloth.cloth_type in category_5:
                         clothobjects[4].append(cloth)
                     if not usercloth.cloth_type:
-                        clothobjects[6].append(cloth)    
+                        clothobjects[5].append(cloth)    
                 except:
                     pass
             cloths=clothobjects
             
         return render(request,
                       'user_auth/dash.html',
-                      {'cloths': cloths, 'userdetails': user , 'active': 'home'})
+                      {'cloths': cloths, 'userdetails': user , 'active': 'dash'})
     
 ##############################################################################################
 #control panel-admin
@@ -148,7 +218,7 @@ def admin_panel(request):
             
         return render(request,
                       'user_auth/panel_reports.html',
-                      {'userdetails': user ,'userslist':userslist,'active': 'home',
+                      {'userdetails': user ,'userslist':userslist,
                        "calculations": calculations})
         
 
@@ -219,9 +289,9 @@ def login_view(request):
                 return HttpResponse("Your Outfit account is disabled.")
         else:
             # Bad login details were provided. So we can't log the user in.
-            print "Invalid login details: {0}, {1}".format(username, password)
+            invalid="Invalid login details"
             #return HttpResponse("Invalid login details supplied.")
-            return render(request, 'user_auth/login.html', {"invalid": True})
+            return render(request, 'user_auth/login.html', {"invalid": invalid})
 
     # The request is not a HTTP POST, so display the login form.
     # This scenario would most likely be a HTTP GET.
@@ -308,7 +378,7 @@ def closet_upload(request):
         return render(request,
                       "user_auth/closet_upload.html",
                       {"clothform": clothdetails, 'userdetails': userdetails
-                       , 'active': 'upload' })
+                       , 'active': 'closet_upload' })
 
 ##############################################################################################
 #edit userdetails
@@ -323,7 +393,7 @@ class UserDetailsUpdate(SuccessMessageMixin,UpdateView):
         self.object = UserDetails.objects.get(user=self.request.user)
         form_class = self.get_form_class()
         form = self.get_form(form_class)
-        context = self.get_context_data(object=self.object, form=form)
+        context = self.get_context_data(object=self.object, form=form, active='index')
         return self.render_to_response(context)
     
     #@method_decorator(login_required)
@@ -366,7 +436,7 @@ def add_user_activity(request):
         return render(request,
                       "user_auth/add_user_activity.html",
                       {"activitydetails": activitydetails, 'userdetails': userdetails
-                       , 'active': 'add_activity'})
+                       , 'active': 'add_user_activity'})
 
 ############################################################################################## 
 #view for activities 
@@ -416,7 +486,7 @@ def user_activites(request):
         return render(request,
                       'user_auth/user_activity.html',
                       {'activities': activities, 'userdetails': user, 'weather_st':weather
-                       , 'active': 'activities'})
+                       , 'active': 'user_activities'})
     
 ##############################################################################################
 
@@ -435,25 +505,22 @@ class UserActivityUpdate(SuccessMessageMixin,UpdateView):
         userdetails=UserDetails.objects.get(user=request.user)
         form_class = self.get_form_class()
         form = self.get_form(form_class)
-        context = self.get_context_data(object=self.object, form=form, userdetails=userdetails)
+        context = self.get_context_data(object=self.object, form=form, userdetails=userdetails, active='user_activities')
         return self.render_to_response(context)
 
 ################################################################################################
  #delete activity
 @login_required
 def delete_activity(request):
-    if not UserDetails.objects.filter(user=request.user).exists():
-            return HttpResponseRedirect('/auth/userdetails')
-    else:
-        if request.method=='GET':
-            activity_id=request.GET['activity_id']
-            if activity_id:
-                user=User.objects.get(username=request.user.username)
-                activity=user.useractivity_set.get(activity_id=activity_id)
-                activity.delete()
-                #messages.info(request, "Activity Deleted")
-                #return HttpResponseRedirect('/auth/user_activities')
-                return HttpResponse(activity_id)
+    if request.method=='GET':
+        activity_id=request.GET['activity_id']
+        if activity_id:
+            user=User.objects.get(username=request.user.username)
+            activity=user.useractivity_set.get(activity_id=activity_id)
+            activity.delete()
+            #messages.info(request, "Activity Deleted")
+            #return HttpResponseRedirect('/auth/user_activities')
+        return HttpResponse(activity_id)
     
 ############################################################################################## 
 #add cloth facts
@@ -500,7 +567,7 @@ def add_cloth_facts(request, cloth_id):
         return render(request,
                       "user_auth/add_cloth_facts.html",
                       {'clothform': cloth_fact, 'userdetails': userdetails,
-                       'cloth': cloth_data, 'clothfacts': facts , 'active': 'active'})
+                       'cloth': cloth_data, 'clothfacts': facts , 'active': 'dash'})
     
 ##############################################################################################
 #delete a cloth
@@ -523,7 +590,7 @@ def delete_cloth(request, cloth_id):
                 return HttpResponseRedirect('/auth/dash') 
 
 ##############################################################################################
-#Edit cloth details
+#Edit cloth's details
 @login_required
 def update_cloth_facts(request, cloth_id):
     #check if the user details are completed
@@ -564,7 +631,7 @@ def update_cloth_facts(request, cloth_id):
         return render(request,
                       "user_auth/update_cloth_facts.html",
                       {"clothform": cloth_fact, 'userdetails': userdetails,
-                       'cloth': cloth_data, })
+                       'cloth': cloth_data, 'active': 'dash'})
   
 
 ##############################################################################################  
@@ -611,7 +678,7 @@ def todays_outfit(request):
         return render(request,
                       "user_auth/index.html",
                       {"activities": datazip, 'userdetails':
-                        userdetails, 'active': 'index', "ui_list": ui_list })
+                        userdetails, 'active': 'daysoutfit', "ui_list": ui_list })
             
         
         
@@ -632,8 +699,9 @@ def knowledge_engine(activities, user, userdetail):
     
     #Check the weather conditions   
         #check the weather conditions
-    print(weather)
-    print(activitytypes)
+    
+    #print(weather)
+    #print(activitytypes)
     wcondition=[]
     for weather_data in weather:
         if (int(weather_data['temp'])>17):
@@ -641,7 +709,7 @@ def knowledge_engine(activities, user, userdetail):
         elif (int(weather_data['temp'])<=17 ):
             wcondition.append("cold")
         #to be changed
-        elif lower(weather_data['text']) in ["rain", "rain and snow"] and weather_data['temp']<15:
+        elif ("rain" in lower(weather_data['text'])) and (weather_data['temp']<15):
             wcondition.append("rainy")
         else:
              pass
@@ -674,10 +742,13 @@ def knowledge_engine(activities, user, userdetail):
             lock=False
             
     else:
-        count=0
-        for activitytype in activitytypes:
-            daysoutfits.append(outfit_rules_male(clothobjects, wcondition[count], activitytype.category))
-            count=count+1
+        try:
+            count=0
+            for activitytype in activitytypes:
+                daysoutfits.append(outfit_rules_male(clothobjects, wcondition[count], activitytype.category))
+                count=count+1
+        except:
+            lock=False
     
     #Getting the clothes' description
     clothresults=[]
@@ -761,10 +832,10 @@ def check_todays_activity(activities):
 def outfit_rules_female(clothobjects, weathercondition, activitytype):
     """Rules to Match Females Outfit"""
     selectedCloths=[]
-    HotWeatherMaterial=['Silk', 'Linen', 'Ramie', 'Jute', 'Hemp', 'Bamboo',  'Cotton', 'Chiffon']
+    HotWeatherMaterial=['Silk', 'Linen', 'Ramie', 'Jute', "Denim",'Hemp', 'Bamboo',  'Cotton', 'Chiffon']
     print(weathercondition)
     for clothobj in clothobjects:
-        if weathercondition in ["hot", 'cold', 'rain']:
+        if weathercondition in ["hot", 'cold', 'rainy']:
             #Material for Hot Weather
             if clothobj.cloth_material in HotWeatherMaterial:
                 #Job Interview Occassion Cloths Type
@@ -774,7 +845,8 @@ def outfit_rules_female(clothobjects, weathercondition, activitytype):
                     if (clothobj.cloth_type=="Full Suit"):
                         selectedCloths.append(clothobj)
                     
-                    if (clothobj.cloth_type=="Mid-Length Skirt" and clothobj.cloth_color in cloth_colors and clothobj.cloth_print=="Plain"):
+                    if (clothobj.cloth_type=="Mid-Length Skirt" and clothobj.cloth_color in cloth_colors and clothobj.cloth_print=="Plain"
+                       and clothobj.cloth_material not in ["Denim"]):
                         selectedCloths.append(clothobj)
                         
                     if (clothobj.cloth_type=="Pants" and clothobj.cloth_color in cloth_colors and clothobj.cloth_print=="Plain"):
@@ -796,9 +868,9 @@ def outfit_rules_female(clothobjects, weathercondition, activitytype):
                 
                 #Activity Shopping/ CasualDay Out
                 if activitytype=="Shopping":
-                    if (clothobj.cloth_type=="Jeans"):
+                    if (clothobj.cloth_type in ["Jeans", "Khakis","Short Skirt","Short"]):
                         selectedCloths.append(clothobj)
-                    if (clothobj.cloth_type=="Top"):
+                    if (clothobj.cloth_type in "Top Turtleneck"):
                         selectedCloths.append(clothobj)
                     if (clothobj.cloth_type=="Cardigan"):
                         selectedCloths.append(clothobj)
@@ -816,7 +888,7 @@ def outfit_rules_female(clothobjects, weathercondition, activitytype):
                         selectedCloths.append(clothobj)
                 #Activity Wedding
                 if activitytype=="Wedding":
-                    if (clothobj.cloth_type=="Maxi Dress"):
+                    if (clothobj.cloth_type in "Maxi Dress Long Dress"):
                         selectedCloths.append(clothobj)
                     if (clothobj.cloth_type=="Brim hat"):
                         selectedCloths.append(clothobj)
@@ -829,6 +901,8 @@ def outfit_rules_female(clothobjects, weathercondition, activitytype):
                         selectedCloths.append(clothobj)
                     if ((clothobj.cloth_type=="Blouse") and (clothobj.cloth_material=="Silk")):
                         selectedCloths.append(clothobj)
+                    if ((clothobj.cloth_type=="Pants")):
+                        selectedCloths.append(clothobj)
     
                 #Activity Formal/Black Tie
                 if activitytype=="Black Tie":
@@ -838,11 +912,11 @@ def outfit_rules_female(clothobjects, weathercondition, activitytype):
                 if activitytype=="White Tie":
                     if (clothobj.cloth_type=="Long Dress"):
                         selectedCloths.append(clothobj)
-                    if (clothobj.cloth_type=="White Gloves"):
+                    if ((clothobj.cloth_type=="Gloves") and (clothobj.cloth_color=="White")):
                         selectedCloths.append(clothobj)
                 #Activity  Church/Religious Events
                 if activitytype=="Religious":
-                    if (((clothobj.cloth_type=="Long Dress") or (clothobj.cloth_type=="Mid-Length Dress"))
+                    if (((clothobj.cloth_type in "Long Dress Maxi Dress") or (clothobj.cloth_type=="Mid-Length Dress"))
                     and((clothobj.cloth_color in ['Red', 'Orange', 'Blue', 'Pink', 'Peach','Multi-Color','Yellow'])
                     or (clothobj.cloth_print=="Floral"))):
                         selectedCloths.append(clothobj)
@@ -852,9 +926,24 @@ def outfit_rules_female(clothobjects, weathercondition, activitytype):
                     and (clothobj.cloth_print=="Floral") ))):
                         selectedCloths.append(clothobj)
                         
-                    if (clothobj.cloth_type in ["Blouse", "Top"]):
+                    if ((clothobj.cloth_type in ["Blouse", "Top"]) and
+                    (clothobj.cloth_color in ['Red', 'Orange', 'Blue', 'Pink', 'Peach', 'Yellow'])):
                         selectedCloths.append(clothobj)
-                #Activity Business Formal
+                #Activity Business Casual
+                
+                if activitytype=="Business Casual":
+                    if (clothobj.cloth_type in["Mid-Length Skirt", "Khakis", "Blouse"]):
+                        selectedCloths.append(clothobj)
+                    if (clothobj.cloth_type=="Pants"):
+                        selectedCloths.append(clothobj)
+                #Funeral
+                if activitytype=="Funeral":
+                    if ((clothobj.cloth_type in
+                         ["Pants","Full Suit","Top", "Turtleneck","Suit Jacket" ,
+                          "Mid-Length Skirt", "Mid-length Dress"])
+                    and (clothobj.cloth_color in ["Black", "Navy", "Brown"])):
+                        selectedCloths.append(clothobj)
+                    
                
                
                
@@ -877,14 +966,15 @@ def outfit_rules_female(clothobjects, weathercondition, activitytype):
 #rules to match Males'  outfit
 def outfit_rules_male(clothobjects, weathercondition, activitytype):
     selectedCloth=[]
-    HotWeatherMaterial=['Silk', 'Linen', 'Ramie', 'Jute', 'Hemp', 'Bamboo',  'Cotton', 'Chiffon']
+    HotWeatherMaterial=['Silk', 'Linen', 'Ramie',"Denim", 'Jute', 'Hemp', 'Bamboo',  'Cotton', 'Chiffon']
+    print("In males")
     
     for clothobj in clothobjects:
-        if weathercondition in ["hot", "cold"]:
+        if weathercondition in ["hot", "cold", "rainy"]:
             #Material for Hot Weather
             if clothobj.cloth_material in HotWeatherMaterial:
                 #Job Interview Occassion Clothes Type
-                if (activitytype=="Job Interview"or activitytype=="School Event" or activitytype=="Business Casual"
+                if (activitytype=="Job Interview" or activitytype=="School Event" or activitytype=="Business Casual"
                     or activitytype=="Business Formal"):
                     cloth_colors=["Gray", "Black", "Navy", "Brown", "Blue"]
                     #Check the appropiate cloth
@@ -899,23 +989,24 @@ def outfit_rules_male(clothobjects, weathercondition, activitytype):
                         selectedCloths.append(clothobj)
                         
                     if ((clothobj.cloth_type=="Shirt") and (clothobj.cloth_print=="Plain" or
-                    clothobj.cloth_print=="Stripped")):
+                    clothobj.cloth_print=="Stripped") and
+                    (clothobj.cloth_color in cloth_colors)):
                         selectedCloths.append(clothobj)
                 
                 #Activity Shopping/ CasualDay Out
                 if activitytype=="Shopping":
-                    if (clothobj.cloth_type in ["Jeans","Short"]):
+                    if (clothobj.cloth_type in ["Jeans","Short", "Khakis"]):
                         selectedCloths.append(clothobj)
-                    if (clothobj.cloth_type=="T-Shirt"):
+                    if (clothobj.cloth_type in "T-Shirt Dressy Shirt Turtleneck Polo Shirt"):
                         selectedCloths.append(clothobj)
                     if (clothobj.cloth_type=="Cardigan"):
                         selectedCloths.append(clothobj)
                 
                 #Activity Date
                 if activitytype=="Date":
-                    if (clothobj.cloth_type=="T-Shirt"):
+                    if (clothobj.cloth_type in ["T-Shirt","Turtleneck" ,"Polo Shirt"]):
                         selectedCloths.append(clothobj)
-                    if (clothobj.cloth_type=="Jeans"):
+                    if (clothobj.cloth_type in "Jeans Khakis"):
                         selectedCloths.append(clothobj)
                     if (clothobj.cloth_type=="Cardigan"):
                         selectedCloths.append(clothobj)
@@ -928,52 +1019,96 @@ def outfit_rules_male(clothobjects, weathercondition, activitytype):
                 
                 #Activity Semi Formal/Cocktail
                 if activitytype=="Cocktail":
-                    if ((clothobj.cloth_type=="Trouser") and (clothobj.cloth_color=="Black")):
+                    if ((clothobj.cloth_type in ["Trouser", "Suit Jacket"])
+                        and (clothobj.cloth_color=="Black")):
                         selectedCloths.append(clothobj)
-                    if ((clothobj.cloth_type=="Full Suit")):
+                    if ((clothobj.cloth_type=="Full Suit") and clothobj.cloth_color=="Black"):
                         selectedCloths.append(clothobj)
-                    if ((clothobj.cloth_type=="Shirt") and (clothobj.cloth_print=="plain")):
+                    if ((clothobj.cloth_type=="Shirt") and (clothobj.cloth_print=="plain")
+                        and (clothobj.cloth_color in cloth_colors)):
                         selectedCloths.append(clothobj)
     
                 #Activity Formal/Black Tie
                 if activitytype=="Black Tie":
-                    if (clothobj.cloth_type=="Long Dress"):
+                    if ((clothobj.cloth_type in ["Suit Jacket","Waistcoat"]) and (clothobj.cloth_color=="Black")):
+                        selectedCloths.append(clothobj)
+                    if ((clothobj.cloth_type=="Trouser") and (clothobj.cloth_color=="Black")):
+                        selectedCloths.append(clothobj)
+                    if ((clothobj.cloth_type=="Shirt") and (clothobj.cloth_color=="White") and
+                        (clothobj.cloth_print=="Plain")):
+                        selectedCloths.append(clothobj)
+                    if ((clothobj.cloth_type=="Bow Tie") and (clothobj.cloth_color=="Black") and
+                        (clothobj.cloth_material=="Slik")):
                         selectedCloths.append(clothobj)
                 #Activity White Tie
                 if activitytype=="White Tie":
-                    if ((clothobj.cloth_type=="Full Suit") and
-                    (clothobj.color_=="Black")):
+                    if ((clothobj.cloth_type in ["Suit Jacket","Waistcoat"]) and (clothobj.cloth_color=="White")):
                         selectedCloths.append(clothobj)
-                    if ((clothobj.cloth_type=="Shirt") and
-                    (clothobj.cloth_color=="White")):
+                    if ((clothobj.cloth_type=="Trouser") and (clothobj.cloth_color=="Black")):
+                        selectedCloths.append(clothobj)
+                    if ((clothobj.cloth_type=="Tailcoat") and (clothobj.cloth_color=="Black")):
+                        selectedCloths.append(clothobj)
+                    if ((clothobj.cloth_type=="Shirt") and (clothobj.cloth_color=="White") and
+                        (clothobj.cloth_print=="Plain")):
+                        selectedCloths.append(clothobj)
+                    if ((clothobj.cloth_type=="Bow Tie") and (clothobj.cloth_color=="White") and
+                        (clothobj.cloth_material=="Slik")):
                         selectedCloths.append(clothobj)
                 #Activity  Church/Religious Events
                 if activitytype=="Religious":
-                    if ((clothobj.cloth_type=="Jeans") or (clothobj.cloth_type=="T-Shirt")):
+                    if ((clothobj.cloth_type in ["Jeans", "Trouser"]) or
+                        (clothobj.cloth_type in ["T-Shirt","Polo Shirt","Shirt", "Turtleneck"])):
                         selectedCloths.append(clothobj)
-                    if (clothobj.cloth_type in ["Trouser", "Cardigan"]):
+                #Activity Business Casual
+                if activitytype=="Business Casual":
+                    if (clothobj.cloth_type in["Khakis,Trousers"]) and (clothobj.cloth_print=="plain"):
                         selectedCloths.append(clothobj)
-                #Activity Business Formal
-                   
-    #print(selectedCloths)   
+                    if ((clothobj.cloth_type in ["Shirt, Polo Shirt", "Turtleneck"]) and (clothobj.cloth_print=="plain")):
+                        selectedCloths.append(clothobj)
+                #Funeral
+                if activitytype=="Funeral":
+                    if ((clothobj.cloth_type in ["Trouser"," Shirt", "Turtleneck", "Polo Shirt", "Blazer"])
+                    and (clothobj.cloth_color in ["Black", "Navy", "Brown"])):
+                        selectedCloths.append(clothobj)
+                    
+           
+            #clothes for cold days
+            if weathercondition=="cold":
+                if ((clothobj.cloth_type in ['Cardigan', 'Sweater', 'Jacket', 'Scarf', 'Gloves','Trench Coat']) and
+                (clothobj.cloth_material in ['Wool', 'Cashmere'])):
+                    selectedCloths.append(clothobj)
+            #clothes for rainy days
+            if weathercondition=="rainy":
+                  if (clothobj.cloth_type in ['Cardigan', 'Sweater', 'Jacket', 'Scarf', 'Gloves','Rain Coat']):
+                    selectedCloths.append(clothobj) 
+        
+    print(selectedCloths)
+    selectedCloths=sortclothes(selectedCloths, "Male")
     return selectedCloths
+
+
+
+
+
+
 
 #Function to Sort the selected clothes
 def sortclothes(selectedclothes, gender):
-    #sort throught the clothes
-    print("Helloooo")
-    category_1=["Top", "Shirt",]
-    category_2=["Dress", "Mid-Length Dress", "Long Dress", "Mid-Length Skirt", "Long Skirt",
-                "Maxi Dress"]
-    category_3=["Full Suit"]
-    category_4=["Jeans", "Pants", "Short"]
-    category_5=["Blazer", "Cardigan", "Trench Coat", "Jacket", "Sweater","Suit Jacket"]
-    category_6=["Scarf", "White Gloves","Rain Coat"]
-    
-    selected_category_1,selected_category_2, selected_category_3,selected_category_4,selected_category_5, selected_category_6=[],[],[],[],[],[]
-    selected=[]
+   
     if gender=="Female":
-        print("Helloooo  in female")
+        #sort through the clothes
+        category_1=["Top", "Shirt",]
+        category_2=["Dress", "Mid-Length Dress", "Long Dress", "Mid-Length Skirt", "Long Skirt",
+                    "Maxi Dress", "Short Skirt"]
+        category_3=["Full Suit"]
+        category_4=["Jeans", "Pants", "Short", "Khakis"]
+        category_5=["Blazer", "Cardigan", "Trench Coat", "Jacket", "Sweater","Suit Jacket"]
+        category_6=["Scarf", "Gloves","Rain Coat", "Brim Hat"]
+        
+        selected_category_1,selected_category_2, selected_category_3,selected_category_4,selected_category_5, selected_category_6=[],[],[],[],[],[]
+        selected=[]
+        
+        print("Start test in female")
         print(selectedclothes)
         for clothobj in selectedclothes:
             print(clothobj.cloth_type)
@@ -1003,7 +1138,46 @@ def sortclothes(selectedclothes, gender):
         if selected_category_6:
             selected.append(random.choice(selected_category_5))
             
-    print("Helloooo return") 
+    else:
+        print("Start test in male")
+        #MALE
+        #sort through the clothes
+        category_1=["Shirt", "T-Shirt",'Polo Shirt', 'Dressy Shirt',"Turtleneck"]
+        category_2=["Full Suit"]
+        category_3=["Jeans", "Trouser", "Short","Khakis",]
+        category_4=["Rain Coat", "Blazer", "Cardigan", "Trenchcoat", "Jacket", "Sweater",
+                        "Sport Coat", "Waistcoat", "Tailcoat"]
+        category_5=["Scarf","Gloves", "Hat"]
+        
+        selected_category_1,selected_category_2, selected_category_3,selected_category_4,selected_category_5=[],[],[],[],[]
+        selected=[]
+        
+        print("Start test in female")
+        print(selectedclothes)
+        for clothobj in selectedclothes:
+            print(clothobj.cloth_type)
+            if clothobj.cloth_type in category_1:
+                selected_category_1.append(clothobj)
+            if clothobj.cloth_type in category_2:
+                selected_category_2.append(clothobj)
+            if clothobj.cloth_type in category_3:
+                selected_category_3.append(clothobj)
+            if clothobj.cloth_type in category_4:
+                selected_category_4.append(clothobj)
+            if clothobj.cloth_type in category_5:
+                selected_category_5.append(clothobj)
+            
+        if selected_category_1 and selected_category_3:
+            selected.append(random.choice(selected_category_1))
+            selected.append(random.choice(selected_category_3))
+        if selected_category_2:
+            selected.append(random.choice(selected_category_2))
+        if selected_category_4:
+            selected.append(random.choice(selected_category_4))
+        if selected_category_5:
+            selected.append(random.choice(selected_category_5))
+       
+    print("Test return") 
     return selected     
         
 

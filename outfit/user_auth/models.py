@@ -11,7 +11,8 @@ class UserDetails(models.Model):
     gender=models.CharField(max_length=10, blank=False, null=False, default="Male")
     dateofbirth=models.DateField(blank=False, null=False)
     occupation=models.CharField(max_length=50,blank=False, null=False)
-    profile_picture= ProcessedImageField(upload_to='images/profileImages',blank=True,default=False,
+    residence=models.CharField(max_length=50, blank=False, null=False,default="Nairobi, Kenya")
+    profile_picture= ProcessedImageField(upload_to='images/profileImages',blank=True,
                                            processors=[ResizeToFill(100, 100)],
                                            format='JPEG',
                                            options={'quality': 100})

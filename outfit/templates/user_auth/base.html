@@ -59,18 +59,21 @@
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
             {% if user.is_authenticated %}
-            <li ><a href="{% url 'index' %}">Day's Outfit</a></li>
-            <li> <a href="{% url 'trya' %}">MyCloset</a></li>
-            <li><a href="{% url 'closet_upload' %}">Upload</a></li>
-            <li><a href="{% url 'user_activities' %}">Activities</a></li>
-            <li><a href="{% url 'add_user_activity' %}">Add Activity</a></li>
-           <li><a href="{% url 'trya' %}"> {{user.username}} </a></li>
+            <li {% ifequal active 'daysoutfit'%} class='active' {%endifequal%}} ><a href="{% url 'index' %}">Day's Outfit</a></li>
+            <li {% ifequal active 'dash'%} class='active' {%endifequal%}}>
+                <a href="{% url 'trya' %}">MyCloset</a></li>
+            <li {% ifequal active 'closet_upload'%} class='active' {%endifequal%}}>
+                <a href="{% url 'closet_upload' %}">Upload</a></li>
+            <li {% ifequal active 'user_activities'%} class='active' {%endifequal%}}>
+                <a href="{% url 'user_activities' %}">Activities</a></li>
+            <li {% ifequal active 'add_user_activity'%} class='active' {%endifequal%}}><a href="{% url 'add_user_activity' %}">Add Activity</a></li>
+           <li {% ifequal active 'index'%} class='bg-warning' {%endifequal%}}><a href="{% url 'trya' %}"> {{user.username}} </a></li>
            <li><a href="{% url 'logout' %}">Logout</a></li>
            <li><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>
            </li>
             {% else %}
-             <li><a href="{% url 'index' %}">Home</a></li>
-             <li><a href="{% url 'login' %}">Login</a></li>
+             <li {% ifequal active 'home'%} class='active' {%endifequal%}}><a href="{% url 'index' %}">Home</a></li>
+             <li {% ifequal active 'login'%} class='active' {%endifequal%}}><a href="{% url 'login' %}">Login</a></li>
              
              
             <li><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span></li>
@@ -129,8 +132,6 @@
                 {% else %}
                 <h4 class='text-info'>Outfit</h4>
                 <a href="{% url 'register' %}">Register</a> <br />
-                <a href="{% url 'password_reset_recover'%}">Password Reset</a>
-               
                 {% endif %}
             </div>
         </div>

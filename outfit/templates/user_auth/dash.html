@@ -27,6 +27,13 @@
         </ul>
     {% endif %}
     <h3 class="text-info">Closet</h3>
+    <div>
+    <div class="col-md-offset-10">
+        <form class="form-class">
+            <input name="search" class="form-control search_cloth"
+                   placeholder="search" autofocus />
+        </form>
+    </div>
         {%if not cloths.0 %}
         <span class="glyphicon glyphicon-info-sign text-error" aria-hidden="true">
             <span class='text-danger'>No Clothes in Closet.</span>
@@ -36,7 +43,7 @@
                 <button class="btn btn-success">Upload to Closet</button>
                  </a>
         </span> 
-        {%endif%}
+    {%endif%}
         {% for clothi in cloths%}
             
         {% if clothi %}
@@ -66,6 +73,7 @@
         </div>
         {%endif%}
         {% endfor %}
+    </div>
     </div>
     </div>
         

@@ -65,11 +65,10 @@
             <div>
                 {% block side_block %}
                 {% endblock %}
-                <h4>ES Links</h4>
-                <a href="/admin/">AdminLogin</a> <br />
+                <h4>Outfit</h4>
                 {% if user.is_authenticated %}
-                <a href="{% url 'trya' %}">MyCloset</a><br />
-                {% else %} 
+                {% else %}
+                <a href="{% url 'login' %}">Login</a><br />
                 <a href="{% url 'register' %}">Register</a><br />
                 <a href="{% url 'password_reset_recover'%}">Password Reset</a>
                

@@ -7,7 +7,7 @@ urlpatterns = patterns('',
     #url(r'^$', 'outfit.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
     
-     url(r'^$', 'user_auth.views.index', name='index'),
+    url(r'^$', 'user_auth.views.index', name='index'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^auth/', include('user_auth.urls')),
     url(r'^password/', include('password_reset.urls')),

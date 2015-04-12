@@ -6,17 +6,18 @@
 {% block title %}{% trans "Password recovery" %}{% endblock %}
 
 {% block content %}
-	<div class='col-md-offset-4 col-md-6'>
+	<div class='col-md-offset-3 col-md-6'>
+	<div class="jumbotron">
 		<form method="post" action="{{ url }}">
 		{% csrf_token %}
 		{{ form|as_bootstrap }}
 		<div class="form-actions">
 			<br/>
-		    <button type="submit"  class="btn btn-primary">Recover Password</button>
+		    <button type="submit"  class="btn btn-success btn-md">Recover Password</button>
 		</div>
-	</form>
-		
-		
+		</form>
+	</div>	
+	
 	</div>
 	
 {% endblock %}

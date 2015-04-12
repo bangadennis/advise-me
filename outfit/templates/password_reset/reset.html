@@ -5,15 +5,17 @@
 		<p>{% blocktrans %}Sorry, this password reset link is invalid. You can still <a href="{{ recovery_url }}">request a new one</a>.{% endblocktrans %}</p>
 	{% else %}
 		<div class='col-md-offset-4 col-md-6'>
+			<div class="jumbotron">
 			<p>{% blocktrans %}Hi, <strong>{{ username }}</strong>. Please choose your new password.{% endblocktrans %}</p>
 			<form method="post" action="{% url "password_reset_reset" token %}">
 				{% csrf_token %}
 				{{ form|as_bootstrap }}
 			<div class="form-actions">
 				<br/>
-			    <button type="submit"  class="btn btn-primary">Set New Password</button>
+			    <button type="submit"  class="btn btn-success btn-md">Set New Password</button>
 			</div>
 			</form>
+			</div>
 		</div>
 	{% endif %}
 {% endblock %}

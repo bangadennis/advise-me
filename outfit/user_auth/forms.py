@@ -29,9 +29,12 @@ class UserDetailsForm(forms.ModelForm):
         widget=DateWidget(usel10n=True, bootstrap_version=3), required=True
         )
     occupation=forms.CharField(label="Occupation", required=True,)
+    residence=forms.CharField(label="Place of Residence",
+                              widget=forms.TextInput(
+                                attrs={'id': 'autocomplete', 'onFocus':'geolocate()'}))
     class Meta:
         model=UserDetails
-        fields=('gender','dateofbirth' , 'occupation', 'profile_picture',)
+        fields=('gender','dateofbirth' , 'occupation','residence', 'profile_picture',)
         
     
 #Cloths Description Form 
@@ -50,7 +53,7 @@ class UserActivityForm(forms.ModelForm):
     category_choices=(('',''),('Job Interview', 'Job Interview'),('Business Formal', 'Business Formal'),
         ('Business Casual', 'Business Casual'),('Cocktail', 'Cocktail'),
         ('Date', 'Date'),('Religious', 'Religious'),('Funeral', 'Funeral'),('Wedding', 'Wedding'),
-        ('School Event', 'School Event'),('Shopping', 'Shopping'),)
+        ('School Event', 'School Event'),('Shopping', 'Shopping/Casual'),)
     helper = FormHelper()
     helper.form_tag = False
     
@@ -73,21 +76,35 @@ class UserActivityForm(forms.ModelForm):
 class ClothFactForm(forms.ModelForm):
     
     #Cloth Types Choices
+    
+    
     #choice male
-    choices_male=(('',''),('Shirt', 'Shirt'), ('T-Shirt', 'T-Shirt'),('Full Suit', 'Full Suit'),
-        ('Jacket', 'Jacket'),('Trouser', 'Trouser'),('Short', 'Short'),)
+    choices_male=(('',''),('Shirt', 'Shirt'), ('T-Shirt', 'T-Shirt'),('Polo Shirt', 'Polo Shirt'),
+        ('Dressy Shirt','Dressy Shirt'),('Full Suit', 'Full Suit'),
+        ('Trouser', 'Trouser'),('Short', 'Short'),
+        ('Khakis','Khakis'), ('Turtleneck','Turtleneck'),('Jacket', 'Jacket'), ('Cardigan', 'Cardigan'),
+        ('Sportcoat','Sportcoat'), ('Blazer','Blazer'), ('Waistcoat','Waistcoat'),
+        ('Tailcoat', 'Tailcoat'),
+        ('Rain Coat','Rain Coat'),('Scarf','Scarf'),('Hat', 'Hat'),("Bow Tie","Bow Tie"),
+        ('Trench Coat', 'Trench Coat'),("Gloves","Gloves"),
+        )
+    
+    
     #choice female
     choices_female=(('',''), ('Dress', 'Dress'),('Pants', 'Pants'), ('Sweater', 'Sweater'),
-        ('Shirt', 'Shirt'), ('Mid-Length Skirt', 'Mid-Length Skirt'),('Long Skirt', 'Long Skirt'),
-        ('Jacket', 'Jacket'),('Full Suit', 'Full Suit'),('Top', 'Top'),
+        ('Shirt', 'Shirt'),('Short Skirt', 'Short Skirt'), ('Mid-Length Skirt', 'Mid-Length Skirt'),
+        ('Long Skirt', 'Long Skirt'),
+        ('Jacket', 'Jacket'),('Full Suit', 'Full Suit'),('Top', 'Top'),('Blouse', 'Blouse'),
+        ("Turtleneck", "Turtleneck"),
         ('Mid-Length Dress', 'Mid-Length Dress'),('Long Dress', 'Long Dress'),('Maxi Dress', 'Maxi Dress'),
         ('Blazer', 'Blazer'),('Suit Jacket', 'Suit Jacket'), ('Cardigan', 'Cardigan'),
-        ('Jeans', 'Jeans'),('White Gloves', 'White Gloves'),('Rain Coat','Rain Coat'),
+        ('Jeans', 'Jeans'),('Khakis','Khakis'),('Short','Short'),('Gloves', 'Gloves'),
+        ('Brim Hat', 'Brim Hat'),('Rain Coat','Rain Coat'),
         ('Scarf','Scarf'), ('Trench Coat', 'Trench Coat'), )
     choices_type=()
     #Color Choices
     choices_color=(('',''),('Red', 'Red'), ('Blue', 'Blue'), ('Black', 'Black'),
-        ('White', 'White'),('Gray', 'Gray'),('Green', 'Green'), ('Pink', 'Pink'),
+        ('White', 'White'),('Gray', 'Gray'),('Navy', 'Navy'),('Green', 'Green'), ('Pink', 'Pink'),
         ('Purple','Purple'),('Brown','Brown'), ('Multi-Color','Multi-Color'))
     
     #Material Choices

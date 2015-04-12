@@ -26,6 +26,8 @@ urlpatterns = patterns('',
     
     url(r'^get_facts/(?P<cloth_id>\d+)/view/$', views.add_cloth_facts, name='cloth_facts'),
     url(r'^delete_cloth/(?P<cloth_id>\d+)/delete/$', views.delete_cloth, name='delete_cloth'),
+    #search closet ajax
+    url(r'^search_closet/(?P<search_name>\d+)/$', views.search_closet, name='search_closet'),
     
     url(r'^update_cloth_facts/(?P<cloth_id>\d+)/view/$', views.update_cloth_facts, name='update_cloth_facts'),
     #admin panel reports
