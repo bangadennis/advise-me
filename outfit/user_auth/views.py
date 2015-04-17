@@ -945,8 +945,6 @@ def outfit_rules_female(clothobjects, weathercondition, activitytype):
                         selectedCloths.append(clothobj)
                     
                
-               
-               
          #########################################
             #clothes for cold days
             if weathercondition=="cold":

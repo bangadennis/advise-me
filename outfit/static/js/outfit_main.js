@@ -43,12 +43,12 @@ $(document).ready(function() {
             dialogClass: "modal-dialog modal-sm" // Bootstrap classes for large modal
         });//delete cloth
       
-      #Map Button
-      $(".btn-show").click(function(){
+      //Map Button
+      $('.btn-show').click(function(){
         $(this).hide();
       });
       
-      #Search function
+      //Search function
       $('.search_cloth').keyup(function()
             {
             var ans=confirm("Are you sure you want to delete that Activity/Event");
@@ -61,6 +61,17 @@ $(document).ready(function() {
                   success: function() {
                   }
             });
-      });   
+      });
+      
+     
+      //Image preview function       
+      $('#id_cloth_image').change(function(){
+                var oFReader = new FileReader();
+                oFReader.readAsDataURL(document.getElementById("id_cloth_image").files[0]);
+        
+                oFReader.onload = function (oFREvent) {
+                    document.getElementById("uploadPreview").src = oFREvent.target.result;
+                };
+      });
       
 });

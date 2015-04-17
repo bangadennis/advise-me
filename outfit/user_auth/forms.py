@@ -36,12 +36,13 @@ class UserDetailsForm(forms.ModelForm):
         model=UserDetails
         fields=('gender','dateofbirth' , 'occupation','residence', 'profile_picture',)
         
-    
+#ttrs={'id': 'uploadImage', 'onchange':'PreviewImage()'
 #Cloths Description Form 
 class ClothDescriptionForm(forms.ModelForm):
     helper = FormHelper()
     helper.form_tag = False
     cloth_description=forms.CharField(label="Cloth Description", required=True,)
+    
     class Meta:
         model=ClothDescription
         fields=('cloth_image', 'cloth_description',)
