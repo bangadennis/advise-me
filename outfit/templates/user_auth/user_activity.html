@@ -6,7 +6,7 @@
 {% block body_block %}
     
     {% if messages %}
-        <ul class="list-unstyled messages bg-info">
+        <ul class="list-unstyled messages alert alert-success">
         {% for message in messages %}
         <p {% if message.tags %} class="{{ message.tags }} text-success"{% endif %}>
             <span class="glyphicon glyphicon-info-sign" aria-hidden="true"> {{ message }}</span></p>
@@ -64,9 +64,9 @@
             <label>Legend</label>
             <table>
                 <tr class="bg-default">
-                    <td class="bg-info">Upcoming Events<td>
-                     <td class="bg-success">Today's Events<td>
-                     <td class="bg-danger">Past Events<td>
+                    <td class="alert alert-info">Upcoming Events<td>
+                     <td class="alert alert-success">Today's Events<td>
+                     <td class="alert alert-danger">Past Events<td>
                 </tr>
             </table>
             

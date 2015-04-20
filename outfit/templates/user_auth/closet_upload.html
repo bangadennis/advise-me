@@ -4,7 +4,7 @@
 
     {% if messages %}
         <b>{{ username }}</b><br/>
-        <ul class="messages bg-info">
+        <ul class="messages alert alert-success">
         {% for message in messages %}
         <p {% if message.tags %} class="{{ message.tags }} text-success"{% endif %}>
             
@@ -23,10 +23,10 @@
         {% load crispy_forms_tags %}
         {% crispy clothform %}
         <div class="col-md-3">
-        <img id="uploadPreview" style="width:250px; height: auto;" />
+        <img id="uploadPreview" style="width:250px; height: auto;" class="img"/>
         </div>
-        
         </fieldset>
+        <br/>
         <button type="submit" class="btn btn-success" >Complete</button>
         </form>
         </div>

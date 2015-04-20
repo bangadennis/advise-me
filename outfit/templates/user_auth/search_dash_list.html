@@ -1,0 +1,15 @@
+ <div>
+ <h3>Search results</h3>
+ {%if not cloths%}
+       <h4>No cloth found</h6>
+{%endif%}
+{%for cloth in cloths %}
+<div class='col-md-4'>
+       <a href="/auth/get_facts/{{cloth.id}}/view/">
+                
+       <img src="{{ cloth.cloth_image.url }}" class='img-rounded' alt="{{cloth.cloth_description}}" />
+       </a>
+       <p class="text-center"> <strong><i> {{cloth.cloth_description }} </i> </strong> </p>
+</div>
+{%endfor%}
+</div>

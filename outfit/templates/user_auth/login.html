@@ -12,7 +12,6 @@
             </a>
             </span>
             {% endif %}
-            
         </div>
        
         <h3>Login</h3>
@@ -26,8 +25,14 @@
             <br />
             </div>
     
-            <input type="submit" class="btn btn-large btn-success" value="Login" />
+            
+         <input type="submit" class="btn btn-success" value="Login" />        
         </form>
+        <div class="col-md-offset-8">
+                <a href="{% url 'password_reset_recover' %}">
+                <button class="btn btn- btn-warning">Forgot Password</button>
+            </a>
+         </div>
     </div>
 </div>
 {% endblock %}

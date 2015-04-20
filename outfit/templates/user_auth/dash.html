@@ -8,15 +8,15 @@
     <div class="row">
         <div class="col-md-12">
         {% if messages %}
-        <ul class="messages success">
+        <ul class="messages" >
         {% for message in messages %}
         <p{% if message.tags %} class="{{ message.tags }}"{% endif %}>
             {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
-                <li class="bg-danger">
+                <li class="alert alert-danger">
                 <span class="glyphicon glyphicon-warning-sign text-error" aria-hidden="true"> {{ message }}</span>
                 </li>
                 {%else%}
-                    <li class="bg-info">
+                    <li class="alert alert-success">
                     <span class="glyphicon glyphicon-info-sign text-success" aria-hidden="true">
                     {{ message }}</span>
                     </li>
@@ -26,15 +26,26 @@
         {% endfor %}
         </ul>
     {% endif %}
-    <h3 class="text-info">Closet</h3>
+    
     <div>
-    <div class="col-md-offset-10">
-        <form class="form-class">
-            <input name="search" class="form-control search_cloth"
-                   placeholder="search" autofocus />
-        </form>
+    <div class="row">
+        <div class="col-md-5">
+            <h2>Closet</h2>
+        </div>
+        <div class="col-md-4 col-md-offset-8">
+            <form class="form-class">
+                <input name="search" class="form-control search_cloth"
+                       placeholder="search" autofocus />
+            </form> 
+        </div>
+        
     </div>
-        {%if not cloths.0 %}
+    
+    
+    <div class="col-md-12 bg-success" id="search_results"></div>
+    <br/>
+    <div class="bg-info">
+        {%if not cloths%}
         <span class="glyphicon glyphicon-info-sign text-error" aria-hidden="true">
             <span class='text-danger'>No Clothes in Closet.</span>
         </span>
@@ -42,8 +53,11 @@
                 <a href="{% url 'closet_upload' %}">
                 <button class="btn btn-success">Upload to Closet</button>
                  </a>
-        </span> 
-    {%endif%}
+        </span>
+        {%endif%}
+    </div>
+    
+    <div>
         {% for clothi in cloths%}
             
         {% if clothi %}
@@ -56,7 +70,7 @@
                   </a>
                 </h4>
             </div>
-        <div id="id_{{forloop.counter}}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="Event_{{forloop.counter}}">
+        <div id="id_{{forloop.counter}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="Event_{{forloop.counter}}">
         <div class="panel-body">
         {%for cloth in clothi %}
         <div class='col-md-4'>
@@ -72,7 +86,8 @@
         </div>
         </div>
         {%endif%}
-        {% endfor %}
+    {% endfor %}
+    </div>
     </div>
     </div>
     </div>

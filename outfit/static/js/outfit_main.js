@@ -50,17 +50,28 @@ $(document).ready(function() {
       
       //Search function
       $('.search_cloth').keyup(function()
-            {
-            var ans=confirm("Are you sure you want to delete that Activity/Event");
-            var search = $(this).value;
-            alert(search);
+      {
+            //alert("Hello");
+           // var ans=confirm("Are you sure you want to delete that Activity/Event");
+            var search = $(this).val();
+            //alert(search);
+            search=search.trim();
             $.ajax({
                   type: 'get',
                   url: '/auth/search_closet/',
                   data: {search_name: search},
-                  success: function() {
-                  }
+                  success: function(data) {
+                        if (data){
+                               $('#search_results').html(data);
+                        }
+                        else
+                        {
+                              $('#search_results').html(); 
+                        }
+                        
+                  },  
             });
+           
       });
       
      

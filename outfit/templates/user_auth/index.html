@@ -6,7 +6,7 @@
 {% block body_block %}
      <h2 class='text-info'>Day's Outfit</h2>
     {% if messages %}
-        <ul class="messages bg-info">
+        <ul class="messages alert alert-success">
         {% for message in messages %}
         <p{% if message.tags %} class="{{ message.tags }}"{% endif %}>
             {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
@@ -23,14 +23,17 @@
     <div class="row">
         
         {% if not activities %}
-            <span class="glyphicon glyphicon-info-sign text-error" aria-hidden="true">
-            <span class='text-danger'>No activity available for the Day</span>
-             </span>
-            <span>
-                <a href="{% url 'add_user_activity' %}">
-                    <button class="btn btn-success">Add Activity</button>
-                 </a>
-            </span>      
+            <div class="bg-info">
+                <span class="glyphicon glyphicon-info-sign text-error" aria-hidden="true">
+                <span class='text-danger'>No activity available for the Day</span>
+                 </span>
+                <span>
+                    <a href="{% url 'add_user_activity' %}">
+                        <button class="btn btn-success">Add Activity</button>
+                     </a>
+                </span>
+            </div>
+            
         {%endif%}
         <div class="col-md-12">
 
@@ -128,11 +131,11 @@
         
     {%endfor%}
     
-     <label>Legend</label>
+    <label>Legend</label>
     <table>
             <tr class="bg-default">
-                <td class="bg-success">Today's Event<td>
-                <td class="bg-info">Upcoming Event  <td>
+                <td class="alert alert-success">Today's Event<td>
+                <td class="alert alert-info">Upcoming Event  <td>
             </tr>
     </table>
         

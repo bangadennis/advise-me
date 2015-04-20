@@ -9,6 +9,8 @@ from django.core.urlresolvers import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.contrib.messages.views import SuccessMessageMixin
 
+
+
 from user_auth.forms import UserForm, UserDetailsForm, ClothDescriptionForm, UserActivityForm, ClothFactForm
 from models import UserDetails, ClothDescription, UserActivity, ClothFactBase
 #weather api
@@ -20,6 +22,9 @@ import json
 #os
 import os
 import random
+#charts
+from chartit import DataPool, Chart
+
 #Base Directory
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 #KnowledgeBase
@@ -40,69 +45,27 @@ def search_closet(request):
     if request.method=='GET':
         search_name=request.GET['search_name']
         if search_name:
+            temp=[]
             username=User.objects.get(username=request.user.username)
             user=UserDetails.objects.get(user=username)
-            cloths=ClothDescription.objects.all().filter(user=username).filter(cloth_description=search_name);
-            if user.gender=="Female":
-                category_1=["Top", "Shirt","Blouse", "Turtleneck"]
-                category_2=["Dress", "Mid-Length Dress", "Long Dress", "Mid-Length Skirt", "Long Skirt",
-                            "Maxi Dress"]
-                category_3=["Full Suit", "Suit Jacket"]
-                category_4=["Jeans", "Pants", "Short", "Khakis"]
-                category_5=["Rain Coat", "Blazer", "Cardigan", "Trench Coat", "Jacket", "Sweater"]
-                category_6=["Scarf", "White Gloves", ""]
-                
-                clothobjects=[[],[],[],[],[],[],[]]
-                for cloth in cloths:
-                    try:
-                        usercloth=ClothFactBase.objects.get(cloth_id=cloth)
-                        if usercloth.cloth_type in category_1:
-                            clothobjects[0].append(cloth)
-                        if usercloth.cloth_type in category_2:
-                            clothobjects[1].append(cloth)
-                        if usercloth.cloth_type in category_3:
-                            clothobjects[2].append(cloth)
-                        if usercloth.cloth_type in category_4:
-                            clothobjects[3].append(cloth)
-                        if usercloth.cloth_type in category_5:
-                            clothobjects[4].append(cloth)
-                        if usercloth.cloth_type in category_6:
-                            clothobjects[5].append(cloth)
-                              
-                    except:
-                        clothobjects[6].append(cloth)  
-                cloths=clothobjects
-            else:
-                #MALE
-                
-                category_1=["Shirt", "T-Shirt",'Polo Shirt', 'Dressy Shirt',"Turtleneck"]
-                category_2=["Full Suit"]
-                category_3=["Jeans", "Trouser", "Short","Khakis",]
-                category_4=["Rain Coat", "Blazer", "Cardigan", "Trenchcoat", "Jacket", "Sweater",
-                            "Sport Coat", "Waistcoat", "Tailcoat"]
-                category_5=["Scarf","Gloves", "Hat"]
-                
-                clothobjects=[[],[],[],[],[],[]]
-                for cloth in cloths:
-                    try:
-                        usercloth=ClothFactBase.objects.get(cloth_id=cloth)
-                        if usercloth.cloth_type in category_1:
-                            clothobjects[0].append(cloth)
-                        if usercloth.cloth_type in category_2:
-                            clothobjects[1].append(cloth)
-                        if usercloth.cloth_type in category_3:
-                            clothobjects[2].append(cloth)
-                        if usercloth.cloth_type in category_4:
-                            clothobjects[3].append(cloth)
-                        if usercloth.cloth_type in category_5:
-                            clothobjects[4].append(cloth)
-                        if not usercloth.cloth_type:
-                            clothobjects[5].append(cloth)    
-                    except:
-                        pass
-                cloths=clothobjects
+            cloths=ClothDescription.objects.all().filter(user=username)
+            results=cloths.filter(cloth_description__icontains=search_name)
             
-        return HttpResponse(cloths)
+            for cloth in results:
+                temp.append(cloth)
+            
+            if True:
+                for cloth in cloths:
+                    
+                    result=(cloth.clothfactbase_set.filter(cloth_material__icontains=search_name).exists() or
+                            cloth.clothfactbase_set.filter(cloth_type__icontains=search_name).exists() or
+                            cloth.clothfactbase_set.filter(cloth_print__icontains=search_name).exists() or
+                            cloth.clothfactbase_set.filter(cloth_color__icontains=search_name).exists() )
+                    if result:
+                        temp.append(cloth)  
+        return render(request,
+                      'user_auth/search_dash_list.html',
+                      {'cloths': temp})
 #Dash/MyCloset
 @login_required
 def dash(request):
@@ -215,14 +178,42 @@ def admin_panel(request):
             calculations={"totalA": sumactivities, "totalT": sumtodays, "totalC": sumclothes,
                           "avgA": averageactivities, "avgT": averagetoday, "avgC": averageclothes,
                           }
-            
+        
+        
+        ##Step 1: Create a DataPool with the data we want to retrieve.
+        #weatherdata=DataPool(
+        #series=[{'options':
+        #{'source': userslist},
+        #'terms': [
+        #        'month',
+        #        'houston_temp',
+        #        'boston_temp']}
+        #     ])
+        #
+        ##Step 2: Create the Chart object
+        #cht = Chart(
+        #    datasource = weatherdata,
+        #    series_options =
+        #      [{'options':{
+        #          'type': 'line',
+        #          'stacking': False},
+        #        'terms':{
+        #          'month': [
+        #            'boston_temp',
+        #            'houston_temp']
+        #          }}],
+        #    chart_options =
+        #      {'title': {
+        #           'text': 'Weather Data of Boston and Houston'},
+        #       'xAxis': {
+        #            'title': {
+        #               'text': 'Month number'}}})
+
         return render(request,
                       'user_auth/panel_reports.html',
                       {'userdetails': user ,'userslist':userslist,
                        "calculations": calculations})
         
-
-
 
 #registration view
 def register(request):
@@ -721,12 +712,12 @@ def knowledge_engine(activities, user, userdetail):
     
     #Fetching the cloths' facts
     for cloth in cloths:
-                clothfactobj=cloth.clothfactbase_set.all()
-                try:
-                    usercloth=ClothFactBase.objects.get(cloth_id=cloth)
-                    clothobjects.append(usercloth)
-                except:
-                    pass
+        clothfactobj=cloth.clothfactbase_set.all()
+        try:
+            usercloth=ClothFactBase.objects.get(cloth_id=cloth)
+            clothobjects.append(usercloth)
+        except:
+            pass
                 
     
     #Select Matching function to either male or female outfit
