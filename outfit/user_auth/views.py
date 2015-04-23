@@ -149,6 +149,7 @@ def admin_panel(request):
             return HttpResponseRedirect('/auth/userdetails')
     else:
         user=UserDetails.objects.get(user=request.user)
+        all_activities=UserActivity.objects.all()
         if not request.user.is_superuser:
             messages.info(request, "Panel For Admins Only")
             return HttpResponseRedirect('/auth/dash')
@@ -183,41 +184,12 @@ def admin_panel(request):
             calculations={"totalA": sumactivities, "totalT": sumtodays, "totalC": sumclothes,
                           "avgA": averageactivities, "avgT": averagetoday, "avgC": averageclothes,
                           }
-        
-        
-        ##Step 1: Create a DataPool with the data we want to retrieve.
-        #weatherdata=DataPool(
-        #series=[{'options':
-        #{'source': userslist},
-        #'terms': [
-        #        'month',
-        #        'houston_temp',
-        #        'boston_temp']}
-        #     ])
-        #
-        ##Step 2: Create the Chart object
-        #cht = Chart(
-        #    datasource = weatherdata,
-        #    series_options =
-        #      [{'options':{
-        #          'type': 'line',
-        #          'stacking': False},
-        #        'terms':{
-        #          'month': [
-        #            'boston_temp',
-        #            'houston_temp']
-        #          }}],
-        #    chart_options =
-        #      {'title': {
-        #           'text': 'Weather Data of Boston and Houston'},
-        #       'xAxis': {
-        #            'title': {
-        #               'text': 'Month number'}}})
+    
 
         return render(request,
                       'user_auth/panel_reports.html',
                       {'userdetails': user ,'userslist':userslist,
-                       "calculations": calculations})
+                       "calculations": calculations, "all_activities":all_activities})
         
 
 #registration view
@@ -330,8 +302,7 @@ def completeuserdetails(request):
                 messages.info(request, "Welcome to Outfit!")
                 return HttpResponseRedirect('/auth/dash')
                 
-            else:
-                
+            else:  
                 print userdetails.errors
         else:
             userdetails=UserDetailsForm()
@@ -706,13 +677,13 @@ def knowledge_engine(activities, user, userdetail):
         elif (int(weather_data['temp'])<=17 ):
             wcondition.append("cold")
         #to be changed
-        elif ("rain" in lower(weather_data['text'])) and (weather_data['temp']<15):
+        elif("rain" in lower(weather_data['text'])) and (weather_data['temp']<25):
             wcondition.append("rainy")
         else:
              pass
     
         
-            
+         
     cloths=ClothDescription.objects.all().filter(user=user)
     clothobjects=[]
     
@@ -1209,33 +1180,33 @@ def suggest_male(activitytype):
     #Job Interview Occassion Clothes Type
     if (activitytype=="Job Interview" or activitytype=="School Event" or activitytype=="Business Casual"
                  or activitytype=="Business Formal"):
-            message="Full suit, Trouser Plain, Blazer/Suit Jacket plain, Shirt plain or striped"
+            message="Suggestion, add; Full suit, Plain Trousers, Plain Blazer/Suit Jacket or Plain Shirt to your closet"
     if activitytype=="Shopping":
-        message=""
+        message="We suggest adding; Jeans, T-Shirt, Light jacket or cardigan to your closet"
     
     if activitytype=="Date":
-        message=""
+        message="Suggestion, add; Jeans, T-Shirt, Light jacket or cardigan to your closet"
     
     if activitytype=="Wedding":
-        message="Full Suit, Trouser plain"
+        message="Suggestion, add; a Full Suit, Plain Trouser or Khaki Pants to your closet"
     
     if activitytype=="Black Tie":
-        message=""
+        message="Suggestion, add; Black tuxedo, dress shirt and black trousers to your closet."
     
     if activitytype=="White Tie":
-        message=""
+        message="Suggestion, add; white bow tie, white shirt, white waistcoat and a black tailcoat and black trousers to your closet"
         
     if activitytype=="Cocktail":
-        message=""
+        message="Suggestion, add; dark suit, white shirt and  silk tie to your closet"
         
     if activitytype=="Religious":
-        message=""
+        message="Suggestion, add; Full suit, Plain Trousers, Plain Blazer/Suit Jacket or Plain Shirt to your closet"
     
     if activitytype=="Business Casual":
-        message=""
+        message="Suggestion, add; Sport coat or blazer, Slacks or Khakis Pants, Dress shirt, Casual button-down shirt, open-collar or polo shirt to your closet"
     
     if activitytype=="Funeral":
-        message=""
+        message="Suggestion; add; clothing that is black and other dark tones like navy, brown, and forest green to your closet"
         
     
     return message
@@ -1247,37 +1218,36 @@ def suggest_female(activitytype):
     #Job Interview Occassion Clothes Type
     if (activitytype=="Job Interview" or activitytype=="School Event" or activitytype=="Business Casual"
                  or activitytype=="Business Formal"):
-            message="Full suit, Trouser Plain, Blazer/Suit Jacket plain, Shirt plain or striped"
+            message="Suggestion, add; Full Suit, Mid-length Skirt, Official Pants, Blazer/Suit jacket or striped blouse or Mid-length dress to your closet. Suggested colours; plain grey, black, brown or navy."
     if activitytype=="Shopping":
-        message=""
+        message="Suggestion, add; Jeans, Leggings, Tank tops or Sundresses to your closet"
     
     if activitytype=="Date":
-        message=""
+        message="Suggestion, add; Midi dresses, Skinny Jeans or V-neked tops to your closet"
     
     if activitytype=="Wedding":
-        message="Full Suit, Trouser plain"
+        message="Suggestion, add Maxi dress, floral dress or wide brim hat to your closet"
     
     if activitytype=="Black Tie":
-        message=""
+        message="Suggestion, add; floor-length gown to your closet."
     
     if activitytype=="White Tie":
-        message=""
+        message="Suggestion, add; floor-length dress and long white gloves to your closet."
         
     if activitytype=="Cocktail":
-        message=""
+        message="Suggestion, add; floor-length evening gown, Dressy cocktail dress or short black dress to your closet"
         
     if activitytype=="Religious":
-        message=""
+        message="Suggestion, add; long dress, mid-length dress, long Skirt, mid-length skirt or blouse to your closet. Colours; red, orange, blue, pink, peach, yellow, Floral prints"
     
     if activitytype=="Business Casual":
-        message=""
+        message="Suggestion, add; Skirt, Khakis pants, Open-collar shirt, knit shirt, sweater or Sheath dress to your closet"
     
     if activitytype=="Funeral":
-        message=""
+        message="Suggestion; add; clothing that is black and other dark tones like navy, brown, and forest green to your closet"
         
     
     return message
-    
     
     
     
