@@ -85,4 +85,20 @@ $(document).ready(function() {
                 };
       });
       
+      $('#panel_table').dataTable({
+        "sDom": 'T<"clear">frtip',
+        "oTableTools": {
+            "aButtons":  ['pdf']
+        }
+      });
+      
+      $('#activity_table').dataTable({
+        "sDom": 'T<"clear">frtip',
+        "bSort":true,
+        "bPaginate":true,
+        "oTableTools": {
+            "aButtons":  ['pdf']
+        }
+      });
+      
 });

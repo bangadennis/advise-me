@@ -23,32 +23,35 @@
         <h3 class='text-info'>Report</h3>
             <div class="panel panel-default">
             <div class="table-responsive">
-            <table class='table table-stripped table-hover '>
-                <tr class="active">
+            <table class='table table-stripped table-hover ' id="panel_table">
+                <thead class="active">
                     <td><strong>User</strong></td>
                     <td><strong>Date Joined</strong></td>
                     <td><strong>User Active</strong></td>
                     <td><strong>SuperUser</strong></td>
+                    <td><strong>Residence</strong></td>
                     <td><strong># Of Clothes</strong></td>
                     <td><strong># Of Activities</strong></td>
                     <td><strong>Today's Activities</strong></td>
-                </tr>
+                </thead>
             
                 {% for user in userslist %}
-                    
                     <tr class="">
                         <td>{{user.0.username}} </td>
                         <td>{{user.0.date_joined}} </td>
                         <td>{{user.0.is_active}} </td>
                         <td>{{user.0.is_superuser}} </td>
+                        <td>{{user.4.residence}}</td>
                         <td>{{user.1}} </td>
                         <td>{{user.2}} </td>
                         <td>{{user.3}} </td>
                     </tr>
                 {%endfor%}
                 
-                <tr class="bg-warning">
+            <tfoot>
+                <tr class="bg-success">
                     <td>Totals</td>
+                    <td></td>
                     <td></td>
                     <td></td>
                     <td></td>
@@ -57,8 +60,9 @@
                     <td>{{calculations.totalT}}</td>
                 </tr>
                 
-                <tr class="bg-warning">
+                <tr class="bg-success">
                     <td>Averages</td>
+                    <td></td>
                     <td></td>
                     <td></td>
                     <td></td>
@@ -66,6 +70,8 @@
                     <td>{{calculations.avgA}}</td>
                     <td>{{calculations.avgT}}</td>
                 </tr>
+            </tfoot>
+                
             </table>
        
     </div>

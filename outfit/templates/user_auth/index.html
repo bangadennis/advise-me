@@ -97,13 +97,27 @@
             <span class="glyphicon glyphicon-info-sign text-error" aria-hidden="true">
             <span class='text-danger'>No appropiate Match in the closet</span>
              </span>
+            <!--Suggestions-->
+            {% if messages %}
+            <ul class="messages alert alert-success">
+            {% for message in messages %}
+            <tr {% if message.tags %} class="{{ message.tags }}"{% endif %}>
+                {% if message.level == DEFAULT_MESSAGE_LEVELS.INFO %}
+                    <span class="glyphicon glyphicon-warning-sign text-error bg-danger" aria-hidden="true"> {{ message }}</span>
+                {%endif%}  
+            </tr>
+            {% endfor %}
+            </ul>
+            {%endif%}
+            <!--Suggestions-->
             <span>
                 <a href="{% url 'closet_upload' %}">
                     <button class="btn btn-success">Add Clothes</button>
                  </a>
-            </span>
-            
+            </span> 
         {%endif%}
+        
+        
         {% for cloth in activity.1 %}
         
         {% ifequal forloop.counter 1 %}
@@ -134,8 +148,8 @@
     <label>Legend</label>
     <table>
             <tr class="bg-default">
-                <td class="alert alert-success">Today's Event<td>
-                <td class="alert alert-info">Upcoming Event  <td>
+                <td class="alert alert-success">Today's Event</td>
+                <td class="alert alert-info">Upcoming Event  </td>
             </tr>
     </table>
         

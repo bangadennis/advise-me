@@ -7,7 +7,7 @@
     {% if messages %}
         <ul class="messages bg-info">
         {% for message in messages %}
-            <div class="alert alert-success">
+            <div class="alert alert-success ">
                  <p{% if message.tags %} class="{{ message.tags }}"{% endif %}>
                 <span class="glyphicon glyphicon-info-sign" aria-hidden="true"> {{ message }}</span>
                  </p>

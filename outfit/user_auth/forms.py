@@ -54,7 +54,8 @@ class UserActivityForm(forms.ModelForm):
     category_choices=(('',''),('Job Interview', 'Job Interview'),('Business Formal', 'Business Formal'),
         ('Business Casual', 'Business Casual'),('Cocktail', 'Cocktail'),
         ('Date', 'Date'),('Religious', 'Religious'),('Funeral', 'Funeral'),('Wedding', 'Wedding'),
-        ('School Event', 'School Event'),('Shopping', 'Shopping/Casual'),)
+        ('School Event', 'School Event'),('Shopping', 'Shopping/Casual'),('Black Tie','Black Tie'),
+        ('White Tie','White Tie'))
     helper = FormHelper()
     helper.form_tag = False
     
@@ -106,12 +107,13 @@ class ClothFactForm(forms.ModelForm):
     #Color Choices
     choices_color=(('',''),('Red', 'Red'), ('Blue', 'Blue'), ('Black', 'Black'),
         ('White', 'White'),('Gray', 'Gray'),('Navy', 'Navy'),('Green', 'Green'), ('Pink', 'Pink'),
-        ('Purple','Purple'),('Brown','Brown'), ('Multi-Color','Multi-Color'))
+        ('Purple','Purple'),('Brown','Brown'), ('Peach', 'Peach'),('Royal Blue', 'Royal Blue'),
+        ('Light Blue', 'Light Blue'),('Yellow', 'Yellow'),('Multi-Color','Multi-Color'))
     
     #Material Choices
     choices_material=(('',''),('Cotton', 'Cotton'), ('Silk', 'Silk'), ('Wool', 'Wool'), ('Nylon', 'Nylon'),
         ('Polyester', 'Polyester'), ('Denim', 'Denim'), ('Knitwear', 'Knitwear'), ('Lace','Lace' ),
-        ('Chiffon', 'Chiffon'), ('Cashmere', 'Cashmere'), ('Spandex', 'Spandex'))
+        ('Chiffon', 'Chiffon'), ('Cashmere', 'Cashmere'), ('Spandex', 'Spandex'),('Leather', 'Leather'))
     #Cloth Print Choices
     choices_print=(('',''), ('Plain', 'Plain'),('Striped', 'Striped'), ('Floral', 'Floral'), ('Geometric', 'Geometric'),
         ('checked','checked'),)

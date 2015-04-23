@@ -45,7 +45,7 @@
     <div class="col-md-12 bg-success" id="search_results"></div>
     <br/>
     <div class="bg-info">
-        {%if not cloths%}
+        {%if not countcloth %}
         <span class="glyphicon glyphicon-info-sign text-error" aria-hidden="true">
             <span class='text-danger'>No Clothes in Closet.</span>
         </span>
@@ -60,19 +60,19 @@
     <div>
         {% for clothi in cloths%}
             
-        {% if clothi %}
+        {% if clothi.0 %}
         <div class="panel panel-default">
             <div class="panel-heading" role="tab" id="Event_{{forloop.counter}}">
                 <h4 class="panel-title">
                   <a data-toggle="collapse" data-parent="#accordion" href="#id_{{forloop.counter}}" aria-expanded="true" aria-controls="collapseOne">
-                    Group-{{forloop.counter}}
+                    {{forloop.counter}}-[{{clothi.1}}]
                     <span class="glyphicon glyphicon-menu-down" aria-hidden="true"></span>
                   </a>
                 </h4>
             </div>
         <div id="id_{{forloop.counter}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="Event_{{forloop.counter}}">
         <div class="panel-body">
-        {%for cloth in clothi %}
+        {%for cloth in clothi.0 %}
         <div class='col-md-4'>
             <a href="/auth/get_facts/{{cloth.id}}/view/">
                 

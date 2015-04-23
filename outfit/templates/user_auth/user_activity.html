@@ -19,8 +19,8 @@
             <h3 class='text-info'>MyActivities</h3>
             <div class="panel panel-default">
             <div class="table-responsive">
-            <table class='table table-stripped table-hover '>
-                <tr class="active">
+            <table class='table table-stripped table-hover ' id="activity_table">
+                <thead class="active">
                     <td>#</td>
                     <td><strong>Category</strong></td>
                     <td><strong>Event</strong></td>
@@ -29,7 +29,7 @@
                     <td><strong>StartTime</strong></td>
                     <td><strong>Edit</strong></td>
                     <td><strong>Delete</strong></td>
-                </tr>
+                </thead>
             
                 {% for item in activities %}
                     
@@ -55,20 +55,19 @@
                         </button> </td>
                     </tr>
                 {%endfor%}
+                
+                <tfoot class="bg-default">
+                    <td class="alert alert-info">Upcoming Events</td>
+                    <td class="alert alert-success">Today's Events</td>
+                    <td class="alert alert-danger">Past Events</td>
+                </tfoot>
                
             </table>
             
             </div>
             </div>
             
-            <label>Legend</label>
-            <table>
-                <tr class="bg-default">
-                    <td class="alert alert-info">Upcoming Events<td>
-                     <td class="alert alert-success">Today's Events<td>
-                     <td class="alert alert-danger">Past Events<td>
-                </tr>
-            </table>
+            
             
             <div>
                 <h4 class="text-info">Weather Details For Today's Events:</h4>
