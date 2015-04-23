@@ -11,7 +11,7 @@
         <p{% if message.tags %} class="{{ message.tags }}"{% endif %}>
             {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
                 <span class="glyphicon glyphicon-warning-sign text-error bg-danger" aria-hidden="true"> {{ message }}</span>
-                {%else%}
+                {%else %}
                     <span class="glyphicon glyphicon-info-sign text-success" aria-hidden="true"> {{ message }}</span>
             {% endif %}
             
@@ -98,17 +98,15 @@
             <span class='text-danger'>No appropiate Match in the closet</span>
              </span>
             <!--Suggestions-->
-            {% if messages %}
-            <ul class="messages alert alert-success">
-            {% for message in messages %}
-            <tr {% if message.tags %} class="{{ message.tags }}"{% endif %}>
-                {% if message.level == DEFAULT_MESSAGE_LEVELS.INFO %}
-                    <span class="glyphicon glyphicon-warning-sign text-error bg-danger" aria-hidden="true"> {{ message }}</span>
-                {%endif%}  
-            </tr>
-            {% endfor %}
-            </ul>
-            {%endif%}
+            
+            <div class="col-md-4 col-md-offset-6 bg-warning">
+                {% if activity.4 %}
+                <span class="glyphicon glyphicon-info-sign" aria-hidden="true"><h4>Suggestions on clothes to add</h4>
+                </span>
+                {{activity.4}}
+                {%endif%}
+            </div>
+            
             <!--Suggestions-->
             <span>
                 <a href="{% url 'closet_upload' %}">

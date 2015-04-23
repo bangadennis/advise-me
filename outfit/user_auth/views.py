@@ -646,6 +646,7 @@ def todays_outfit(request):
             clothobjs=results['clothresults']
             activities=results['activities']
             weatherdata=results['weatherdata']
+            message=results['message']
             
             #formatting activities with date
             now = datetime.datetime.now()
@@ -660,7 +661,7 @@ def todays_outfit(request):
                     pass
             
         
-            datazip=zip(activities, clothobjs, weatherdata, display)   
+            datazip=zip(activities, clothobjs, weatherdata, display, message)   
                 
         except:
             messages.error(request, "Unable to Connect to Yahoo Weather, Check Internet Connection")
@@ -670,7 +671,6 @@ def todays_outfit(request):
         list1=[(i)*3+1 for i in range(0,6)]
         list2=[i*3 for i in range(1,6)]
         ui_list=[list1, list2]
-        
         
         return render(request,
                       "user_auth/index.html",
@@ -728,21 +728,31 @@ def knowledge_engine(activities, user, userdetail):
     
     #Select Matching function to either male or female outfit
     daysoutfits=[]
+    message=[]
     lock=True
     if userdetail.gender=="Female":
         try:
             count=0
             for activitytype in activitytypes:
-                daysoutfits.append(outfit_rules_female(clothobjects, wcondition[count], activitytype.category))
+                results=outfit_rules_male(clothobjects, wcondition[count], activitytype.category)
+                print(results)
+                message.append(results['message'])
+                daysoutfits.append(results['clothobjs'])
                 count=count+1
+                #daysoutfits.append(outfit_rules_female(clothobjects, wcondition[count], activitytype.category))
+                #count=count+1
         except:
             lock=False
             
     else:
         try:
             count=0
+            message=[]
             for activitytype in activitytypes:
-                daysoutfits.append(outfit_rules_male(clothobjects, wcondition[count], activitytype.category))
+                results=outfit_rules_male(clothobjects, wcondition[count], activitytype.category)
+                print(results)
+                message.append(results['message'])
+                daysoutfits.append(results['clothobjs'])
                 count=count+1
         except:
             lock=False
@@ -760,7 +770,7 @@ def knowledge_engine(activities, user, userdetail):
     
     
     return {"clothresults": clothresults, "activities": activitytypes,
-            "weatherdata": weatherdata, }
+            "weatherdata": weatherdata, "message":message }
 
 ##############################################################################################
 #Fuction to check if there is an activity and the weather conditions
@@ -957,7 +967,11 @@ def outfit_rules_female(clothobjects, weathercondition, activitytype):
     
     print(selectedCloths)
     selectedCloths=sortclothes(selectedCloths, "Female")
-    return selectedCloths
+    message="";
+    if(len(selectedCloths))==0:
+        message=suggest_male(activitytype)
+        
+    return {'clothobjs':selectedCloths, 'message':message}
 
 ##############################################################################################
 #rules to match Males'  outfit
@@ -1081,9 +1095,14 @@ def outfit_rules_male(clothobjects, weathercondition, activitytype):
                   if (clothobj.cloth_type in ['Cardigan', 'Sweater', 'Jacket', 'Scarf', 'Gloves','Rain Coat']):
                     selectedCloths.append(clothobj) 
         
-    print("selected:",selectedCloths)
+    
     selectedCloths=sortclothes(selectedCloths, "Male")
-    return selectedCloths
+    
+    message="";
+    if(len(selectedCloths))==0:
+        message=suggest_male(activitytype)
+    
+    return {'clothobjs':selectedCloths, 'message':message}
 
 
 
@@ -1124,11 +1143,11 @@ def sortclothes(selectedclothes, gender):
             if clothobj.cloth_type in category_6:
                 selected_category_6.append(clothobj)
             
-        if selected_category_1 and selected_category_4:
+        if selected_category_4:
             selected.append(random.choice(selected_category_1))
-            selected.append(random.choice(selected_category_4))
-        if selected_category_1 and selected_category_2:
+        if selected_category_1:
             selected.append(random.choice(selected_category_1))
+        if selected_category_2:
             selected.append(random.choice(selected_category_2))
         if selected_category_3:
             selected.append(random.choice(selected_category_3))
@@ -1184,7 +1203,80 @@ def sortclothes(selectedclothes, gender):
     return selected     
         
 
+################################################
+#suggestions male
+def suggest_male(activitytype):
+    #Job Interview Occassion Clothes Type
+    if (activitytype=="Job Interview" or activitytype=="School Event" or activitytype=="Business Casual"
+                 or activitytype=="Business Formal"):
+            message="Full suit, Trouser Plain, Blazer/Suit Jacket plain, Shirt plain or striped"
+    if activitytype=="Shopping":
+        message=""
+    
+    if activitytype=="Date":
+        message=""
+    
+    if activitytype=="Wedding":
+        message="Full Suit, Trouser plain"
+    
+    if activitytype=="Black Tie":
+        message=""
+    
+    if activitytype=="White Tie":
+        message=""
+        
+    if activitytype=="Cocktail":
+        message=""
+        
+    if activitytype=="Religious":
+        message=""
+    
+    if activitytype=="Business Casual":
+        message=""
+    
+    if activitytype=="Funeral":
+        message=""
+        
+    
+    return message
+        
 
+################################################
+#suggestions female
+def suggest_female(activitytype):
+    #Job Interview Occassion Clothes Type
+    if (activitytype=="Job Interview" or activitytype=="School Event" or activitytype=="Business Casual"
+                 or activitytype=="Business Formal"):
+            message="Full suit, Trouser Plain, Blazer/Suit Jacket plain, Shirt plain or striped"
+    if activitytype=="Shopping":
+        message=""
+    
+    if activitytype=="Date":
+        message=""
+    
+    if activitytype=="Wedding":
+        message="Full Suit, Trouser plain"
+    
+    if activitytype=="Black Tie":
+        message=""
+    
+    if activitytype=="White Tie":
+        message=""
+        
+    if activitytype=="Cocktail":
+        message=""
+        
+    if activitytype=="Religious":
+        message=""
+    
+    if activitytype=="Business Casual":
+        message=""
+    
+    if activitytype=="Funeral":
+        message=""
+        
+    
+    return message
     
     
     
