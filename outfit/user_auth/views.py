@@ -18,13 +18,15 @@ import yweather
 #datetime
 import datetime
 #json
-import json
+import urllib2, urllib, json
 #os
 import os
 import random
 #charts
 from chartit import DataPool, Chart
 
+
+baseurl_weather_api = "https://query.yahooapis.com/v1/public/yql?"
 #Base Directory
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 #KnowledgeBase
@@ -434,7 +436,12 @@ def user_activites(request):
                     
                     if weather_id is None:
                         weather_id=client.fetch_woeid('Nairobi,Kenya')
-                    weather_st=client.fetch_weather(weather_id, metric=True)
+                    
+                    yql_query = "select * from weather.forecast where woeid=%s" %(weather_id)
+                    yql_url = baseurl_weather_api + urllib.urlencode({'q':yql_query}) + "&format=json"
+                    result = urllib2.urlopen(yql_url).read()
+                    data = json.loads(result)
+                    weather_st=data['query']['results']['channel']['item']
                     weather.append(weather_st)
         except:
             messages.error(request, "No Internet Connection!")
@@ -771,7 +778,12 @@ def check_todays_activity(activities):
             weather_id=client.fetch_woeid(activity.event_location)
             if weather_id is None:
                 weather_id=client.fetch_woeid('Nairobi,Kenya')
-            weather_st=client.fetch_weather(weather_id, metric=True)
+            
+            yql_query = "select * from weather.forecast where woeid=%s" %(weather_id)
+            yql_url = baseurl_weather_api + urllib.urlencode({'q':yql_query}) + "&format=json"
+            result = urllib2.urlopen(yql_url).read()
+            data = json.loads(result)
+            weather_st=data['query']['results']['channel']['item']
             weather.append(weather_st['condition'])
             weatherdata.append(weather_st)
             #append activity type
@@ -782,7 +794,11 @@ def check_todays_activity(activities):
             weather_id=client.fetch_woeid(activity.event_location)
             if weather_id is None:
                 weather_id=client.fetch_woeid('Nairobi,Kenya')
-            weather_st=client.fetch_weather(weather_id, metric=True)
+            yql_query = "select * from weather.forecast where woeid=%s" %(weather_id)
+            yql_url = baseurl_weather_api + urllib.urlencode({'q':yql_query}) + "&format=json"
+            result = urllib2.urlopen(yql_url).read()
+            data = json.loads(result)
+            weather_st=data['query']['results']['channel']['item']
             print(weather_st)
             for forecast in weather_st['forecast']:
                 #formating the date form d/m/Y to Y/m/d
